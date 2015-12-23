@@ -34,9 +34,11 @@ const int FRAMES_PER_SECOND = 60;
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;
-TTF_Font *font = NULL;
+TTF_Font *FONT = NULL;
 LTexture lightsaber;
-Mix_Chunk *sound1 = NULL;
+Mix_Chunk *ON_SOUND = NULL;
+Mix_Chunk *OFF_SOUND = NULL;
+Mix_Chunk *HUM = NULL;
 
 bool init()
 {
@@ -55,7 +57,7 @@ bool init()
 		}
 		
 		//create window
-		WINDOW = SDL_CreateWindow( "Christmas Snow", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		WINDOW = SDL_CreateWindow( "Lightsaber", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (WINDOW == NULL)
 		{
 			cout << "Window could not be created. SDL_Error: " << SDL_GetError() << endl;
@@ -113,17 +115,47 @@ bool loadMedia(string CurrentPath)
 	lightsaber.loadFromFile(path.str(), RENDERER);
 	if (lightsaber.mTexture == NULL)
 		return false;	
+
+	//clear stringstream
+	path.str("");
+
+	//load sound effects 
+	path << CurrentPath << "/content/SaberOn.wav";
+	ON_SOUND = Mix_LoadWAV(path.str().c_str());
+	if (ON_SOUND == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+
+	//load sound effects 
+	path << CurrentPath << "/content/SaberOff.wav";
+	OFF_SOUND = Mix_LoadWAV(path.str().c_str());
+	if (OFF_SOUND == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+
+	//load sound effects 
+	path << CurrentPath << "/content/Hum.wav";
+	HUM = Mix_LoadWAV(path.str().c_str());
+	if (HUM == NULL)
+		return false;
+
 	return true;
 }
 
 void close()
 {
 	//free loaded images
-	
+	lightsaber.free();
+
 	//free loaded music
 
 	//free loaded sound effects
 	
+
 	//free loaded fonts
 
 	//Destroy window
@@ -142,7 +174,6 @@ void close()
 
 int main()
 {
-	
 	if (!init())
 		return 1;
 
@@ -173,12 +204,23 @@ int main()
 
 	//frame rate regulator
 	Timer fps;
-	
+
+	//lightsaber rendering rectangle 
 	SDL_Rect lightsaberRect;
 	lightsaberRect.x = SCREEN_WIDTH / 2;
 	lightsaberRect.y = 3 * SCREEN_HEIGHT / 4;
 	lightsaberRect.w = 14;
 	lightsaberRect.h = 60;
+
+	//blade rendering rectangle
+	SDL_Rect blade;
+	blade.x = SCREEN_WIDTH / 2 + 2;
+	blade.y = 3 * SCREEN_HEIGHT / 4 ;
+	blade.w = 7;
+	blade.h = 3;
+
+	//lightsaber on/off
+	bool on = false;
 
 	//Main loop
 	while (!quit)
@@ -200,11 +242,48 @@ int main()
 			{
 				quit = true;
 			}
+			if (e.type == SDL_MOUSEBUTTONDOWN)
+			{
+				on = !on;
+				if (on)
+					Mix_PlayChannel(-1, ON_SOUND, 0);
+				if (!on)
+					Mix_PlayChannel(-1, OFF_SOUND, 0);
+			}
 		}
 
 		//clear screen
 		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
 		SDL_RenderClear(RENDERER);
+		
+		if (on)
+		{
+			if (Mix_Playing(1) == 0)
+				Mix_PlayChannel(1, HUM, 0);
+		}
+
+		//draw blade
+		blade.x = mouse_x + 4;
+		if (on)
+		{
+			if (blade.y > 50)
+			{
+				blade.y -= 10;
+				blade.h += 10;
+			}
+			SDL_SetRenderDrawColor(RENDERER, 255, 255, 255, 255);
+			SDL_RenderFillRect(RENDERER, &blade);
+		}
+		if (!on)
+		{	
+			if (blade.y < 3 * SCREEN_HEIGHT / 4) 
+			{
+				blade.y += 8;
+				blade.h -= 8;
+			}
+			SDL_SetRenderDrawColor(RENDERER, 255, 255, 255, 255);
+			SDL_RenderFillRect(RENDERER, &blade);	
+		}
 
 		//draw lightsaber
 		lightsaberRect.x = mouse_x;
