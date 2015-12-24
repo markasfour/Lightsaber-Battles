@@ -141,30 +141,6 @@ bool loadMedia(string CurrentPath)
 	//clear stringstream
 	path.str("");
 
-	path << CurrentPath << "/content/glow.png";
-	glow.loadFromFile(path.str(), RENDERER);
-	if (glow.mTexture == NULL)
-		return false;
-
-	//clear stringstream
-	path.str("");
-	
-	path << CurrentPath << "/content/glow2.png";
-	glow2.loadFromFile(path.str(), RENDERER);
-	if (glow2.mTexture == NULL)
-		return false;
-
-	//clear stringstream
-	path.str("");
-	
-	path << CurrentPath << "/content/glowtip.png";
-	glowtip.loadFromFile(path.str(), RENDERER);
-	if (glowtip.mTexture == NULL)
-		return false;
-
-	//clear stringstream
-	path.str("");
-
 	//load sound effects 
 	path << CurrentPath << "/content/SaberOn.wav";
 	ON_SOUND = Mix_LoadWAV(path.str().c_str());
@@ -196,9 +172,6 @@ void close()
 	lightsaber.free();
 	blade.free();
 	bladetip.free();
-	glow.free();
-	glow2.free();
-	glowtip.free();
 
 	//free loaded music
 
@@ -267,38 +240,17 @@ int main()
 	//blade rendering rectangle
 	SDL_Rect bladeRect;
 	bladeRect.x = SCREEN_WIDTH / 2 - 4;
-	bladeRect.y = 3 * SCREEN_HEIGHT / 4 ;
-	bladeRect.w = 7;
+	bladeRect.y = 3 * SCREEN_HEIGHT / 4 - 3;
+	bladeRect.w = 21;
 	bladeRect.h = 3;
 	
-	//blade rendering rectangle
+	//blade tip rendering rectangle
 	SDL_Rect bladetipRect;
 	bladetipRect.x = bladeRect.x;
 	bladetipRect.y = bladeRect.y - 7;
-	bladetipRect.w = 7;
-	bladetipRect.h = 7;
+	bladetipRect.w = 21;
+	bladetipRect.h = 3;
 	
-	//blade glow rectangle
-	SDL_Rect glowRect;
-	glowRect.x = bladeRect.x - 3;
-	glowRect.y = bladeRect.y;
-	glowRect.w = 14;
-	glowRect.h = 7;
-	
-	//blade glow rectangle
-	SDL_Rect glowRect2;
-	glowRect2.x = bladeRect.x + 3;
-	glowRect2.y = bladeRect.y;
-	glowRect2.w = 14;
-	glowRect2.h = 7;
-	
-	//glow tip rendering rectangle
-	SDL_Rect glowtipRect;
-	glowtipRect.x = bladeRect.x;
-	glowtipRect.y = bladeRect.y - 7;
-	glowtipRect.w = 33;
-	glowtipRect.h = 9;
-
 	//lightsaber on/off
 	bool on = false;
 
@@ -347,29 +299,18 @@ int main()
 		}
 
 		//draw blade
-		bladeRect.x = mouse_x - 4;
+		bladeRect.x = mouse_x - 11;
 		bladetipRect.x = bladeRect.x;
-		glowRect.x = bladeRect.x - 14;
-		glowRect2.x = bladeRect.x + 7;
-		glowtipRect.x = bladeRect.x - 13;
 		if (on)
 		{
 			if (bladeRect.y > 50)
 			{
 				bladeRect.y -= 10;
 				bladeRect.h += 10;
-				bladetipRect.y = bladeRect.y - 7;
-				glowRect.h = bladeRect.h;
-				glowRect.y = bladeRect.y;
-				glowRect2.h = bladeRect.h;
-				glowRect2.y = bladeRect.y;
-				glowtipRect.y = bladeRect.y - 9;
+				bladetipRect.y = bladeRect.y - 3;
 			}
 			SDL_RenderCopy(RENDERER, blade.mTexture, NULL, &bladeRect);
 			SDL_RenderCopy(RENDERER, bladetip.mTexture, NULL, &bladetipRect);
-			SDL_RenderCopy(RENDERER, glow.mTexture, NULL, &glowRect);
-			SDL_RenderCopy(RENDERER, glow2.mTexture, NULL, &glowRect2);
-			SDL_RenderCopy(RENDERER, glowtip.mTexture, NULL, &glowtipRect);
 		}
 		if (!on)
 		{	
@@ -377,17 +318,9 @@ int main()
 			{
 				bladeRect.y += 4;
 				bladeRect.h -= 4;
-				bladetipRect.y = bladeRect.y - 7;
-				glowRect.h = bladeRect.h;
-				glowRect.y = bladeRect.y;
-				glowRect2.h = bladeRect.h;
-				glowRect2.y = bladeRect.y;
-				glowtipRect.y = bladeRect.y - 9;
+				bladetipRect.y = bladeRect.y - 3;
 				SDL_RenderCopy(RENDERER, blade.mTexture, NULL, &bladeRect);	
 				SDL_RenderCopy(RENDERER, bladetip.mTexture, NULL, &bladetipRect);
-				SDL_RenderCopy(RENDERER, glow.mTexture, NULL, &glowRect);
-				SDL_RenderCopy(RENDERER, glow2.mTexture, NULL, &glowRect2);
-				SDL_RenderCopy(RENDERER, glowtip.mTexture, NULL, &glowtipRect);
 			}
 		}
 
