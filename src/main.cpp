@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
+#include <cmath>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -16,6 +17,8 @@
 #include "input.h"
 #include "timer.h"
 #include "texture.h"
+
+#define PI 3.14
 
 using namespace std;
 
@@ -202,7 +205,7 @@ void close()
 int main()
 {
 	if (!init())
-		return 1;
+		return -1;
 
 	char CurrentPath[FILENAME_MAX];
 	if (!GetCurrentDir(CurrentPath, sizeof(CurrentPath)))
@@ -253,6 +256,10 @@ int main()
 	
 	//lightsaber on/off
 	bool on = false;
+	
+	//rotate blade
+	bool rotate = false;
+	double angle = 0;
 
 	//Main loop
 	while (!quit)
@@ -282,25 +289,59 @@ int main()
 				if (!on)
 					Mix_PlayChannel(-1, OFF_SOUND, 0);
 			}
+			if (e.type == SDL_KEYDOWN)
+			{
+				if (e.key.repeat == 0) 
+					input.keyDownEvent(e);
+			}
+			else if (e.type == SDL_KEYUP) 
+				input.keyUpEvent(e);
 		}
+
+		//handle key presses
+		if (input.wasKeyPressed(SDL_SCANCODE_LSHIFT) || input.isKeyHeld(SDL_SCANCODE_LSHIFT))
+			rotate = true;
+		else if (input.wasKeyReleased(SDL_SCANCODE_LSHIFT))
+			rotate = false;
 
 		//clear screen
 		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
 		SDL_RenderClear(RENDERER);
 		
-		if (on)
+		SDL_Point center = {lightsaberRect.w / 2, lightsaberRect.h / 2};
+		SDL_Point bladeCenter = {bladeRect.w / 2, bladeRect.h + (lightsaberRect.h / 2)};
+		SDL_Point bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (lightsaberRect.h / 2)};
+	
+		//handle angle
+		if (rotate)
 		{
+			if (mouse_x - center.x != 0)
+			{
+				angle = atan2((double(center.y + mouse_y)) , (double(center.x - mouse_x))) * (180.0/PI) - 90;
+				cout << center.y - mouse_y << "," << center.x - mouse_x << endl;
+				cout << atan2((double(center.y - mouse_y)) , (double(mouse_x - center.x))) * (180.0/PI) << endl;
+			}
+			else
+				angle = 0;
+		}
+		else
+			angle = 0;
+		
+		//handle music
+		if (on)
 			if (Mix_Playing(1) == 0)
 				Mix_PlayChannel(1, HUM, 0);
-		}
 		if (!on)
-		{
 			Mix_HaltChannel(1);
+	
+		//handle hilt position
+		if (!rotate)
+		{
+			bladeRect.x = mouse_x - 11;
+			bladetipRect.x = bladeRect.x;
 		}
 
-		//draw blade
-		bladeRect.x = mouse_x - 11;
-		bladetipRect.x = bladeRect.x;
+		//blade on
 		if (on)
 		{
 			if (bladeRect.y > 50)
@@ -309,9 +350,12 @@ int main()
 				bladeRect.h += 10;
 				bladetipRect.y = bladeRect.y - 3;
 			}
-			SDL_RenderCopy(RENDERER, blade.mTexture, NULL, &bladeRect);
-			SDL_RenderCopy(RENDERER, bladetip.mTexture, NULL, &bladetipRect);
+			SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &bladeRect, 
+							 angle, &bladeCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &bladetipRect, 
+							 angle, &bladetipCenter, SDL_FLIP_NONE);
 		}
+		//blade off
 		if (!on)
 		{	
 			if (bladeRect.y < 3 * SCREEN_HEIGHT / 4) 
@@ -319,14 +363,19 @@ int main()
 				bladeRect.y += 4;
 				bladeRect.h -= 4;
 				bladetipRect.y = bladeRect.y - 3;
-				SDL_RenderCopy(RENDERER, blade.mTexture, NULL, &bladeRect);	
-				SDL_RenderCopy(RENDERER, bladetip.mTexture, NULL, &bladetipRect);
+				SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &bladeRect, 
+					   			 angle, &bladeCenter, SDL_FLIP_NONE);
+				SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &bladetipRect, 
+								 angle, &bladetipCenter, SDL_FLIP_NONE);
 			}
 		}
 
-		//draw lightsaber
-		lightsaberRect.x = mouse_x - 8;
-		SDL_RenderCopy(RENDERER, lightsaber.mTexture, NULL, &lightsaberRect);
+		//draw hilt
+		if (!rotate)
+			lightsaberRect.x = mouse_x - 8;
+		
+		SDL_RenderCopyEx(RENDERER, lightsaber.mTexture, NULL, &lightsaberRect,
+						 angle, NULL, SDL_FLIP_NONE);
 
 		//update the screen
 		SDL_RenderPresent(RENDERER);
