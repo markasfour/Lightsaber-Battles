@@ -260,6 +260,9 @@ int main()
 	//rotate blade
 	bool rotate = false;
 	double angle = 0;
+	SDL_Point center;
+	SDL_Point bladeCenter;
+	SDL_Point bladetipCenter;
 
 	//Main loop
 	while (!quit)
@@ -303,24 +306,17 @@ int main()
 			rotate = true;
 		else if (input.wasKeyReleased(SDL_SCANCODE_LSHIFT))
 			rotate = false;
-
-		//clear screen
-		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
-		SDL_RenderClear(RENDERER);
-		
-		SDL_Point center = {lightsaberRect.w / 2, lightsaberRect.h / 2};
-		SDL_Point bladeCenter = {bladeRect.w / 2, bladeRect.h + (lightsaberRect.h / 2)};
-		SDL_Point bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (lightsaberRect.h / 2)};
 	
 		//handle angle
 		if (rotate)
 		{
+			//get center points
+			center = {lightsaberRect.x + (lightsaberRect.w / 2), lightsaberRect.y + (lightsaberRect.h / 2)};
+			bladeCenter = {bladeRect.w / 2, bladeRect.h + (lightsaberRect.h / 2)};
+			bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (lightsaberRect.h / 2)};
+			
 			if (mouse_x - center.x != 0)
-			{
-				angle = atan2((double(center.y + mouse_y)) , (double(center.x - mouse_x))) * (180.0/PI) - 90;
-				cout << center.y - mouse_y << "," << center.x - mouse_x << endl;
-				cout << atan2((double(center.y - mouse_y)) , (double(mouse_x - center.x))) * (180.0/PI) << endl;
-			}
+				angle = atan2((double(center.y - mouse_y)) , (double(center.x - mouse_x))) * (180.0/PI) - 90;
 			else
 				angle = 0;
 		}
@@ -340,7 +336,11 @@ int main()
 			bladeRect.x = mouse_x - 11;
 			bladetipRect.x = bladeRect.x;
 		}
-
+		
+		//clear screen
+		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
+		SDL_RenderClear(RENDERER);
+		
 		//blade on
 		if (on)
 		{
