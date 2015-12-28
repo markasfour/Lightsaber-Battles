@@ -128,7 +128,7 @@ bool loadMedia(string CurrentPath)
 	path.str("");
 
 	//load blade images
-	path << CurrentPath << "/content/blade.png";
+	path << CurrentPath << "/content/blade_G.png";
 	blade.loadFromFile(path.str(), RENDERER);
 	if (blade.mTexture == NULL)
 		return false;	
@@ -136,7 +136,7 @@ bool loadMedia(string CurrentPath)
 	//clear stringstream
 	path.str("");
 	
-	path << CurrentPath << "/content/bladetip.png";
+	path << CurrentPath << "/content/bladetip_G.png";
 	bladetip.loadFromFile(path.str(), RENDERER);
 	if (bladetip.mTexture == NULL)
 		return false;	
@@ -259,15 +259,12 @@ int main()
 	bool on = false;
 	
 	//rotate blade
-	bool rotate = false;
 	double angle = 0;
 	SDL_Point center;
+	SDL_Point lightsaberCenter;
 	SDL_Point bladeCenter;
 	SDL_Point bladetipCenter;
 	
-	//shift blade
-	bool shift = false;
-
 	//init position
 	bool start = true;
 
@@ -316,18 +313,6 @@ int main()
 				input.keyUpEvent(e);
 		}
 
-		//handle key presses
-		if (input.wasKeyPressed(SDL_SCANCODE_LSHIFT) || input.isKeyHeld(SDL_SCANCODE_LSHIFT) || 
-			input.wasKeyPressed(SDL_SCANCODE_RSHIFT) || input.isKeyHeld(SDL_SCANCODE_RSHIFT) )
-			shift = true;
-		else if (input.wasKeyReleased(SDL_SCANCODE_LSHIFT) || input.wasKeyReleased(SDL_SCANCODE_RSHIFT))
-			shift = false;
-		if (input.wasKeyPressed(SDL_SCANCODE_LCTRL) || input.isKeyHeld(SDL_SCANCODE_LCTRL) || 
-			input.wasKeyPressed(SDL_SCANCODE_RCTRL) || input.isKeyHeld(SDL_SCANCODE_RCTRL) )
-			rotate = true;
-		else if (input.wasKeyReleased(SDL_SCANCODE_LCTRL) || input.wasKeyReleased(SDL_SCANCODE_RCTRL))
-			rotate = false;
-		
 		//handle music
 		if (on)
 			if (Mix_Playing(1) == 0)
@@ -336,32 +321,25 @@ int main()
 			Mix_HaltChannel(1);
 
 		//get center points
-		center = {lightsaberRect.x + (lightsaberRect.w / 2), lightsaberRect.y + (lightsaberRect.h / 2)};
+		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
+		lightsaberCenter = {lightsaberRect.w / 2, lightsaberRect.h / 2};
 		bladeCenter = {bladeRect.w / 2, bladeRect.h + (lightsaberRect.h / 2)};
 		bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (lightsaberRect.h / 2)};
 
 		//handle angle
-		if (rotate)
-		{
-			if (mouse_x - center.x != 0)
-				angle = atan2((double(center.y - mouse_y)) , (double(center.x - mouse_x))) * (180.0/PI) - 90;
-			else if (mouse_y < center.y)
-				angle = 0;
-			else
-				angle = 180;
-		}
+		if (mouse_x - center.x != 0)
+			angle = atan2((double(center.y - mouse_y)) , (double(center.x - mouse_x))) * (180.0/PI) - 90;
+		else if (mouse_y < center.y)
+			angle = 0;
+		else
+			angle = 180;
+		angle *= 6;
 		
 		//handle blade position
-		if (!rotate)
-		{
-			bladeRect.x = mouse_x - 11;
-			bladetipRect.x = bladeRect.x;
-			if (shift)
-			{
-				bladeRect.y = mouse_y - 30 - bladeRect.h;
-				bladetipRect.y = bladeRect.y - 3;
-			}
-		}
+		bladeRect.x = mouse_x - 11;
+		bladetipRect.x = bladeRect.x;
+		bladeRect.y = mouse_y - 30 - bladeRect.h;
+		bladetipRect.y = bladeRect.y - 3;
 		
 		//clear screen
 		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
@@ -372,7 +350,7 @@ int main()
 		{
 			if (bladeRect.h < 300)
 			{
-				bladeRect.y -= 10 ;//* sin(angle + 90);
+				bladeRect.y -= 10;
 				bladeRect.h += 10;
 				bladetipRect.y = bladeRect.y - 3;
 			}
@@ -386,7 +364,7 @@ int main()
 		{	
 			if (bladeRect.h > 0) 
 			{
-				bladeRect.y += 4 ;//* sin(angle + 90);
+				bladeRect.y += 4;
 				bladeRect.h -= 4;
 				bladetipRect.y = bladeRect.y - 3;
 				SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &bladeRect, 
@@ -397,15 +375,11 @@ int main()
 		}
 
 		//draw hilt
-		if (!rotate)
-		{
-			lightsaberRect.x = mouse_x - 8;
-			if (shift)
-				lightsaberRect.y = mouse_y - 30;
-		}
+		lightsaberRect.x = mouse_x - 8;
+		lightsaberRect.y = mouse_y - 30;
 		
 		SDL_RenderCopyEx(RENDERER, lightsaber.mTexture, NULL, &lightsaberRect,
-						 angle, NULL, SDL_FLIP_NONE);
+						 angle, &lightsaberCenter, SDL_FLIP_NONE);
 		
 		//update the screen
 		SDL_RenderPresent(RENDERER);
