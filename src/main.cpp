@@ -38,12 +38,15 @@ SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;
 TTF_Font *FONT = NULL;
-LTexture lightsaber;
-LTexture blade;
-LTexture bladetip;
-LTexture glow;
-LTexture glow2;
-LTexture glowtip;
+LTexture hilt_Luke;
+LTexture hilt_Anakin;
+LTexture hilt_Vader;
+LTexture blade_G;
+LTexture blade_B;
+LTexture blade_R;
+LTexture bladetip_G;
+LTexture bladetip_B;
+LTexture bladetip_R;
 Mix_Chunk *ON_SOUND = NULL;
 Mix_Chunk *OFF_SOUND = NULL;
 Mix_Chunk *HUM = NULL;
@@ -119,9 +122,25 @@ bool loadMedia(string CurrentPath)
 {
 	stringstream path;
 	//load hilt images
-	path << CurrentPath << "/content/lightsaber.png";
-	lightsaber.loadFromFile(path.str(), RENDERER);
-	if (lightsaber.mTexture == NULL)
+	path << CurrentPath << "/content/Luke_hilt.png";
+	hilt_Luke.loadFromFile(path.str(), RENDERER);
+	if (hilt_Luke.mTexture == NULL)
+		return false;	
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/Anakin_hilt.png";
+	hilt_Anakin.loadFromFile(path.str(), RENDERER);
+	if (hilt_Anakin.mTexture == NULL)
+		return false;	
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/Vader_hilt.png";
+	hilt_Vader.loadFromFile(path.str(), RENDERER);
+	if (hilt_Vader.mTexture == NULL)
 		return false;	
 
 	//clear stringstream
@@ -129,16 +148,48 @@ bool loadMedia(string CurrentPath)
 
 	//load blade images
 	path << CurrentPath << "/content/blade_G.png";
-	blade.loadFromFile(path.str(), RENDERER);
-	if (blade.mTexture == NULL)
+	blade_G.loadFromFile(path.str(), RENDERER);
+	if (blade_G.mTexture == NULL)
 		return false;	
 
 	//clear stringstream
 	path.str("");
 	
+	path << CurrentPath << "/content/blade_B.png";
+	blade_B.loadFromFile(path.str(), RENDERER);
+	if (blade_B.mTexture == NULL)
+		return false;	
+
+	//clear stringstream
+	path.str("");
+
+	path << CurrentPath << "/content/blade_R.png";
+	blade_R.loadFromFile(path.str(), RENDERER);
+	if (blade_R.mTexture == NULL)
+		return false;	
+
+	//clear stringstream
+	path.str("");
+
 	path << CurrentPath << "/content/bladetip_G.png";
-	bladetip.loadFromFile(path.str(), RENDERER);
-	if (bladetip.mTexture == NULL)
+	bladetip_G.loadFromFile(path.str(), RENDERER);
+	if (bladetip_G.mTexture == NULL)
+		return false;	
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/bladetip_B.png";
+	bladetip_B.loadFromFile(path.str(), RENDERER);
+	if (bladetip_B.mTexture == NULL)
+		return false;	
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/bladetip_R.png";
+	bladetip_R.loadFromFile(path.str(), RENDERER);
+	if (bladetip_R.mTexture == NULL)
 		return false;	
 
 	//clear stringstream
@@ -172,9 +223,15 @@ bool loadMedia(string CurrentPath)
 void close()
 {
 	//free loaded images
-	lightsaber.free();
-	blade.free();
-	bladetip.free();
+	hilt_Luke.free();
+	hilt_Anakin.free();
+	hilt_Vader.free();
+	blade_G.free();
+	blade_B.free();
+	blade_R.free();
+	bladetip_G.free();
+	bladetip_B.free();
+	bladetip_R.free();
 
 	//free loaded music
 
@@ -201,6 +258,46 @@ void close()
 	SDL_Quit();
 }
 
+struct Character
+{
+	LTexture hilt;
+	LTexture blade;
+	LTexture bladetip;
+
+	Character()
+	{
+		hilt = hilt_Luke;
+		blade = blade_G;
+		bladetip = bladetip_G;
+	}
+	Character(string name)
+	{
+		if (name == "Luke")
+		{
+			hilt = hilt_Luke;
+			blade = blade_G;
+			bladetip = bladetip_G;
+		}
+		else if (name == "Anakin")
+		{
+			hilt = hilt_Anakin;
+			blade = blade_B;
+			bladetip = bladetip_B;
+		}
+		else if (name == "Vader")
+		{
+			hilt = hilt_Vader;
+			blade = blade_R;
+			bladetip = bladetip_R;
+		}
+	}
+	Character(const Character &c)
+	{
+		hilt = c.hilt;
+		blade = c.blade;
+		bladetip = c.bladetip;
+	}
+};
 
 int main()
 {
@@ -234,26 +331,26 @@ int main()
 	//frame rate regulator
 	Timer fps;
 
-	//lightsaber rendering rectangle 
-	SDL_Rect lightsaberRect;
-	lightsaberRect.x = SCREEN_WIDTH / 2;
-	lightsaberRect.y = 3 * SCREEN_HEIGHT / 4;
-	lightsaberRect.w = 14;
-	lightsaberRect.h = 60;
+	//hilt rendering rectangle 
+	SDL_Rect hiltRect;
+	hiltRect.x = SCREEN_WIDTH / 2;
+	hiltRect.y = 3 * SCREEN_HEIGHT / 4;
+	hiltRect.w = 14;
+	hiltRect.h = 60;
 
 	//blade rendering rectangle
 	SDL_Rect bladeRect;
 	bladeRect.x = SCREEN_WIDTH / 2 - 4;
 	bladeRect.y = 3 * SCREEN_HEIGHT / 4 - 3;
 	bladeRect.w = 21;
-	bladeRect.h = 3;
+	bladeRect.h = 1;
 	
 	//blade tip rendering rectangle
 	SDL_Rect bladetipRect;
 	bladetipRect.x = bladeRect.x;
 	bladetipRect.y = bladeRect.y - 7;
 	bladetipRect.w = 21;
-	bladetipRect.h = 3;
+	bladetipRect.h = 7;
 	
 	//lightsaber on/off
 	bool on = false;
@@ -261,12 +358,18 @@ int main()
 	//rotate blade
 	double angle = 0;
 	SDL_Point center;
-	SDL_Point lightsaberCenter;
+	SDL_Point hiltCenter;
 	SDL_Point bladeCenter;
 	SDL_Point bladetipCenter;
 	
 	//init position
 	bool start = true;
+	
+	//character
+	Character main_char("Luke");
+	Character Luke("Luke");
+	Character Anakin("Anakin");
+	Character Vader("Vader");
 
 	//Main loop
 	while (!quit)
@@ -312,6 +415,14 @@ int main()
 			else if (e.type == SDL_KEYUP) 
 				input.keyUpEvent(e);
 		}
+		
+		//handle key presses
+		if (input.wasKeyPressed(SDL_SCANCODE_1))
+			main_char = Luke;	
+		else if (input.wasKeyPressed(SDL_SCANCODE_2))
+			main_char = Anakin;
+		else if (input.wasKeyPressed(SDL_SCANCODE_3))
+			main_char = Vader;
 
 		//handle music
 		if (on)
@@ -322,9 +433,9 @@ int main()
 
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
-		lightsaberCenter = {lightsaberRect.w / 2, lightsaberRect.h / 2};
-		bladeCenter = {bladeRect.w / 2, bladeRect.h + (lightsaberRect.h / 2)};
-		bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (lightsaberRect.h / 2)};
+		hiltCenter = {hiltRect.w / 2, hiltRect.h / 2};
+		bladeCenter = {bladeRect.w / 2, bladeRect.h + (hiltRect.h / 2)};
+		bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (hiltRect.h / 2)};
 
 		//handle angle
 		if (mouse_x - center.x != 0)
@@ -333,13 +444,13 @@ int main()
 			angle = 0;
 		else
 			angle = 180;
-		angle *= 6;
+		angle *= 2;
 		
 		//handle blade position
-		bladeRect.x = mouse_x - 11;
+		bladeRect.x = mouse_x - (bladeRect.w / 2);
 		bladetipRect.x = bladeRect.x;
-		bladeRect.y = mouse_y - 30 - bladeRect.h;
-		bladetipRect.y = bladeRect.y - 3;
+		bladeRect.y = mouse_y - (hiltRect.h / 2) - bladeRect.h;
+		bladetipRect.y = bladeRect.y - bladetipRect.h;
 		
 		//clear screen
 		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
@@ -354,9 +465,9 @@ int main()
 				bladeRect.h += 10;
 				bladetipRect.y = bladeRect.y - 3;
 			}
-			SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &bladeRect, 
+			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &bladeRect, 
 							 angle, &bladeCenter, SDL_FLIP_NONE);
-			SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &bladetipRect, 
+			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
 							 angle, &bladetipCenter, SDL_FLIP_NONE);
 		}
 		//blade off
@@ -367,19 +478,19 @@ int main()
 				bladeRect.y += 4;
 				bladeRect.h -= 4;
 				bladetipRect.y = bladeRect.y - 3;
-				SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &bladeRect, 
+				SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &bladeRect, 
 					   			 angle, &bladeCenter, SDL_FLIP_NONE);
-				SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &bladetipRect, 
+				SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
 								 angle, &bladetipCenter, SDL_FLIP_NONE);
 			}
 		}
 
 		//draw hilt
-		lightsaberRect.x = mouse_x - 8;
-		lightsaberRect.y = mouse_y - 30;
+		hiltRect.x = mouse_x - (hiltRect.w / 2);
+		hiltRect.y = mouse_y - (hiltRect.h / 2);
 		
-		SDL_RenderCopyEx(RENDERER, lightsaber.mTexture, NULL, &lightsaberRect,
-						 angle, &lightsaberCenter, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &hiltRect,
+						 angle, &hiltCenter, SDL_FLIP_NONE);
 		
 		//update the screen
 		SDL_RenderPresent(RENDERER);
