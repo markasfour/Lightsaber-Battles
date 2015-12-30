@@ -19,6 +19,7 @@
 #include "texture.h"
 #include "helper.h"
 #include "character.h"
+#include "button.h"
 
 #define PI 3.14
 
@@ -58,28 +59,22 @@ int main()
 
 	//hilt rendering rectangle 
 	SDL_Rect hiltRect;
-	hiltRect.x = SCREEN_WIDTH / 2;
-	hiltRect.y = 3 * SCREEN_HEIGHT / 4;
 	hiltRect.w = 14;
 	hiltRect.h = 60;
 
 	//blade rendering rectangle
 	SDL_Rect bladeRect;
-	bladeRect.x = SCREEN_WIDTH / 2 - 4;
-	bladeRect.y = 3 * SCREEN_HEIGHT / 4 - 3;
 	bladeRect.w = 21;
 	bladeRect.h = 1;
 	
 	//blade tip rendering rectangle
 	SDL_Rect bladetipRect;
-	bladetipRect.x = bladeRect.x;
-	bladetipRect.y = bladeRect.y - 7;
 	bladetipRect.w = 21;
 	bladetipRect.h = 7;
 	
 	//lightsaber on/off
 	bool on = false;
-	
+
 	//rotate blade
 	double angle = 0;
 	SDL_Point center;
@@ -95,7 +90,21 @@ int main()
 	Character Luke("Luke");
 	Character Anakin("Anakin");
 	Character Vader("Vader");
-
+	
+	//lightsaber selection panel
+	bool visible = false;
+	SDL_Rect saberSelect;
+	saberSelect.x = 0;
+	saberSelect.y = SCREEN_HEIGHT;
+	saberSelect.h = 60;
+	saberSelect.w = 3 * (10 + 45) + 10;
+	button LukeBG(0xFF, 0xFF, 0xFF, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
+	button AnakinBG(0xFF, 0xFF, 0xFF, 0xFF, 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);	
+	button VaderBG(0xFF, 0xFF, 0xFF, 0xFF, 10 + 45 + 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);
+	button LukeIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	button AnakinIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	
 	//Main loop
 	while (!quit)
 	{
@@ -126,10 +135,18 @@ int main()
 			}
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
-				on = !on;
+				
+				if (visible && LukeBG.wasClicked(mouse_x, mouse_y))
+					main_char = Luke;
+				else if (visible && AnakinBG.wasClicked(mouse_x, mouse_y))
+					main_char = Anakin;
+				else if (visible && VaderBG.wasClicked(mouse_x, mouse_y))
+					main_char = Vader;
+				else
+					on = !on;
 				if (on)
 					Mix_PlayChannel(-1, main_char.ON_SOUND, 0);
-				if (!on)
+				else if (!on)
 					Mix_PlayChannel(-1, main_char.OFF_SOUND, 0);
 			}
 			if (e.type == SDL_KEYDOWN)
@@ -141,13 +158,7 @@ int main()
 				input.keyUpEvent(e);
 		}
 		
-		//handle key presses
-		if (input.wasKeyPressed(SDL_SCANCODE_1))
-			main_char = Luke;	
-		else if (input.wasKeyPressed(SDL_SCANCODE_2))
-			main_char = Anakin;
-		else if (input.wasKeyPressed(SDL_SCANCODE_3))
-			main_char = Vader;
+		//handle key presses here
 
 		//handle music
 		if (on)
@@ -163,7 +174,7 @@ int main()
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
 		hiltCenter = {hiltRect.w / 2, hiltRect.h / 2};
-		bladeCenter = {bladeRect.w / 2, bladeRect.h + (hiltRect.h / 2)};
+		bladeCenter = {bladeRect.w / 2, (bladeRect.h) + (hiltRect.h / 2)};
 		bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (hiltRect.h / 2)};
 
 		//handle angle
@@ -178,7 +189,7 @@ int main()
 		//handle blade position
 		bladeRect.x = mouse_x - (bladeRect.w / 2);
 		bladetipRect.x = bladeRect.x;
-		bladeRect.y = mouse_y - (hiltRect.h / 2) - bladeRect.h;
+		bladeRect.y = mouse_y - (hiltRect.h / 2) - bladeRect.h; 
 		bladetipRect.y = bladeRect.y - bladetipRect.h;
 		
 		//blade on
@@ -186,32 +197,76 @@ int main()
 		{
 			if (bladeRect.h < 300)
 			{
-				bladeRect.y -= 10;
 				bladeRect.h += 10;
-				bladetipRect.y = bladeRect.y - 3;
 			}
-			
+			else
+				bladeRect.h = 300;
 		}
 		//blade off
 		if (!on)
 		{	
 			if (bladeRect.h > 0) 
 			{
-				bladeRect.y += 4;
 				bladeRect.h -= 4;
-				bladetipRect.y = bladeRect.y - 3;
-				SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &bladeRect, 
-							 	 angle, &bladeCenter, SDL_FLIP_NONE);
-				SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
-							 	 angle, &bladetipCenter, SDL_FLIP_NONE);
 			}
+			else
+				bladeRect.h = 0;
 		}
-
-		//draw hilt
+		
+		//hilt position
 		hiltRect.x = mouse_x - (hiltRect.w / 2);
 		hiltRect.y = mouse_y - (hiltRect.h / 2);
 		
+		//lightsaber select gui
+		if (mouse_x < saberSelect.w && mouse_y > SCREEN_HEIGHT - 20)
+		{
+			visible = true;
+		}
+		if (visible)
+		{
+			if (saberSelect.y > SCREEN_HEIGHT - 60)
+				saberSelect.y -= 10;
+			if (LukeBG.rect.y > SCREEN_HEIGHT - 50)	
+			{	
+				LukeBG.rect.y -= 10;
+				LukeIC.rect.y -= 10;
+			}
+			if (AnakinBG.rect.y > SCREEN_HEIGHT - 50)	
+			{	
+				AnakinBG.rect.y -= 10;
+				AnakinIC.rect.y -= 10;
+			}
+			if (VaderBG.rect.y > SCREEN_HEIGHT - 50)	
+			{	
+				VaderBG.rect.y -= 10;
+				VaderIC.rect.y -= 10;
+			}
+			if (mouse_x > saberSelect.w || mouse_y < SCREEN_HEIGHT - 60)
+				visible = false;
+		}
+		if (!visible)
+		{
+			if (saberSelect.y < SCREEN_HEIGHT)
+				saberSelect.y += 10;
+			if (LukeBG.rect.y < SCREEN_HEIGHT)
+			{
+				LukeBG.rect.y += 10;
+				LukeIC.rect.y += 10;
+			}
+			if (AnakinBG.rect.y < SCREEN_HEIGHT)	
+			{
+				AnakinBG.rect.y += 10;
+				AnakinIC.rect.y += 10;
+			}
+			if (VaderBG.rect.y < SCREEN_HEIGHT)	
+			{	
+				VaderBG.rect.y += 10;
+				VaderIC.rect.y += 10;
+			}
+		}
+		
 		//render everything
+		//blade
 		if (on)
 		{
 			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &bladeRect, 
@@ -219,8 +274,66 @@ int main()
 			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
 						 	 angle, &bladetipCenter, SDL_FLIP_NONE);
 		}
+		if (!on && bladeRect.h > 0)
+		{
+			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &bladeRect, 
+						 	 angle, &bladeCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
+						 	 angle, &bladetipCenter, SDL_FLIP_NONE);
+		}
+		//hilt
 		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &hiltRect,
 						 angle, &hiltCenter, SDL_FLIP_NONE);
+		//saber select
+		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
+		SDL_RenderFillRect(RENDERER, &saberSelect);
+		//Luke button
+		SDL_SetRenderDrawColor(RENDERER, LukeBG.r, LukeBG.g, LukeBG.b, LukeBG.a);
+		if (visible && LukeBG.mouseHover(mouse_x, mouse_y))
+		{
+			SDL_RenderFillRect(RENDERER, &LukeBG.hover);
+			LukeIC.mouseHover(mouse_x, mouse_y);
+			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.hover,
+							 45, NULL, SDL_FLIP_NONE);
+		}
+		else
+		{
+			SDL_RenderFillRect(RENDERER, &LukeBG.rect);
+			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.rect,
+							 45, NULL, SDL_FLIP_NONE);
+		}
+		//Anakin button
+		SDL_SetRenderDrawColor(RENDERER, AnakinBG.r, AnakinBG.g, AnakinBG.b, AnakinBG.a);
+		if (visible && AnakinBG.mouseHover(mouse_x, mouse_y))
+		{
+			SDL_RenderFillRect(RENDERER, &AnakinBG.hover);
+			AnakinIC.mouseHover(mouse_x, mouse_y);
+			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.hover,
+							 45, NULL, SDL_FLIP_NONE);	
+		}
+		else
+		{	
+			SDL_RenderFillRect(RENDERER, &AnakinBG.rect);
+			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.rect,
+							 45, NULL, SDL_FLIP_NONE);	
+		}
+		//Vader button
+		SDL_SetRenderDrawColor(RENDERER, VaderBG.r, VaderBG.g, VaderBG.b, VaderBG.a);
+		if (visible && VaderBG.mouseHover(mouse_x, mouse_y))
+		{	
+			SDL_RenderFillRect(RENDERER, &VaderBG.hover);
+			VaderIC.mouseHover(mouse_x, mouse_y);
+			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.hover,
+							 45, NULL, SDL_FLIP_NONE);	
+		}
+		else
+		{	
+			SDL_RenderFillRect(RENDERER, &VaderBG.rect);
+			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.rect,
+							 45, NULL, SDL_FLIP_NONE);	
+		}
+
+		//display
 		SDL_RenderPresent(RENDERER);
 		
 		//cap the frame rate

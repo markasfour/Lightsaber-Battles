@@ -17,10 +17,12 @@ void close();
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const int FRAMES_PER_SECOND = 60;
+
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;
 TTF_Font *FONT = NULL;
+
 LTexture hilt_Luke;
 LTexture hilt_Anakin;
 LTexture hilt_Vader;
@@ -30,6 +32,10 @@ LTexture blade_R;
 LTexture bladetip_G;
 LTexture bladetip_B;
 LTexture bladetip_R;
+LTexture LukeIcon;
+LTexture AnakinIcon;
+LTexture VaderIcon;
+
 Mix_Chunk *ON_SOUND_1 = NULL;
 Mix_Chunk *ON_SOUND_2 = NULL;
 Mix_Chunk *ON_SOUND_3 = NULL;
@@ -115,6 +121,14 @@ bool loadMedia(string CurrentPath)
 	hilt_Luke.loadFromFile(path.str(), RENDERER);
 	if (hilt_Luke.mTexture == NULL)
 		return false;	
+	
+	//clear stringstream
+	path.str("");
+
+	//path << CurrentPath << "/content/Luke_hilt.png";
+	//LukeIcon.loadFromFile(path.str(), RENDERER);
+	//if (LukeIcon.mTexture == NULL);
+		//return false;
 
 	//clear stringstream
 	path.str("");
@@ -123,6 +137,14 @@ bool loadMedia(string CurrentPath)
 	hilt_Anakin.loadFromFile(path.str(), RENDERER);
 	if (hilt_Anakin.mTexture == NULL)
 		return false;	
+	
+	//clear stringstream
+	path.str("");
+	
+	//path << CurrentPath << "/content/Anakin_hilt.png";
+	//AnakinIcon.loadFromFile(path.str(), RENDERER);
+	//if (AnakinIcon.mTexture == NULL);
+	//	return false;
 
 	//clear stringstream
 	path.str("");
@@ -131,6 +153,14 @@ bool loadMedia(string CurrentPath)
 	hilt_Vader.loadFromFile(path.str(), RENDERER);
 	if (hilt_Vader.mTexture == NULL)
 		return false;	
+	
+	//clear stringstream
+	path.str("");
+	
+	//path << CurrentPath << "/content/Vader_hilt.png";
+	//VaderIcon.loadFromFile(path.str(), RENDERER);
+	//if (VaderIcon.mTexture == NULL);
+	//	return false;
 
 	//clear stringstream
 	path.str("");
