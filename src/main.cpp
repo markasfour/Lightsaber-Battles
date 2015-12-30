@@ -93,6 +93,7 @@ int main()
 	
 	//lightsaber selection panel
 	bool visible = false;
+	bool switched = false;
 	SDL_Rect saberSelect;
 	saberSelect.x = 0;
 	saberSelect.y = SCREEN_HEIGHT;
@@ -125,6 +126,9 @@ int main()
 		if (start && mouse_x != SCREEN_WIDTH / 2 && mouse_y != SCREEN_HEIGHT / 4)
 			start = false;
 
+		//character switch boolean
+		switched = false;
+
 		//Handle events in the queue
 		while (SDL_PollEvent(&e) != 0)
 		{
@@ -137,16 +141,16 @@ int main()
 			{
 				
 				if (visible && LukeBG.wasClicked(mouse_x, mouse_y))
-					main_char = Luke;
+					main_char = Luke, switched = true, on = false;
 				else if (visible && AnakinBG.wasClicked(mouse_x, mouse_y))
-					main_char = Anakin;
+					main_char = Anakin, switched = true, on = false;
 				else if (visible && VaderBG.wasClicked(mouse_x, mouse_y))
-					main_char = Vader;
+					main_char = Vader, switched = true, on = false;
 				else
 					on = !on;
-				if (on)
+				if (on && !switched)
 					Mix_PlayChannel(-1, main_char.ON_SOUND, 0);
-				else if (!on)
+				else if (!on && !switched)
 					Mix_PlayChannel(-1, main_char.OFF_SOUND, 0);
 			}
 			if (e.type == SDL_KEYDOWN)
@@ -195,7 +199,7 @@ int main()
 		//blade on
 		if (on)
 		{
-			if (bladeRect.h < 300)
+			if (bladeRect.h < 300 && !switched)
 			{
 				bladeRect.h += 10;
 			}
@@ -205,7 +209,7 @@ int main()
 		//blade off
 		if (!on)
 		{	
-			if (bladeRect.h > 0) 
+			if (bladeRect.h > 0 && !switched) 
 			{
 				bladeRect.h -= 4;
 			}
@@ -229,16 +233,19 @@ int main()
 			if (LukeBG.rect.y > SCREEN_HEIGHT - 50)	
 			{	
 				LukeBG.rect.y -= 10;
+				LukeBG.hover.y -= 10;
 				LukeIC.rect.y -= 10;
 			}
 			if (AnakinBG.rect.y > SCREEN_HEIGHT - 50)	
 			{	
 				AnakinBG.rect.y -= 10;
+				AnakinBG.hover.y -= 10;
 				AnakinIC.rect.y -= 10;
 			}
 			if (VaderBG.rect.y > SCREEN_HEIGHT - 50)	
 			{	
 				VaderBG.rect.y -= 10;
+				VaderBG.hover.y -= 10;
 				VaderIC.rect.y -= 10;
 			}
 			if (mouse_x > saberSelect.w || mouse_y < SCREEN_HEIGHT - 60)
@@ -251,16 +258,19 @@ int main()
 			if (LukeBG.rect.y < SCREEN_HEIGHT)
 			{
 				LukeBG.rect.y += 10;
+				LukeBG.hover.y += 10;
 				LukeIC.rect.y += 10;
 			}
 			if (AnakinBG.rect.y < SCREEN_HEIGHT)	
 			{
 				AnakinBG.rect.y += 10;
+				AnakinBG.hover.y += 10;
 				AnakinIC.rect.y += 10;
 			}
 			if (VaderBG.rect.y < SCREEN_HEIGHT)	
 			{	
 				VaderBG.rect.y += 10;
+				VaderBG.hover.y += 10;
 				VaderIC.rect.y += 10;
 			}
 		}
