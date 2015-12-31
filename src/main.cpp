@@ -106,6 +106,12 @@ int main()
 	button AnakinIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	
+	//mute
+	bool mute = false;
+	bool soundOn = false;
+	bool soundOff = false;
+	button muteIC(SCREEN_WIDTH - 25, 5, 20, 20);
+
 	//Main loop
 	while (!quit)
 	{
@@ -146,12 +152,28 @@ int main()
 					main_char = Anakin, switched = true, on = false;
 				else if (visible && VaderBG.wasClicked(mouse_x, mouse_y))
 					main_char = Vader, switched = true, on = false;
+				else if (muteIC.wasClicked(mouse_x, mouse_y))
+				{	
+					mute = !mute;
+					Mix_HaltChannel(2);	
+				}
 				else
 					on = !on;
-				if (on && !switched)
-					Mix_PlayChannel(-1, main_char.ON_SOUND, 0);
-				else if (!on && !switched)
-					Mix_PlayChannel(-1, main_char.OFF_SOUND, 0);
+				
+				if (on && !switched && !soundOn)
+				{
+					if (!mute)
+						Mix_PlayChannel(2, main_char.ON_SOUND, 0);
+					soundOn = true;
+					soundOff = false;
+				}
+				else if (!on && !switched && !soundOff)
+				{	
+					if (!mute)
+						Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
+					soundOff = true;
+					soundOn = false;
+				}
 			}
 			if (e.type == SDL_KEYDOWN)
 			{
@@ -165,10 +187,10 @@ int main()
 		//handle key presses here
 
 		//handle music
-		if (on)
+		if (on && !mute)
 			if (Mix_Playing(1) == 0)
 				Mix_PlayChannel(1, main_char.HUM, 0);
-		if (!on)
+		if (!on || mute)
 			Mix_HaltChannel(1);
 
 		//clear screen
@@ -299,14 +321,14 @@ int main()
 		SDL_RenderFillRect(RENDERER, &saberSelect);
 		//Luke button
 		SDL_SetRenderDrawColor(RENDERER, LukeBG.r, LukeBG.g, LukeBG.b, LukeBG.a);
-		if (visible && LukeBG.mouseHover(mouse_x, mouse_y))
+		if (visible && LukeBG.mouseHover(mouse_x, mouse_y, true))
 		{
 			SDL_RenderFillRect(RENDERER, &LukeBG.hover);
-			LukeIC.mouseHover(mouse_x, mouse_y);
+			LukeIC.mouseHover(mouse_x, mouse_y, false);
 			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.hover,
 							 45, NULL, SDL_FLIP_NONE);
 		}
-		else
+		else if (visible && !LukeBG.mouseHover(mouse_x, mouse_y, true))
 		{
 			SDL_RenderFillRect(RENDERER, &LukeBG.rect);
 			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.rect,
@@ -314,14 +336,14 @@ int main()
 		}
 		//Anakin button
 		SDL_SetRenderDrawColor(RENDERER, AnakinBG.r, AnakinBG.g, AnakinBG.b, AnakinBG.a);
-		if (visible && AnakinBG.mouseHover(mouse_x, mouse_y))
+		if (visible && AnakinBG.mouseHover(mouse_x, mouse_y, true))
 		{
 			SDL_RenderFillRect(RENDERER, &AnakinBG.hover);
-			AnakinIC.mouseHover(mouse_x, mouse_y);
+			AnakinIC.mouseHover(mouse_x, mouse_y, false);
 			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.hover,
 							 45, NULL, SDL_FLIP_NONE);	
 		}
-		else
+		else if (visible && !AnakinBG.mouseHover(mouse_x, mouse_y, true))
 		{	
 			SDL_RenderFillRect(RENDERER, &AnakinBG.rect);
 			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.rect,
@@ -329,18 +351,37 @@ int main()
 		}
 		//Vader button
 		SDL_SetRenderDrawColor(RENDERER, VaderBG.r, VaderBG.g, VaderBG.b, VaderBG.a);
-		if (visible && VaderBG.mouseHover(mouse_x, mouse_y))
+		if (visible && VaderBG.mouseHover(mouse_x, mouse_y, true))
 		{	
 			SDL_RenderFillRect(RENDERER, &VaderBG.hover);
-			VaderIC.mouseHover(mouse_x, mouse_y);
+			VaderIC.mouseHover(mouse_x, mouse_y, false);
 			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.hover,
 							 45, NULL, SDL_FLIP_NONE);	
 		}
-		else
+		else if (visible && !VaderBG.mouseHover(mouse_x, mouse_y, true))
 		{	
 			SDL_RenderFillRect(RENDERER, &VaderBG.rect);
 			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.rect,
 							 45, NULL, SDL_FLIP_NONE);	
+		}
+		//mute button
+		if (mute)
+		{
+			if (muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopyEx(RENDERER, muteOn.mTexture, NULL, &muteIC.hover,
+								 0, NULL, SDL_FLIP_NONE);	
+			else if (!muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopyEx(RENDERER, muteOn.mTexture, NULL, &muteIC.rect,
+								 0, NULL, SDL_FLIP_NONE);
+		}
+		else if (!mute)
+		{
+			if (muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopyEx(RENDERER, muteOff.mTexture, NULL, &muteIC.hover,
+								 0, NULL, SDL_FLIP_NONE);
+			else if (!muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopyEx(RENDERER, muteOff.mTexture, NULL, &muteIC.rect,
+								 0, NULL, SDL_FLIP_NONE);
 		}
 
 		//display

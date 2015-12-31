@@ -23,6 +23,8 @@ SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;
 TTF_Font *FONT = NULL;
 
+LTexture muteOn;
+LTexture muteOff;
 LTexture hilt_Luke;
 LTexture hilt_Anakin;
 LTexture hilt_Vader;
@@ -116,6 +118,24 @@ bool init()
 bool loadMedia(string CurrentPath)
 {
 	stringstream path;
+	
+	//load mute icons
+	path << CurrentPath << "/content/mute_sfx.png";
+	muteOn.loadFromFile(path.str(), RENDERER);
+	if (muteOn.mTexture == NULL)
+		return false;	
+	
+	//clear stringstream
+	path.str("");
+
+	path << CurrentPath << "/content/unmute_sfx.png";
+	muteOff.loadFromFile(path.str(), RENDERER);
+	if (muteOff.mTexture == NULL)
+		return false;	
+	
+	//clear stringstream
+	path.str("");
+
 	//load hilt images
 	path << CurrentPath << "/content/Luke_hilt.png";
 	hilt_Luke.loadFromFile(path.str(), RENDERER);
@@ -125,14 +145,6 @@ bool loadMedia(string CurrentPath)
 	//clear stringstream
 	path.str("");
 
-	//path << CurrentPath << "/content/Luke_hilt.png";
-	//LukeIcon.loadFromFile(path.str(), RENDERER);
-	//if (LukeIcon.mTexture == NULL);
-		//return false;
-
-	//clear stringstream
-	path.str("");
-	
 	path << CurrentPath << "/content/Anakin_hilt.png";
 	hilt_Anakin.loadFromFile(path.str(), RENDERER);
 	if (hilt_Anakin.mTexture == NULL)
@@ -141,27 +153,11 @@ bool loadMedia(string CurrentPath)
 	//clear stringstream
 	path.str("");
 	
-	//path << CurrentPath << "/content/Anakin_hilt.png";
-	//AnakinIcon.loadFromFile(path.str(), RENDERER);
-	//if (AnakinIcon.mTexture == NULL);
-	//	return false;
-
-	//clear stringstream
-	path.str("");
-	
 	path << CurrentPath << "/content/Vader_hilt.png";
 	hilt_Vader.loadFromFile(path.str(), RENDERER);
 	if (hilt_Vader.mTexture == NULL)
 		return false;	
 	
-	//clear stringstream
-	path.str("");
-	
-	//path << CurrentPath << "/content/Vader_hilt.png";
-	//VaderIcon.loadFromFile(path.str(), RENDERER);
-	//if (VaderIcon.mTexture == NULL);
-	//	return false;
-
 	//clear stringstream
 	path.str("");
 

@@ -33,23 +33,24 @@ struct button
 		rect.h = h;
 		type = 2;
 	}
-	bool mouseHover(int mouse_x, int mouse_y)
+	bool mouseHover(int mouse_x, int mouse_y, bool special)
 	{
-		if (type == 2)
+		if (type == 2 || special)
 		{
-			if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
+			if (mouse_x > rect.x && mouse_x < (rect.x + rect.w))
 			{
-				if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
+				if (mouse_y > rect.y && mouse_y < (rect.y + rect.h))
 				{
+					cout << mouse_y << "," << rect.y << "," << rect.y + rect.h << endl;
 					hover.x = rect.x - 2.5;
 					hover.y = rect.y - 2.5;
 					hover.w = rect.w + 5;
 					hover.h = rect.h + 5;
 					return true;
 				}
-			}
-			else
 				return false;
+			}
+			return false;
 		}
 		else if (type == 1)
 		{
@@ -62,13 +63,13 @@ struct button
 	}
 	bool wasClicked(int mouse_x, int mouse_y)
 	{
-		if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
-			{
-				if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
-					return true;
-			}
-			else
-				return false;
+		if (mouse_x > rect.x && mouse_x < (rect.x + rect.w))
+		{
+			if (mouse_y > rect.y && mouse_y < (rect.y + rect.h))
+				return true;
+			return false;
+		}
+		return false;
 	}
 };
 
