@@ -41,7 +41,6 @@ struct button
 			{
 				if (mouse_y > rect.y && mouse_y < (rect.y + rect.h))
 				{
-					cout << mouse_y << "," << rect.y << "," << rect.y + rect.h << endl;
 					hover.x = rect.x - 2.5;
 					hover.y = rect.y - 2.5;
 					hover.w = rect.w + 5;

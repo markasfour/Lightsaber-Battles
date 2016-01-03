@@ -23,6 +23,7 @@ SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;
 TTF_Font *FONT = NULL;
 
+LTexture background1;
 LTexture muteOn;
 LTexture muteOff;
 LTexture hilt_Luke;
@@ -119,6 +120,15 @@ bool loadMedia(string CurrentPath)
 {
 	stringstream path;
 	
+	//load backgrounds
+	path << CurrentPath << "/content/background1.jpg";
+	background1.loadFromFile(path.str(), RENDERER);
+	if (background1.mTexture == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+
 	//load mute icons
 	path << CurrentPath << "/content/mute_sfx.png";
 	muteOn.loadFromFile(path.str(), RENDERER);
@@ -286,6 +296,9 @@ bool loadMedia(string CurrentPath)
 void close()
 {
 	//free loaded images
+	background1.free();
+	muteOn.free();
+	muteOff.free();
 	hilt_Luke.free();
 	hilt_Anakin.free();
 	hilt_Vader.free();

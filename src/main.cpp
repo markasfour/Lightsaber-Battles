@@ -56,6 +56,13 @@ int main()
 
 	//frame rate regulator
 	Timer fps;
+	
+	//background rendering rectangle
+	SDL_Rect backgroundRect;
+	backgroundRect.w = SCREEN_WIDTH * 1.05;
+	backgroundRect.h = SCREEN_HEIGHT * 1.05;
+	backgroundRect.x = (SCREEN_WIDTH - backgroundRect.w) / 2;
+	backgroundRect.y = SCREEN_HEIGHT - backgroundRect.h;
 
 	//hilt rendering rectangle 
 	SDL_Rect hiltRect;
@@ -147,11 +154,11 @@ int main()
 			{
 				
 				if (visible && LukeBG.wasClicked(mouse_x, mouse_y))
-					main_char = Luke, switched = true, on = false;
+					main_char = Luke, switched = true, on = false, soundOn = false;
 				else if (visible && AnakinBG.wasClicked(mouse_x, mouse_y))
-					main_char = Anakin, switched = true, on = false;
+					main_char = Anakin, switched = true, on = false, soundOn = false;
 				else if (visible && VaderBG.wasClicked(mouse_x, mouse_y))
-					main_char = Vader, switched = true, on = false;
+					main_char = Vader, switched = true, on = false, soundOn = false;
 				else if (muteIC.wasClicked(mouse_x, mouse_y))
 				{	
 					mute = !mute;
@@ -202,6 +209,10 @@ int main()
 		hiltCenter = {hiltRect.w / 2, hiltRect.h / 2};
 		bladeCenter = {bladeRect.w / 2, (bladeRect.h) + (hiltRect.h / 2)};
 		bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (hiltRect.h / 2)};
+
+		//move background
+		backgroundRect.x = (-1 * (((center.x - mouse_x) / double(center.x)) * ((SCREEN_WIDTH - backgroundRect.w))/2)) - ((backgroundRect.w - SCREEN_WIDTH)/2);
+		backgroundRect.y = (((center.y - mouse_y) / double(center.y)) * (SCREEN_HEIGHT - backgroundRect.h)/2);
 
 		//handle angle
 		if (mouse_x - center.x != 0)
@@ -298,6 +309,9 @@ int main()
 		}
 		
 		//render everything
+		//background
+		SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &backgroundRect);
+						 
 		//blade
 		if (on)
 		{
