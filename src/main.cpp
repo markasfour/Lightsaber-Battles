@@ -22,7 +22,7 @@
 #include "button.h"
 #include "panel.h"
 
-#define PI 3.14
+#define PI 3.14159265 
 
 using namespace std;
 
@@ -220,19 +220,19 @@ int main()
 		else
 			angle = 180;
 		angle *= 2;
-		
+				
 		//handle blade position
 		bladeRect.x = mouse_x - (bladeRect.w / 2);
-		bladetipRect.x = bladeRect.x;
 		bladeRect.y = mouse_y - (hiltRect.h / 2) - bladeRect.h; 
-		bladetipRect.y = bladeRect.y - bladetipRect.h;
-		
+
 		//blade on
 		if (on)
 		{
 			if (bladeRect.h < 300 && !switched)
 			{
 				bladeRect.h += 10;
+				bladeRect.y -= (10 * sin((angle + 90) * (PI/180)));
+				bladeRect.x -= (10 * cos((angle + 90) * (PI/180)));
 			}
 			else
 				bladeRect.h = 300;
@@ -243,10 +243,16 @@ int main()
 			if (bladeRect.h > 0 && !switched) 
 			{
 				bladeRect.h -= 4;
+				bladeRect.y += (4 * sin((angle + 90) * (PI/180)));
+				bladeRect.x += (4 * cos((angle + 90) * (PI/180)));
 			}
 			else
 				bladeRect.h = 0;
 		}
+
+		//handle blade tip position
+		bladetipRect.x = bladeRect.x;
+		bladetipRect.y = bladeRect.y - bladetipRect.h;
 		
 		//hilt position
 		hiltRect.x = mouse_x - (hiltRect.w / 2);
