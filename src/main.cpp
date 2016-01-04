@@ -20,6 +20,7 @@
 #include "helper.h"
 #include "character.h"
 #include "button.h"
+#include "panel.h"
 
 #define PI 3.14
 
@@ -99,19 +100,16 @@ int main()
 	Character Vader("Vader");
 	
 	//lightsaber selection panel
-	bool visible = false;
+	panel saberSelect (0, SCREEN_HEIGHT, 3, 45, 10);
 	bool switched = false;
-	SDL_Rect saberSelect;
-	saberSelect.x = 0;
-	saberSelect.y = SCREEN_HEIGHT;
-	saberSelect.h = 60;
-	saberSelect.w = 3 * (10 + 45) + 10;
 	button LukeBG(0xFF, 0xFF, 0xFF, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
 	button AnakinBG(0xFF, 0xFF, 0xFF, 0xFF, 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);	
 	button VaderBG(0xFF, 0xFF, 0xFF, 0xFF, 10 + 45 + 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);
 	button LukeIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	button AnakinIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	
+	//background selection panel
 	
 	//mute
 	bool mute = false;
@@ -153,11 +151,11 @@ int main()
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
 				
-				if (visible && LukeBG.wasClicked(mouse_x, mouse_y))
+				if (saberSelect.visible && LukeBG.wasClicked(mouse_x, mouse_y))
 					main_char = Luke, switched = true, on = false, soundOn = false;
-				else if (visible && AnakinBG.wasClicked(mouse_x, mouse_y))
+				else if (saberSelect.visible && AnakinBG.wasClicked(mouse_x, mouse_y))
 					main_char = Anakin, switched = true, on = false, soundOn = false;
-				else if (visible && VaderBG.wasClicked(mouse_x, mouse_y))
+				else if (saberSelect.visible && VaderBG.wasClicked(mouse_x, mouse_y))
 					main_char = Vader, switched = true, on = false, soundOn = false;
 				else if (muteIC.wasClicked(mouse_x, mouse_y))
 				{	
@@ -255,14 +253,14 @@ int main()
 		hiltRect.y = mouse_y - (hiltRect.h / 2);
 		
 		//lightsaber select gui
-		if (mouse_x < saberSelect.w && mouse_y > SCREEN_HEIGHT - 20)
+		if (mouse_x < saberSelect.rect.w && mouse_y > SCREEN_HEIGHT - 20)
 		{
-			visible = true;
+			saberSelect.visible = true;
 		}
-		if (visible)
+		if (saberSelect.visible)
 		{
-			if (saberSelect.y > SCREEN_HEIGHT - 60)
-				saberSelect.y -= 10;
+			if (saberSelect.rect.y > SCREEN_HEIGHT - 60)
+				saberSelect.rect.y -= 10;
 			if (LukeBG.rect.y > SCREEN_HEIGHT - 50)	
 			{	
 				LukeBG.rect.y -= 10;
@@ -281,13 +279,13 @@ int main()
 				VaderBG.hover.y -= 10;
 				VaderIC.rect.y -= 10;
 			}
-			if (mouse_x > saberSelect.w || mouse_y < SCREEN_HEIGHT - 60)
-				visible = false;
+			if (mouse_x > saberSelect.rect.w || mouse_y < SCREEN_HEIGHT - 60)
+				saberSelect.visible = false;
 		}
-		if (!visible)
+		if (!saberSelect.visible)
 		{
-			if (saberSelect.y < SCREEN_HEIGHT)
-				saberSelect.y += 10;
+			if (saberSelect.rect.y < SCREEN_HEIGHT)
+				saberSelect.rect.y += 10;
 			if (LukeBG.rect.y < SCREEN_HEIGHT)
 			{
 				LukeBG.rect.y += 10;
@@ -330,19 +328,24 @@ int main()
 		//hilt
 		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &hiltRect,
 						 angle, &hiltCenter, SDL_FLIP_NONE);
+		
+		//glow
+		//if (on)
+		//	SDL_RenderCopy(RENDERER, glow_R.mTexture, NULL, &backgroundRect);
+		
 		//saber select
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
-		SDL_RenderFillRect(RENDERER, &saberSelect);
+		SDL_RenderFillRect(RENDERER, &saberSelect.rect);
 		//Luke button
 		SDL_SetRenderDrawColor(RENDERER, LukeBG.r, LukeBG.g, LukeBG.b, LukeBG.a);
-		if (visible && LukeBG.mouseHover(mouse_x, mouse_y, true))
+		if (saberSelect.visible && LukeBG.mouseHover(mouse_x, mouse_y, true))
 		{
 			SDL_RenderFillRect(RENDERER, &LukeBG.hover);
 			LukeIC.mouseHover(mouse_x, mouse_y, false);
 			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.hover,
 							 45, NULL, SDL_FLIP_NONE);
 		}
-		else if (visible && !LukeBG.mouseHover(mouse_x, mouse_y, true))
+		else if (saberSelect.visible && !LukeBG.mouseHover(mouse_x, mouse_y, true))
 		{
 			SDL_RenderFillRect(RENDERER, &LukeBG.rect);
 			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.rect,
@@ -350,14 +353,14 @@ int main()
 		}
 		//Anakin button
 		SDL_SetRenderDrawColor(RENDERER, AnakinBG.r, AnakinBG.g, AnakinBG.b, AnakinBG.a);
-		if (visible && AnakinBG.mouseHover(mouse_x, mouse_y, true))
+		if (saberSelect.visible && AnakinBG.mouseHover(mouse_x, mouse_y, true))
 		{
 			SDL_RenderFillRect(RENDERER, &AnakinBG.hover);
 			AnakinIC.mouseHover(mouse_x, mouse_y, false);
 			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.hover,
 							 45, NULL, SDL_FLIP_NONE);	
 		}
-		else if (visible && !AnakinBG.mouseHover(mouse_x, mouse_y, true))
+		else if (saberSelect.visible && !AnakinBG.mouseHover(mouse_x, mouse_y, true))
 		{	
 			SDL_RenderFillRect(RENDERER, &AnakinBG.rect);
 			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.rect,
@@ -365,14 +368,14 @@ int main()
 		}
 		//Vader button
 		SDL_SetRenderDrawColor(RENDERER, VaderBG.r, VaderBG.g, VaderBG.b, VaderBG.a);
-		if (visible && VaderBG.mouseHover(mouse_x, mouse_y, true))
+		if (saberSelect.visible && VaderBG.mouseHover(mouse_x, mouse_y, true))
 		{	
 			SDL_RenderFillRect(RENDERER, &VaderBG.hover);
 			VaderIC.mouseHover(mouse_x, mouse_y, false);
 			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.hover,
 							 45, NULL, SDL_FLIP_NONE);	
 		}
-		else if (visible && !VaderBG.mouseHover(mouse_x, mouse_y, true))
+		else if (saberSelect.visible && !VaderBG.mouseHover(mouse_x, mouse_y, true))
 		{	
 			SDL_RenderFillRect(RENDERER, &VaderBG.rect);
 			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.rect,

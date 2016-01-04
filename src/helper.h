@@ -35,6 +35,7 @@ LTexture blade_R;
 LTexture bladetip_G;
 LTexture bladetip_B;
 LTexture bladetip_R;
+LTexture glow_R;
 LTexture LukeIcon;
 LTexture AnakinIcon;
 LTexture VaderIcon;
@@ -116,110 +117,64 @@ bool init()
 	return true;
 }
 
+bool loadImage(LTexture &x, string CurrentPath, string file)
+{
+	stringstream path;
+	path << CurrentPath << file;
+	x.loadFromFile(path.str(), RENDERER);
+	if (x.mTexture == NULL)
+		return false;	
+	return true;
+}
+
 bool loadMedia(string CurrentPath)
 {
 	stringstream path;
 	
 	//load backgrounds
-	path << CurrentPath << "/content/background1.jpg";
-	background1.loadFromFile(path.str(), RENDERER);
-	if (background1.mTexture == NULL)
+	if (!loadImage(background1, CurrentPath, "/content/background2.jpg"))
 		return false;
 
-	//clear stringstream
-	path.str("");
-
 	//load mute icons
-	path << CurrentPath << "/content/mute_sfx.png";
-	muteOn.loadFromFile(path.str(), RENDERER);
-	if (muteOn.mTexture == NULL)
+	if (!loadImage(muteOn, CurrentPath, "/content/mute_sfx.png"))
 		return false;	
 	
-	//clear stringstream
-	path.str("");
-
-	path << CurrentPath << "/content/unmute_sfx.png";
-	muteOff.loadFromFile(path.str(), RENDERER);
-	if (muteOff.mTexture == NULL)
+	if (!loadImage(muteOff, CurrentPath, "/content/unmute_sfx.png"))
 		return false;	
 	
-	//clear stringstream
-	path.str("");
-
 	//load hilt images
-	path << CurrentPath << "/content/Luke_hilt.png";
-	hilt_Luke.loadFromFile(path.str(), RENDERER);
-	if (hilt_Luke.mTexture == NULL)
+	if (!loadImage(hilt_Luke, CurrentPath, "/content/Luke_hilt.png"))
 		return false;	
 	
-	//clear stringstream
-	path.str("");
-
-	path << CurrentPath << "/content/Anakin_hilt.png";
-	hilt_Anakin.loadFromFile(path.str(), RENDERER);
-	if (hilt_Anakin.mTexture == NULL)
+	if (!loadImage(hilt_Anakin, CurrentPath, "/content/Anakin_hilt.png"))
 		return false;	
 	
-	//clear stringstream
-	path.str("");
-	
-	path << CurrentPath << "/content/Vader_hilt.png";
-	hilt_Vader.loadFromFile(path.str(), RENDERER);
-	if (hilt_Vader.mTexture == NULL)
+	if (!loadImage(hilt_Vader, CurrentPath, "/content/Vader_hilt.png"))
 		return false;	
-	
-	//clear stringstream
-	path.str("");
 
 	//load blade images
-	path << CurrentPath << "/content/blade_G.png";
-	blade_G.loadFromFile(path.str(), RENDERER);
-	if (blade_G.mTexture == NULL)
+	if (!loadImage(blade_G, CurrentPath, "/content/blade_G.png"))
 		return false;	
 
-	//clear stringstream
-	path.str("");
-	
-	path << CurrentPath << "/content/blade_B.png";
-	blade_B.loadFromFile(path.str(), RENDERER);
-	if (blade_B.mTexture == NULL)
+	if (!loadImage(blade_B, CurrentPath, "/content/blade_B.png"))
 		return false;	
 
-	//clear stringstream
-	path.str("");
-
-	path << CurrentPath << "/content/blade_R.png";
-	blade_R.loadFromFile(path.str(), RENDERER);
-	if (blade_R.mTexture == NULL)
+	if (!loadImage(blade_R, CurrentPath, "/content/blade_R.png"))
 		return false;	
 
-	//clear stringstream
-	path.str("");
-
-	path << CurrentPath << "/content/bladetip_G.png";
-	bladetip_G.loadFromFile(path.str(), RENDERER);
-	if (bladetip_G.mTexture == NULL)
+	if (!loadImage(bladetip_G, CurrentPath, "/content/bladetip_G.png"))
 		return false;	
 
-	//clear stringstream
-	path.str("");
-	
-	path << CurrentPath << "/content/bladetip_B.png";
-	bladetip_B.loadFromFile(path.str(), RENDERER);
-	if (bladetip_B.mTexture == NULL)
+	if (!loadImage(bladetip_B, CurrentPath, "/content/bladetip_B.png"))
 		return false;	
 
-	//clear stringstream
-	path.str("");
-	
-	path << CurrentPath << "/content/bladetip_R.png";
-	bladetip_R.loadFromFile(path.str(), RENDERER);
-	if (bladetip_R.mTexture == NULL)
+	if (!loadImage(bladetip_R, CurrentPath, "/content/bladetip_R.png"))
 		return false;	
 
-	//clear stringstream
-	path.str("");
-	
+	//load glow
+	if (!loadImage(glow_R, CurrentPath, "/content/glow_R.png"))
+		return false;	
+
 	//load sound effects 
 	path << CurrentPath << "/content/SaberOn_1.wav";
 	ON_SOUND_1 = Mix_LoadWAV(path.str().c_str());
@@ -228,7 +183,7 @@ bool loadMedia(string CurrentPath)
 
 	//clear stringstream
 	path.str("");
-	
+
 	path << CurrentPath << "/content/SaberOn_2.wav";
 	ON_SOUND_2 = Mix_LoadWAV(path.str().c_str());
 	if (ON_SOUND_2 == NULL)
