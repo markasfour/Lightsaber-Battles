@@ -111,9 +111,10 @@ int main()
 	
 	//background selection panel
 	int background = 1;
-	panel bgSelect (520, SCREEN_HEIGHT, 2, 45, 10);
+	panel bgSelect (465, SCREEN_HEIGHT, 3, 45, 10);
 	button CarbonFreezing(bgSelect.rect.x + 10, SCREEN_HEIGHT, 45, 45);
 	button EmperorsThrone(CarbonFreezing.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+	button HothEchoBase(EmperorsThrone.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
 
 	//mute
 	bool mute = false;
@@ -166,6 +167,8 @@ int main()
 					background = 1;
 				else if (bgSelect.visible && EmperorsThrone.wasClicked(mouse_x, mouse_y))
 					background = 2;
+				else if (bgSelect.visible && HothEchoBase.wasClicked(mouse_x, mouse_y))
+					background = 3;
 				//mute button click
 				else if (muteIC.wasClicked(mouse_x, mouse_y))
 				{	
@@ -329,6 +332,10 @@ int main()
 			{
 				EmperorsThrone.rect.y -= 10;
 			}
+			if (HothEchoBase.rect.y > SCREEN_HEIGHT - 50)
+			{
+				HothEchoBase.rect.y -= 10;
+			}
 			if (mouse_x < bgSelect.rect.x || mouse_y < SCREEN_HEIGHT - 60)
 				bgSelect.visible = false;
 		}
@@ -344,6 +351,10 @@ int main()
 			{
 				EmperorsThrone.rect.y += 10;
 			}
+			if (HothEchoBase.rect.y < SCREEN_HEIGHT)
+			{
+				HothEchoBase.rect.y += 10;
+			}
 		}
 
 		//render everything
@@ -352,6 +363,8 @@ int main()
 			SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &backgroundRect);
 		else if (background == 2)	
 			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &backgroundRect);
+		else if (background == 3)
+			SDL_RenderCopy(RENDERER, background3.mTexture, NULL, &backgroundRect);
 
 		//blade
 		if (on)
@@ -445,6 +458,15 @@ int main()
 		else if (bgSelect.visible && !EmperorsThrone.mouseHover(mouse_x, mouse_y, true))
 		{	
 			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &EmperorsThrone.rect);
+		}
+		//Hoth echo base button
+		if (bgSelect.visible && HothEchoBase.mouseHover(mouse_x, mouse_y, true))
+		{	
+			SDL_RenderCopy(RENDERER, background3.mTexture, NULL, &HothEchoBase.hover);
+		}
+		else if (bgSelect.visible && !HothEchoBase.mouseHover(mouse_x, mouse_y, true))
+		{	
+			SDL_RenderCopy(RENDERER, background3.mTexture, NULL, &HothEchoBase.rect);
 		}
 
 		//mute button

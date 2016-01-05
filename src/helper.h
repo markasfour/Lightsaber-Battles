@@ -25,6 +25,7 @@ TTF_Font *FONT = NULL;
 
 LTexture background1;
 LTexture background2;
+LTexture background3;
 LTexture muteOn;
 LTexture muteOff;
 LTexture hilt_Luke;
@@ -137,6 +138,9 @@ bool loadMedia(string CurrentPath)
 		return false;
 	
 	if (!loadImage(background2, CurrentPath, "/content/background2.jpg"))
+		return false;
+	
+	if (!loadImage(background3, CurrentPath, "/content/background3.jpg"))
 		return false;
 
 	//load mute icons
@@ -257,6 +261,7 @@ void close()
 	//free loaded images
 	background1.free();
 	background2.free();
+	background3.free();
 	muteOn.free();
 	muteOff.free();
 	hilt_Luke.free();
