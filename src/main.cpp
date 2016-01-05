@@ -102,15 +102,19 @@ int main()
 	//lightsaber selection panel
 	panel saberSelect (0, SCREEN_HEIGHT, 3, 45, 10);
 	bool switched = false;
-	button LukeBG(0xFF, 0xFF, 0xFF, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
-	button AnakinBG(0xFF, 0xFF, 0xFF, 0xFF, 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);	
-	button VaderBG(0xFF, 0xFF, 0xFF, 0xFF, 10 + 45 + 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);
+	button LukeBG(0x00, 0x00, 0x00, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
+	button AnakinBG(0x00, 0x00, 0x00, 0xfF, 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);	
+	button VaderBG(0x00, 0x00, 0x00, 0xFF, 10 + 45 + 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);
 	button LukeIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	button AnakinIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	
 	//background selection panel
-	
+	int background = 1;
+	panel bgSelect (520, SCREEN_HEIGHT, 2, 45, 10);
+	button CarbonFreezing(bgSelect.rect.x + 10, SCREEN_HEIGHT, 45, 45);
+	button EmperorsThrone(CarbonFreezing.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+
 	//mute
 	bool mute = false;
 	bool soundOn = false;
@@ -150,13 +154,19 @@ int main()
 			}
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
-				
+				//saber select panel clicks
 				if (saberSelect.visible && LukeBG.wasClicked(mouse_x, mouse_y))
 					main_char = Luke, switched = true, on = false, soundOn = false;
 				else if (saberSelect.visible && AnakinBG.wasClicked(mouse_x, mouse_y))
 					main_char = Anakin, switched = true, on = false, soundOn = false;
 				else if (saberSelect.visible && VaderBG.wasClicked(mouse_x, mouse_y))
 					main_char = Vader, switched = true, on = false, soundOn = false;
+				//background select panel clicks
+				else if (bgSelect.visible && CarbonFreezing.wasClicked(mouse_x, mouse_y))
+					background = 1;
+				else if (bgSelect.visible && EmperorsThrone.wasClicked(mouse_x, mouse_y))
+					background = 2;
+				//mute button click
 				else if (muteIC.wasClicked(mouse_x, mouse_y))
 				{	
 					mute = !mute;
@@ -260,9 +270,7 @@ int main()
 		
 		//lightsaber select gui
 		if (mouse_x < saberSelect.rect.w && mouse_y > SCREEN_HEIGHT - 20)
-		{
 			saberSelect.visible = true;
-		}
 		if (saberSelect.visible)
 		{
 			if (saberSelect.rect.y > SCREEN_HEIGHT - 60)
@@ -270,19 +278,16 @@ int main()
 			if (LukeBG.rect.y > SCREEN_HEIGHT - 50)	
 			{	
 				LukeBG.rect.y -= 10;
-				LukeBG.hover.y -= 10;
 				LukeIC.rect.y -= 10;
 			}
 			if (AnakinBG.rect.y > SCREEN_HEIGHT - 50)	
 			{	
 				AnakinBG.rect.y -= 10;
-				AnakinBG.hover.y -= 10;
 				AnakinIC.rect.y -= 10;
 			}
 			if (VaderBG.rect.y > SCREEN_HEIGHT - 50)	
 			{	
 				VaderBG.rect.y -= 10;
-				VaderBG.hover.y -= 10;
 				VaderIC.rect.y -= 10;
 			}
 			if (mouse_x > saberSelect.rect.w || mouse_y < SCREEN_HEIGHT - 60)
@@ -295,27 +300,59 @@ int main()
 			if (LukeBG.rect.y < SCREEN_HEIGHT)
 			{
 				LukeBG.rect.y += 10;
-				LukeBG.hover.y += 10;
 				LukeIC.rect.y += 10;
 			}
 			if (AnakinBG.rect.y < SCREEN_HEIGHT)	
 			{
 				AnakinBG.rect.y += 10;
-				AnakinBG.hover.y += 10;
 				AnakinIC.rect.y += 10;
 			}
 			if (VaderBG.rect.y < SCREEN_HEIGHT)	
 			{	
 				VaderBG.rect.y += 10;
-				VaderBG.hover.y += 10;
 				VaderIC.rect.y += 10;
 			}
 		}
-		
+
+		//background select gui
+		if (mouse_x > bgSelect.rect.x && mouse_y > SCREEN_HEIGHT - 20)
+			bgSelect.visible = true;
+		if (bgSelect.visible)
+		{
+			if (bgSelect.rect.y > SCREEN_HEIGHT - 60)
+				bgSelect.rect.y -= 10;
+			if (CarbonFreezing.rect.y > SCREEN_HEIGHT - 50)
+			{
+				CarbonFreezing.rect.y -= 10;
+			}
+			if (EmperorsThrone.rect.y > SCREEN_HEIGHT - 50)
+			{
+				EmperorsThrone.rect.y -= 10;
+			}
+			if (mouse_x < bgSelect.rect.x || mouse_y < SCREEN_HEIGHT - 60)
+				bgSelect.visible = false;
+		}
+		if (!bgSelect.visible)
+		{
+			if (bgSelect.rect.y < SCREEN_HEIGHT)
+				bgSelect.rect.y += 10;
+			if (CarbonFreezing.rect.y < SCREEN_HEIGHT)
+			{
+				CarbonFreezing.rect.y += 10;
+			}
+			if (EmperorsThrone.rect.y < SCREEN_HEIGHT)
+			{
+				EmperorsThrone.rect.y += 10;
+			}
+		}
+
 		//render everything
 		//background
-		SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &backgroundRect);
-						 
+		if (background == 1)
+			SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &backgroundRect);
+		else if (background == 2)	
+			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &backgroundRect);
+
 		//blade
 		if (on)
 		{
@@ -387,6 +424,29 @@ int main()
 			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.rect,
 							 45, NULL, SDL_FLIP_NONE);	
 		}
+
+		//background select
+		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
+		SDL_RenderFillRect(RENDERER, &bgSelect.rect);
+		//carbon freezing chamber button
+		if (bgSelect.visible && CarbonFreezing.mouseHover(mouse_x, mouse_y, true))
+		{	
+			SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &CarbonFreezing.hover);
+		}
+		else if (bgSelect.visible && !CarbonFreezing.mouseHover(mouse_x, mouse_y, true))
+		{	
+			SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &CarbonFreezing.rect);
+		}
+		//emperors throne room button
+		if (bgSelect.visible && EmperorsThrone.mouseHover(mouse_x, mouse_y, true))
+		{	
+			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &EmperorsThrone.hover);
+		}
+		else if (bgSelect.visible && !EmperorsThrone.mouseHover(mouse_x, mouse_y, true))
+		{	
+			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &EmperorsThrone.rect);
+		}
+
 		//mute button
 		if (mute)
 		{
