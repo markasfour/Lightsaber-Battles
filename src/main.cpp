@@ -185,7 +185,7 @@ int main()
 					soundOn = true;
 					soundOff = false;
 				}
-				else if (!on && !switched && !soundOff)
+				else if (!on && !switched && !soundOff && !bgSelect.visible)
 				{	
 					if (!mute)
 						Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
