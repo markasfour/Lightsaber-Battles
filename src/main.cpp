@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <cmath>
+#include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -110,11 +111,15 @@ int main()
 	button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
 	
 	//background selection panel
-	int background = 1;
+	int background = 0;
 	panel bgSelect (465, SCREEN_HEIGHT, 3, 45, 10);
+	vector <button> bgButtons;
 	button CarbonFreezing(bgSelect.rect.x + 10, SCREEN_HEIGHT, 45, 45);
+	bgButtons.push_back(CarbonFreezing);
 	button EmperorsThrone(CarbonFreezing.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+	bgButtons.push_back(EmperorsThrone);
 	button HothEchoBase(EmperorsThrone.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+	bgButtons.push_back(HothEchoBase);
 
 	//mute
 	bool mute = false;
@@ -125,6 +130,12 @@ int main()
 	//Main loop
 	while (!quit)
 	{
+		//hide cursor
+		if (saberSelect.visible || bgSelect.visible)
+			SDL_ShowCursor(1);
+		else
+			SDL_ShowCursor(0);
+		
 		//start input handler
 		input.beginNewFrame();
 		
@@ -163,12 +174,14 @@ int main()
 				else if (saberSelect.visible && VaderBG.wasClicked(mouse_x, mouse_y))
 					main_char = Vader, switched = true, on = false, soundOn = false;
 				//background select panel clicks
-				else if (bgSelect.visible && CarbonFreezing.wasClicked(mouse_x, mouse_y))
-					background = 1;
-				else if (bgSelect.visible && EmperorsThrone.wasClicked(mouse_x, mouse_y))
-					background = 2;
-				else if (bgSelect.visible && HothEchoBase.wasClicked(mouse_x, mouse_y))
-					background = 3;
+				else if (bgSelect.visible)
+				{
+					for (int i = 0; i < bgButtons.size(); i++)
+					{
+						if (bgSelect.visible && bgButtons.at(i).wasClicked(mouse_x, mouse_y))
+							background = i;
+					}
+				}
 				//mute button click
 				else if (muteIC.wasClicked(mouse_x, mouse_y))
 				{	
@@ -324,17 +337,10 @@ int main()
 		{
 			if (bgSelect.rect.y > SCREEN_HEIGHT - 60)
 				bgSelect.rect.y -= 10;
-			if (CarbonFreezing.rect.y > SCREEN_HEIGHT - 50)
+			for (int i = 0; i < bgButtons.size(); i++)
 			{
-				CarbonFreezing.rect.y -= 10;
-			}
-			if (EmperorsThrone.rect.y > SCREEN_HEIGHT - 50)
-			{
-				EmperorsThrone.rect.y -= 10;
-			}
-			if (HothEchoBase.rect.y > SCREEN_HEIGHT - 50)
-			{
-				HothEchoBase.rect.y -= 10;
+				if (bgButtons.at(i).rect.y > SCREEN_HEIGHT - 50)
+					bgButtons.at(i).rect.y -= 10;
 			}
 			if (mouse_x < bgSelect.rect.x || mouse_y < SCREEN_HEIGHT - 60)
 				bgSelect.visible = false;
@@ -343,28 +349,16 @@ int main()
 		{
 			if (bgSelect.rect.y < SCREEN_HEIGHT)
 				bgSelect.rect.y += 10;
-			if (CarbonFreezing.rect.y < SCREEN_HEIGHT)
+			for (int i = 0; i < bgButtons.size(); i++)
 			{
-				CarbonFreezing.rect.y += 10;
-			}
-			if (EmperorsThrone.rect.y < SCREEN_HEIGHT)
-			{
-				EmperorsThrone.rect.y += 10;
-			}
-			if (HothEchoBase.rect.y < SCREEN_HEIGHT)
-			{
-				HothEchoBase.rect.y += 10;
+				if (bgButtons.at(i).rect.y < SCREEN_HEIGHT)
+					bgButtons.at(i).rect.y += 10;
 			}
 		}
 
 		//render everything
 		//background
-		if (background == 1)
-			SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &backgroundRect);
-		else if (background == 2)	
-			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &backgroundRect);
-		else if (background == 3)
-			SDL_RenderCopy(RENDERER, background3.mTexture, NULL, &backgroundRect);
+		SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
 
 		//blade
 		if (on)
@@ -384,10 +378,6 @@ int main()
 		//hilt
 		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &hiltRect,
 						 angle, &hiltCenter, SDL_FLIP_NONE);
-		
-		//glow
-		//if (on)
-		//	SDL_RenderCopy(RENDERER, glow_R.mTexture, NULL, &backgroundRect);
 		
 		//saber select
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
@@ -441,34 +431,15 @@ int main()
 		//background select
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
 		SDL_RenderFillRect(RENDERER, &bgSelect.rect);
-		//carbon freezing chamber button
-		if (bgSelect.visible && CarbonFreezing.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &CarbonFreezing.hover);
+		//buttons
+		for (int i = 0; i < bgButtons.size(); i++)
+		{
+			if (bgSelect.visible && bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgButtons.at(i).hover);
+			else if (bgSelect.visible && !bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgButtons.at(i).rect);
 		}
-		else if (bgSelect.visible && !CarbonFreezing.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderCopy(RENDERER, background1.mTexture, NULL, &CarbonFreezing.rect);
-		}
-		//emperors throne room button
-		if (bgSelect.visible && EmperorsThrone.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &EmperorsThrone.hover);
-		}
-		else if (bgSelect.visible && !EmperorsThrone.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderCopy(RENDERER, background2.mTexture, NULL, &EmperorsThrone.rect);
-		}
-		//Hoth echo base button
-		if (bgSelect.visible && HothEchoBase.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderCopy(RENDERER, background3.mTexture, NULL, &HothEchoBase.hover);
-		}
-		else if (bgSelect.visible && !HothEchoBase.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderCopy(RENDERER, background3.mTexture, NULL, &HothEchoBase.rect);
-		}
-
+		
 		//mute button
 		if (mute)
 		{

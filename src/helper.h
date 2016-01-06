@@ -23,9 +23,7 @@ SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;
 TTF_Font *FONT = NULL;
 
-LTexture background1;
-LTexture background2;
-LTexture background3;
+vector <LTexture> backgrounds (3);
 LTexture muteOn;
 LTexture muteOff;
 LTexture hilt_Luke;
@@ -134,13 +132,13 @@ bool loadMedia(string CurrentPath)
 	stringstream path;
 	
 	//load backgrounds
-	if (!loadImage(background1, CurrentPath, "/content/background1.jpg"))
+	if (!loadImage(backgrounds.at(0), CurrentPath, "/content/background1.jpg"))
 		return false;
 	
-	if (!loadImage(background2, CurrentPath, "/content/background2.jpg"))
+	if (!loadImage(backgrounds.at(1), CurrentPath, "/content/background2.jpg"))
 		return false;
 	
-	if (!loadImage(background3, CurrentPath, "/content/background3.jpg"))
+	if (!loadImage(backgrounds.at(2), CurrentPath, "/content/background3.jpg"))
 		return false;
 
 	//load mute icons
@@ -259,9 +257,8 @@ bool loadMedia(string CurrentPath)
 void close()
 {
 	//free loaded images
-	background1.free();
-	background2.free();
-	background3.free();
+	for (int i = 0; i < backgrounds.size(); i++)
+		backgrounds.at(i).free();
 	muteOn.free();
 	muteOff.free();
 	hilt_Luke.free();
