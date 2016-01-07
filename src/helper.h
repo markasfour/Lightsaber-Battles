@@ -26,9 +26,7 @@ TTF_Font *FONT = NULL;
 vector <LTexture> backgrounds (3);
 LTexture muteOn;
 LTexture muteOff;
-LTexture hilt_Luke;
-LTexture hilt_Anakin;
-LTexture hilt_Vader;
+vector <LTexture> hilts (3);
 LTexture blade_G;
 LTexture blade_B;
 LTexture blade_R;
@@ -149,13 +147,13 @@ bool loadMedia(string CurrentPath)
 		return false;	
 	
 	//load hilt images
-	if (!loadImage(hilt_Luke, CurrentPath, "/content/Luke_hilt.png"))
+	if (!loadImage(hilts.at(0), CurrentPath, "/content/Luke_hilt.png"))
 		return false;	
 	
-	if (!loadImage(hilt_Anakin, CurrentPath, "/content/Anakin_hilt.png"))
+	if (!loadImage(hilts.at(1), CurrentPath, "/content/Anakin_hilt.png"))
 		return false;	
 	
-	if (!loadImage(hilt_Vader, CurrentPath, "/content/Vader_hilt.png"))
+	if (!loadImage(hilts.at(2), CurrentPath, "/content/Vader_hilt.png"))
 		return false;	
 
 	//load blade images
@@ -261,9 +259,8 @@ void close()
 		backgrounds.at(i).free();
 	muteOn.free();
 	muteOff.free();
-	hilt_Luke.free();
-	hilt_Anakin.free();
-	hilt_Vader.free();
+	for (int i = 0; i < hilts.size(); i++)
+		hilts.at(i).free();
 	blade_G.free();
 	blade_B.free();
 	blade_R.free();

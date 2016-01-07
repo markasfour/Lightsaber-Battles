@@ -99,17 +99,27 @@ int main()
 	Character Luke("Luke");
 	Character Anakin("Anakin");
 	Character Vader("Vader");
-	
+
 	//lightsaber selection panel
 	panel saberSelect (0, SCREEN_HEIGHT, 3, 45, 10);
 	bool switched = false;
-	button LukeBG(0x00, 0x00, 0x00, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
-	button AnakinBG(0x00, 0x00, 0x00, 0xfF, 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);	
-	button VaderBG(0x00, 0x00, 0x00, 0xFF, 10 + 45 + 10 + 45 + 10, SCREEN_HEIGHT, 45, 45);
-	button LukeIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
-	button AnakinIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
-	button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	vector <button> saberButtons;
+	vector <button> saberIcons;
 	
+	button LukeBG(0x00, 0x00, 0x00, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
+	saberButtons.push_back(LukeBG);
+	button AnakinBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);	
+	saberButtons.push_back(AnakinBG);
+	button VaderBG(0x00, 0x00, 0x00, 0xFF, AnakinBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+	saberButtons.push_back(VaderBG);
+	
+	button LukeIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	saberIcons.push_back(LukeIC);
+	button AnakinIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	saberIcons.push_back(AnakinIC);
+	button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+	saberIcons.push_back(VaderIC);
+
 	//background selection panel
 	int background = 0;
 	panel bgSelect (465, SCREEN_HEIGHT, 3, 45, 10);
@@ -131,10 +141,10 @@ int main()
 	while (!quit)
 	{
 		//hide cursor
-		if (saberSelect.visible || bgSelect.visible)
-			SDL_ShowCursor(1);
-		else
-			SDL_ShowCursor(0);
+		//if (saberSelect.visible || bgSelect.visible)
+		//	SDL_ShowCursor(1);
+		//else
+		//	SDL_ShowCursor(0);
 		
 		//start input handler
 		input.beginNewFrame();
@@ -167,18 +177,28 @@ int main()
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
 				//saber select panel clicks
-				if (saberSelect.visible && LukeBG.wasClicked(mouse_x, mouse_y))
-					main_char = Luke, switched = true, on = false, soundOn = false;
-				else if (saberSelect.visible && AnakinBG.wasClicked(mouse_x, mouse_y))
-					main_char = Anakin, switched = true, on = false, soundOn = false;
-				else if (saberSelect.visible && VaderBG.wasClicked(mouse_x, mouse_y))
-					main_char = Vader, switched = true, on = false, soundOn = false;
+				if (saberSelect.visible)
+				{
+					for (int i = 0; i < saberButtons.size(); i++)
+					{
+						if (saberButtons.at(i).wasClicked(mouse_x, mouse_y))
+						{
+							if (i == 0)
+								main_char = Luke;
+							else if (i == 1)
+								main_char = Anakin;
+							else
+								main_char = Vader;
+							switched = true, on = false, soundOn = false;
+						}
+					}
+				}
 				//background select panel clicks
 				else if (bgSelect.visible)
 				{
 					for (int i = 0; i < bgButtons.size(); i++)
 					{
-						if (bgSelect.visible && bgButtons.at(i).wasClicked(mouse_x, mouse_y))
+						if (bgButtons.at(i).wasClicked(mouse_x, mouse_y))
 							background = i;
 					}
 				}
@@ -291,20 +311,13 @@ int main()
 		{
 			if (saberSelect.rect.y > SCREEN_HEIGHT - 60)
 				saberSelect.rect.y -= 10;
-			if (LukeBG.rect.y > SCREEN_HEIGHT - 50)	
-			{	
-				LukeBG.rect.y -= 10;
-				LukeIC.rect.y -= 10;
-			}
-			if (AnakinBG.rect.y > SCREEN_HEIGHT - 50)	
-			{	
-				AnakinBG.rect.y -= 10;
-				AnakinIC.rect.y -= 10;
-			}
-			if (VaderBG.rect.y > SCREEN_HEIGHT - 50)	
-			{	
-				VaderBG.rect.y -= 10;
-				VaderIC.rect.y -= 10;
+			for (int i = 0; i < saberButtons.size(); i++)
+			{
+				if (saberButtons.at(i).rect.y > SCREEN_HEIGHT - 50)
+				{
+					saberButtons.at(i).rect.y -= 10;
+					saberIcons.at(i).rect.y -= 10;
+				}
 			}
 			if (mouse_x > saberSelect.rect.w || mouse_y < SCREEN_HEIGHT - 60)
 				saberSelect.visible = false;
@@ -313,20 +326,13 @@ int main()
 		{
 			if (saberSelect.rect.y < SCREEN_HEIGHT)
 				saberSelect.rect.y += 10;
-			if (LukeBG.rect.y < SCREEN_HEIGHT)
+			for (int i = 0; i < saberButtons.size(); i++)
 			{
-				LukeBG.rect.y += 10;
-				LukeIC.rect.y += 10;
-			}
-			if (AnakinBG.rect.y < SCREEN_HEIGHT)	
-			{
-				AnakinBG.rect.y += 10;
-				AnakinIC.rect.y += 10;
-			}
-			if (VaderBG.rect.y < SCREEN_HEIGHT)	
-			{	
-				VaderBG.rect.y += 10;
-				VaderIC.rect.y += 10;
+				if (saberButtons.at(i).rect.y < SCREEN_HEIGHT)
+				{
+					saberButtons.at(i).rect.y += 10;
+					saberIcons.at(i).rect.y += 10;
+				}
 			}
 		}
 
@@ -355,7 +361,7 @@ int main()
 					bgButtons.at(i).rect.y += 10;
 			}
 		}
-
+		
 		//render everything
 		//background
 		SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
@@ -375,6 +381,7 @@ int main()
 			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
 						 	 angle, &bladetipCenter, SDL_FLIP_NONE);
 		}
+		
 		//hilt
 		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &hiltRect,
 						 angle, &hiltCenter, SDL_FLIP_NONE);
@@ -382,52 +389,26 @@ int main()
 		//saber select
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
 		SDL_RenderFillRect(RENDERER, &saberSelect.rect);
-		//Luke button
-		SDL_SetRenderDrawColor(RENDERER, LukeBG.r, LukeBG.g, LukeBG.b, LukeBG.a);
-		if (saberSelect.visible && LukeBG.mouseHover(mouse_x, mouse_y, true))
+		//buttons
+		for (int i = 0; i < saberButtons.size(); i++)
 		{
-			SDL_RenderFillRect(RENDERER, &LukeBG.hover);
-			LukeIC.mouseHover(mouse_x, mouse_y, false);
-			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.hover,
-							 45, NULL, SDL_FLIP_NONE);
+			SDL_SetRenderDrawColor(RENDERER, saberButtons.at(i).r, saberButtons.at(i).g, saberButtons.at(i).b, saberButtons.at(i).a);
+			if (saberSelect.visible && saberButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+			{
+				SDL_RenderFillRect(RENDERER, &saberButtons.at(i).hover);
+				saberIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+				SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &saberIcons.at(i).hover,
+							 	 45, NULL, SDL_FLIP_NONE);	
+			}
+			else if (saberSelect.visible && !saberButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+			{
+				SDL_RenderFillRect(RENDERER, &saberButtons.at(i).rect);
+				saberIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+				SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &saberIcons.at(i).rect,
+							 	 45, NULL, SDL_FLIP_NONE);
+			}
 		}
-		else if (saberSelect.visible && !LukeBG.mouseHover(mouse_x, mouse_y, true))
-		{
-			SDL_RenderFillRect(RENDERER, &LukeBG.rect);
-			SDL_RenderCopyEx(RENDERER, hilt_Luke.mTexture, NULL, &LukeIC.rect,
-							 45, NULL, SDL_FLIP_NONE);
-		}
-		//Anakin button
-		SDL_SetRenderDrawColor(RENDERER, AnakinBG.r, AnakinBG.g, AnakinBG.b, AnakinBG.a);
-		if (saberSelect.visible && AnakinBG.mouseHover(mouse_x, mouse_y, true))
-		{
-			SDL_RenderFillRect(RENDERER, &AnakinBG.hover);
-			AnakinIC.mouseHover(mouse_x, mouse_y, false);
-			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.hover,
-							 45, NULL, SDL_FLIP_NONE);	
-		}
-		else if (saberSelect.visible && !AnakinBG.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderFillRect(RENDERER, &AnakinBG.rect);
-			SDL_RenderCopyEx(RENDERER, hilt_Anakin.mTexture, NULL, &AnakinIC.rect,
-							 45, NULL, SDL_FLIP_NONE);	
-		}
-		//Vader button
-		SDL_SetRenderDrawColor(RENDERER, VaderBG.r, VaderBG.g, VaderBG.b, VaderBG.a);
-		if (saberSelect.visible && VaderBG.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderFillRect(RENDERER, &VaderBG.hover);
-			VaderIC.mouseHover(mouse_x, mouse_y, false);
-			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.hover,
-							 45, NULL, SDL_FLIP_NONE);	
-		}
-		else if (saberSelect.visible && !VaderBG.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderFillRect(RENDERER, &VaderBG.rect);
-			SDL_RenderCopyEx(RENDERER, hilt_Vader.mTexture, NULL, &VaderIC.rect,
-							 45, NULL, SDL_FLIP_NONE);	
-		}
-
+		
 		//background select
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
 		SDL_RenderFillRect(RENDERER, &bgSelect.rect);

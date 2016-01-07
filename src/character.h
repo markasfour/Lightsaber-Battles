@@ -6,6 +6,7 @@ using namespace std;
 
 struct Character
 {
+	string name;
 	LTexture hilt;
 	LTexture blade;
 	LTexture bladetip;
@@ -15,18 +16,20 @@ struct Character
 
 	Character()
 	{
-		hilt = hilt_Luke;
+		name = "Luke";
+		hilt = hilts.at(0);
 		blade = blade_G;
 		bladetip = bladetip_G;
 		ON_SOUND = ON_SOUND_1;
 		OFF_SOUND = OFF_SOUND_1;
 		HUM = HUM_1;
 	}
-	Character(string name)
+	Character(string n)
 	{
-		if (name == "Luke")
+		name = n;
+		if (n == "Luke")
 		{
-			hilt = hilt_Luke;
+			hilt = hilts.at(0);
 			blade = blade_G;
 			bladetip = bladetip_G;
 			ON_SOUND = ON_SOUND_1;
@@ -35,7 +38,7 @@ struct Character
 		}
 		else if (name == "Anakin")
 		{
-			hilt = hilt_Anakin;
+			hilt = hilts.at(1);
 			blade = blade_B;
 			bladetip = bladetip_B;
 			ON_SOUND = ON_SOUND_2;
@@ -44,7 +47,7 @@ struct Character
 		}
 		else if (name == "Vader")
 		{
-			hilt = hilt_Vader;
+			hilt = hilts.at(2);
 			blade = blade_R;
 			bladetip = bladetip_R;
 			ON_SOUND = ON_SOUND_3;
@@ -54,6 +57,7 @@ struct Character
 	}
 	Character(const Character &c)
 	{
+		name = c.name;
 		hilt = c.hilt;
 		blade = c.blade;
 		bladetip = c.bladetip;
