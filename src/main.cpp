@@ -86,6 +86,9 @@ int main()
 
 	//rotate blade
 	double angle = 0;
+	double prev_angle = 0;
+	bool swing;
+	int swing_choice = 0;
 	SDL_Point center;
 	SDL_Point hiltCenter;
 	SDL_Point bladeCenter;
@@ -141,10 +144,10 @@ int main()
 	while (!quit)
 	{
 		//hide cursor
-		//if (saberSelect.visible || bgSelect.visible)
-		//	SDL_ShowCursor(1);
-		//else
-		//	SDL_ShowCursor(0);
+		if (saberSelect.visible || bgSelect.visible)
+			SDL_ShowCursor(1);
+		else
+			SDL_ShowCursor(0);
 		
 		//start input handler
 		input.beginNewFrame();
@@ -237,16 +240,15 @@ int main()
 		
 		//handle key presses here
 
-		//handle music
+		//handle hum sound 
 		if (on && !mute)
+		{
+			Mix_Volume(1, MIX_MAX_VOLUME/2);	//play at half volume
 			if (Mix_Playing(1) == 0)
 				Mix_PlayChannel(1, main_char.HUM, 0);
+		}
 		if (!on || mute)
 			Mix_HaltChannel(1);
-
-		//clear screen
-		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
-		SDL_RenderClear(RENDERER);
 		
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
@@ -259,6 +261,7 @@ int main()
 		backgroundRect.y = (((center.y - mouse_y) / double(center.y)) * (SCREEN_HEIGHT - backgroundRect.h)/2);
 
 		//handle angle
+		prev_angle = angle;
 		if (mouse_x - center.x != 0)
 			angle = atan2((double(center.y - mouse_y)) , (double(center.x - mouse_x))) * (180.0/PI) - 90;
 		else if (mouse_y < center.y)
@@ -266,7 +269,36 @@ int main()
 		else
 			angle = 180;
 		angle *= 2;
-				
+		
+		//handle swing
+		swing = false;
+		if (prev_angle != angle)
+			cout << abs(prev_angle - angle) << endl;
+		if (abs(prev_angle - angle) > 15)
+			swing = true;
+		else
+			swing = false;
+		if (swing && on && !mute)
+		{
+			if (Mix_Playing(3) == 0)
+			{	
+				Mix_Volume(3, MIX_MAX_VOLUME/3);	//play at third of volume
+				if (abs(prev_angle - angle) <= 25)
+					Mix_PlayChannel(3, SWING_SOUND_2, 0);
+			}
+			if (Mix_Playing(4) == 0)
+			{
+				Mix_Volume(4, MIX_MAX_VOLUME/3);	//play at third of volume
+				if (abs(prev_angle - angle) > 25)
+					Mix_PlayChannel(4, SWING_SOUND_1, 0);
+			}
+		}
+		else if (!on || mute)
+		{
+			Mix_HaltChannel(3);
+			Mix_HaltChannel(4);
+		}
+
 		//handle blade position
 		bladeRect.x = mouse_x - (bladeRect.w / 2);
 		bladeRect.y = mouse_y - (hiltRect.h / 2) - bladeRect.h; 
@@ -363,9 +395,13 @@ int main()
 		}
 		
 		//render everything
+		//clear screen
+		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
+		SDL_RenderClear(RENDERER);
+		
 		//background
 		SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
-
+		
 		//blade
 		if (on)
 		{

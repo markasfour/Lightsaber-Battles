@@ -47,6 +47,8 @@ Mix_Chunk *OFF_SOUND_3 = NULL;
 Mix_Chunk *HUM_1 = NULL;
 Mix_Chunk *HUM_2 = NULL;
 Mix_Chunk *HUM_3 = NULL;
+Mix_Chunk *SWING_SOUND_1 = NULL;
+Mix_Chunk *SWING_SOUND_2 = NULL;
 
 bool init()
 {
@@ -249,6 +251,22 @@ bool loadMedia(string CurrentPath)
 	if (HUM_3 == NULL)
 		return false;
 
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/swing1.wav";
+	SWING_SOUND_1 = Mix_LoadWAV(path.str().c_str());
+	if (SWING_SOUND_1 == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/swing2.wav";
+	SWING_SOUND_2 = Mix_LoadWAV(path.str().c_str());
+	if (SWING_SOUND_2 == NULL)
+		return false;
+
 	return true;
 }
 
@@ -289,7 +307,11 @@ void close()
 	HUM_2 = NULL;
 	Mix_FreeChunk(HUM_3);
 	HUM_3 = NULL;
-	
+	Mix_FreeChunk(SWING_SOUND_1);
+	SWING_SOUND_1 = NULL;
+	Mix_FreeChunk(SWING_SOUND_2);
+	SWING_SOUND_2 = NULL;
+
 	//free loaded fonts
 
 	//Destroy window

@@ -48,6 +48,7 @@ void Timer::start()
 	paused = false;
 	//Get the current clock time
     startTicks = SDL_GetTicks();
+    pausedTicks = 0;
 }
 
 void Timer::stop()
@@ -56,6 +57,9 @@ void Timer::stop()
 	started = false;
 	//unpause the timer
 	paused = false;
+	//clear tick variables
+	startTicks = 0;
+	pausedTicks = 0;
 }
 
 void Timer::pause()
@@ -67,15 +71,16 @@ void Timer::pause()
 		paused = true;
 		//calculate the paused ticks
 		pausedTicks = SDL_GetTicks() - startTicks;
+		startTicks = 0;
 	}
 }
 
 void Timer::unpause()
 {
 	//if the timer is paused
-	if(paused)
+	if(started && paused)
 	{
-		//unapuse the tiemr
+		//unpause the timer
 		paused = false;
 		//reset the starting ticks
 		startTicks = SDL_GetTicks() - pausedTicks;
@@ -112,7 +117,7 @@ bool Timer::is_started()
 
 bool Timer::is_paused()
 {
-	return paused;
+	return paused && started;
 }
 
 #endif
