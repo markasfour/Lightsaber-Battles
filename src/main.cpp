@@ -221,7 +221,7 @@ int main()
 					soundOn = true;
 					soundOff = false;
 				}
-				else if (!on && !switched && !soundOff && !bgSelect.visible)
+				else if (!on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible)
 				{	
 					if (!mute)
 						Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
@@ -272,8 +272,6 @@ int main()
 		
 		//handle swing
 		swing = false;
-		if (prev_angle != angle)
-			cout << abs(prev_angle - angle) << endl;
 		if (abs(prev_angle - angle) > 15)
 			swing = true;
 		else
@@ -293,7 +291,7 @@ int main()
 					Mix_PlayChannel(4, SWING_SOUND_1, 0);
 			}
 		}
-		else if (!on || mute)
+		else if (mute)
 		{
 			Mix_HaltChannel(3);
 			Mix_HaltChannel(4);
