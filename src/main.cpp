@@ -330,24 +330,10 @@ int main()
 		SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
 		
 		//blade
-		if (main_char.saber.on)
-		{
-			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &main_char.saber.blade, 
-						 	 main_char.saber.angle, &main_char.saber.bladeCenter, SDL_FLIP_NONE);
-			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &main_char.saber.bladetip, 
-						 	 main_char.saber.angle, &main_char.saber.bladetipCenter, SDL_FLIP_NONE);
-		}
-		if (!main_char.saber.on && main_char.saber.blade.h > 0)
-		{
-			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &main_char.saber.blade, 
-						 	 main_char.saber.angle, &main_char.saber.bladeCenter, SDL_FLIP_NONE);
-			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &main_char.saber.bladetip, 
-						 	 main_char.saber.angle, &main_char.saber.bladetipCenter, SDL_FLIP_NONE);
-		}
+		main_char.renderBlade(RENDERER);
 		
 		//hilt
-		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &main_char.saber.hilt,
-						 main_char.saber.angle, &main_char.saber.hiltCenter, SDL_FLIP_NONE);
+		main_char.renderHilt(RENDERER);
 		
 		//saber select
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);

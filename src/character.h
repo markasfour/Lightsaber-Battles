@@ -66,5 +66,29 @@ struct Character
 		HUM = c.HUM;
 		saber = c.saber;
 	}
+
+	void renderBlade(SDL_Renderer *RENDERER)
+	{
+		if (saber.on)
+		{
+			SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &saber.blade, 
+						 	 saber.angle, &saber.bladeCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &saber.bladetip, 
+						 	 saber.angle, &saber.bladetipCenter, SDL_FLIP_NONE);
+		}
+		if (!saber.on && saber.blade.h > 0)
+		{
+			SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &saber.blade, 
+						 	 saber.angle, &saber.bladeCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &saber.bladetip, 
+						 	 saber.angle, &saber.bladetipCenter, SDL_FLIP_NONE);
+		}
+	}
+
+	void renderHilt(SDL_Renderer *RENDERER)
+	{
+		SDL_RenderCopyEx(RENDERER, hilt.mTexture, NULL, &saber.hilt,
+						 saber.angle, &saber.hiltCenter, SDL_FLIP_NONE);
+	}
 };
 #endif
