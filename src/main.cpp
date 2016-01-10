@@ -217,14 +217,7 @@ int main()
 		//handle key presses here
 
 		//handle hum sound 
-		if (main_char.saber.on && !mute)
-		{
-			Mix_Volume(1, MIX_MAX_VOLUME/2);	//play at half volume
-			if (Mix_Playing(1) == 0)
-				Mix_PlayChannel(1, main_char.HUM, 0);
-		}
-		if (!main_char.saber.on || mute)
-			Mix_HaltChannel(1);
+		main_char.handleHumSound(mute);
 		
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
@@ -239,26 +232,7 @@ int main()
 
 		//handle swing
 		main_char.saber.handleSwing();
-		if (main_char.saber.swing && main_char.saber.on && !mute)
-		{
-			if (Mix_Playing(3) == 0)
-			{	
-				Mix_Volume(3, MIX_MAX_VOLUME/3);	//play at third of volume
-				if (abs(main_char.saber.prev_angle - main_char.saber.angle) <= 25)
-					Mix_PlayChannel(3, SWING_SOUND_2, 0);
-			}
-			if (Mix_Playing(4) == 0)
-			{
-				Mix_Volume(4, MIX_MAX_VOLUME/3);	//play at third of volume
-				if (abs(main_char.saber.prev_angle - main_char.saber.angle) > 25)
-					Mix_PlayChannel(4, SWING_SOUND_1, 0);
-			}
-		}
-		else if (mute)
-		{
-			Mix_HaltChannel(3);
-			Mix_HaltChannel(4);
-		}
+		main_char.handleSwingSound(mute);
 	
 		//handle saber position
 		main_char.saber.handleSaberPosition(mouse_x, mouse_y, switched);

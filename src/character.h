@@ -67,6 +67,42 @@ struct Character
 		saber = c.saber;
 	}
 
+	void handleHumSound(bool mute)
+	{
+		if (saber.on && !mute)
+		{
+			Mix_Volume(1, MIX_MAX_VOLUME/2);	//play at half volume
+			if (Mix_Playing(1) == 0)
+				Mix_PlayChannel(1, HUM, 0);
+		}
+		if (!saber.on || mute)
+			Mix_HaltChannel(1);
+	}
+
+	void handleSwingSound(bool mute)
+	{
+		if (saber.swing && saber.on && !mute)
+		{
+			if (Mix_Playing(3) == 0)
+			{	
+				Mix_Volume(3, MIX_MAX_VOLUME/3);	//play at third of volume
+				if (abs(saber.prev_angle - saber.angle) <= 25)
+					Mix_PlayChannel(3, SWING_SOUND_2, 0);
+			}
+			if (Mix_Playing(4) == 0)
+			{
+				Mix_Volume(4, MIX_MAX_VOLUME/3);	//play at third of volume
+				if (abs(saber.prev_angle - saber.angle) > 25)
+					Mix_PlayChannel(4, SWING_SOUND_1, 0);
+			}
+		}
+		else if (mute)
+		{
+			Mix_HaltChannel(3);
+			Mix_HaltChannel(4);
+		}
+	}
+
 	void renderBlade(SDL_Renderer *RENDERER)
 	{
 		if (saber.on)
