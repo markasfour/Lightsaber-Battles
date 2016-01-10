@@ -1,7 +1,6 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include "helper.h"
 using namespace std;
 
 struct Character
@@ -13,6 +12,7 @@ struct Character
 	Mix_Chunk *ON_SOUND;
 	Mix_Chunk *OFF_SOUND;
 	Mix_Chunk *HUM;
+	Saber saber;
 
 	Character()
 	{
@@ -64,6 +64,7 @@ struct Character
 		ON_SOUND = c.ON_SOUND;
 		OFF_SOUND = c.OFF_SOUND;
 		HUM = c.HUM;
+		saber = c.saber;
 	}
 };
 #endif

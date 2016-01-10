@@ -103,11 +103,11 @@ bool init()
 				}
 
 				//Initialize SDL_ttf
-				//if (!TTF_Init())
-				//{
-				//	cout << "SDL_ttf could not initialize. SDL_ttf Error: " << TTF_GetError() << endl;
-				//	return false;
-				//}
+				if (TTF_Init() == -1)
+				{
+					cout << "SDL_ttf could not initialize. SDL_ttf Error: " << TTF_GetError() << endl;
+					return false;
+				}
 
 				//get window surface
 				SCREENSURFACE = SDL_GetWindowSurface(WINDOW);
@@ -131,6 +131,15 @@ bool loadMedia(string CurrentPath)
 {
 	stringstream path;
 	
+	//load fonts
+	path << CurrentPath << "/content/Starjedi.ttf";
+	FONT = TTF_OpenFont(path.str().c_str(), 28 );
+	if( FONT == NULL )
+		return false;
+
+	//clear stringstream
+	path.str("");	
+
 	//load backgrounds
 	if (!loadImage(backgrounds.at(0), CurrentPath, "/content/background1.jpg"))
 		return false;
@@ -313,6 +322,8 @@ void close()
 	SWING_SOUND_2 = NULL;
 
 	//free loaded fonts
+	TTF_CloseFont(FONT);
+	FONT = NULL;	
 
 	//Destroy window
 	SDL_DestroyRenderer(RENDERER);

@@ -19,6 +19,7 @@
 #include "timer.h"
 #include "texture.h"
 #include "helper.h"
+#include "lightsaber.h"
 #include "character.h"
 #include "button.h"
 #include "panel.h"
@@ -66,33 +67,8 @@ int main()
 	backgroundRect.x = (SCREEN_WIDTH - backgroundRect.w) / 2;
 	backgroundRect.y = SCREEN_HEIGHT - backgroundRect.h;
 
-	//hilt rendering rectangle 
-	SDL_Rect hiltRect;
-	hiltRect.w = 14;
-	hiltRect.h = 60;
-
-	//blade rendering rectangle
-	SDL_Rect bladeRect;
-	bladeRect.w = 21;
-	bladeRect.h = 1;
-	
-	//blade tip rendering rectangle
-	SDL_Rect bladetipRect;
-	bladetipRect.w = 21;
-	bladetipRect.h = 7;
-	
-	//lightsaber on/off
-	bool on = false;
-
-	//rotate blade
-	double angle = 0;
-	double prev_angle = 0;
-	bool swing;
-	int swing_choice = 0;
+	//player center
 	SDL_Point center;
-	SDL_Point hiltCenter;
-	SDL_Point bladeCenter;
-	SDL_Point bladetipCenter;
 	
 	//init position
 	bool start = true;
@@ -192,7 +168,7 @@ int main()
 								main_char = Anakin;
 							else
 								main_char = Vader;
-							switched = true, on = false, soundOn = false;
+							switched = true, main_char.saber.on = false, soundOn = false;
 						}
 					}
 				}
@@ -212,16 +188,16 @@ int main()
 					Mix_HaltChannel(2);	
 				}
 				else
-					on = !on;
+					main_char.saber.on = !main_char.saber.on;
 				
-				if (on && !switched && !soundOn)
+				if (main_char.saber.on && !switched && !soundOn)
 				{
 					if (!mute)
 						Mix_PlayChannel(2, main_char.ON_SOUND, 0);
 					soundOn = true;
 					soundOff = false;
 				}
-				else if (!on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible)
+				else if (!main_char.saber.on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible)
 				{	
 					if (!mute)
 						Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
@@ -241,53 +217,40 @@ int main()
 		//handle key presses here
 
 		//handle hum sound 
-		if (on && !mute)
+		if (main_char.saber.on && !mute)
 		{
 			Mix_Volume(1, MIX_MAX_VOLUME/2);	//play at half volume
 			if (Mix_Playing(1) == 0)
 				Mix_PlayChannel(1, main_char.HUM, 0);
 		}
-		if (!on || mute)
+		if (!main_char.saber.on || mute)
 			Mix_HaltChannel(1);
 		
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
-		hiltCenter = {hiltRect.w / 2, hiltRect.h / 2};
-		bladeCenter = {bladeRect.w / 2, (bladeRect.h) + (hiltRect.h / 2)};
-		bladetipCenter = {bladetipRect.w / 2, bladetipRect.h + bladeRect.h + (hiltRect.h / 2)};
+		main_char.saber.setCenterPoints();
 
 		//move background
 		backgroundRect.x = (-1 * (((center.x - mouse_x) / double(center.x)) * ((SCREEN_WIDTH - backgroundRect.w))/2)) - ((backgroundRect.w - SCREEN_WIDTH)/2);
 		backgroundRect.y = (((center.y - mouse_y) / double(center.y)) * (SCREEN_HEIGHT - backgroundRect.h)/2);
 
 		//handle angle
-		prev_angle = angle;
-		if (mouse_x - center.x != 0)
-			angle = atan2((double(center.y - mouse_y)) , (double(center.x - mouse_x))) * (180.0/PI) - 90;
-		else if (mouse_y < center.y)
-			angle = 0;
-		else
-			angle = 180;
-		angle *= 2;
-		
+		main_char.saber.handleAngle(center, mouse_x, mouse_y);
+
 		//handle swing
-		swing = false;
-		if (abs(prev_angle - angle) > 15)
-			swing = true;
-		else
-			swing = false;
-		if (swing && on && !mute)
+		main_char.saber.handleSwing();
+		if (main_char.saber.swing && main_char.saber.on && !mute)
 		{
 			if (Mix_Playing(3) == 0)
 			{	
 				Mix_Volume(3, MIX_MAX_VOLUME/3);	//play at third of volume
-				if (abs(prev_angle - angle) <= 25)
+				if (abs(main_char.saber.prev_angle - main_char.saber.angle) <= 25)
 					Mix_PlayChannel(3, SWING_SOUND_2, 0);
 			}
 			if (Mix_Playing(4) == 0)
 			{
 				Mix_Volume(4, MIX_MAX_VOLUME/3);	//play at third of volume
-				if (abs(prev_angle - angle) > 25)
+				if (abs(main_char.saber.prev_angle - main_char.saber.angle) > 25)
 					Mix_PlayChannel(4, SWING_SOUND_1, 0);
 			}
 		}
@@ -296,43 +259,9 @@ int main()
 			Mix_HaltChannel(3);
 			Mix_HaltChannel(4);
 		}
-
-		//handle blade position
-		bladeRect.x = mouse_x - (bladeRect.w / 2);
-		bladeRect.y = mouse_y - (hiltRect.h / 2) - bladeRect.h; 
-
-		//blade on
-		if (on)
-		{
-			if (bladeRect.h < 300 && !switched)
-			{
-				bladeRect.h += 10;
-				bladeRect.y -= (10 * sin((angle + 90) * (PI/180)));
-				bladeRect.x -= (10 * cos((angle + 90) * (PI/180)));
-			}
-			else
-				bladeRect.h = 300;
-		}
-		//blade off
-		if (!on)
-		{	
-			if (bladeRect.h > 0 && !switched) 
-			{
-				bladeRect.h -= 4;
-				bladeRect.y += (4 * sin((angle + 90) * (PI/180)));
-				bladeRect.x += (4 * cos((angle + 90) * (PI/180)));
-			}
-			else
-				bladeRect.h = 0;
-		}
-
-		//handle blade tip position
-		bladetipRect.x = bladeRect.x;
-		bladetipRect.y = bladeRect.y - bladetipRect.h;
-		
-		//hilt position
-		hiltRect.x = mouse_x - (hiltRect.w / 2);
-		hiltRect.y = mouse_y - (hiltRect.h / 2);
+	
+		//handle saber position
+		main_char.saber.handleSaberPosition(mouse_x, mouse_y, switched);
 		
 		//lightsaber select gui
 		if (mouse_x < saberSelect.rect.w && mouse_y > SCREEN_HEIGHT - 20)
@@ -401,24 +330,24 @@ int main()
 		SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
 		
 		//blade
-		if (on)
+		if (main_char.saber.on)
 		{
-			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &bladeRect, 
-						 	 angle, &bladeCenter, SDL_FLIP_NONE);
-			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
-						 	 angle, &bladetipCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &main_char.saber.blade, 
+						 	 main_char.saber.angle, &main_char.saber.bladeCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &main_char.saber.bladetip, 
+						 	 main_char.saber.angle, &main_char.saber.bladetipCenter, SDL_FLIP_NONE);
 		}
-		if (!on && bladeRect.h > 0)
+		if (!main_char.saber.on && main_char.saber.blade.h > 0)
 		{
-			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &bladeRect, 
-						 	 angle, &bladeCenter, SDL_FLIP_NONE);
-			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &bladetipRect, 
-						 	 angle, &bladetipCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, main_char.blade.mTexture, NULL, &main_char.saber.blade, 
+						 	 main_char.saber.angle, &main_char.saber.bladeCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, main_char.bladetip.mTexture, NULL, &main_char.saber.bladetip, 
+						 	 main_char.saber.angle, &main_char.saber.bladetipCenter, SDL_FLIP_NONE);
 		}
 		
 		//hilt
-		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &hiltRect,
-						 angle, &hiltCenter, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(RENDERER, main_char.hilt.mTexture, NULL, &main_char.saber.hilt,
+						 main_char.saber.angle, &main_char.saber.hiltCenter, SDL_FLIP_NONE);
 		
 		//saber select
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
