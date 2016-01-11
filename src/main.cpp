@@ -52,9 +52,6 @@ int main()
 	int mouse_x = 0; 
 	int mouse_y = 0;
 
-	//mouse click boolean
-	bool click = false;
-
 	//keyboard input handler
 	Input input;
 
