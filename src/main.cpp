@@ -157,54 +157,22 @@ int main()
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
 				//saber select panel clicks
-				if (saberSelect.visible)
-				{
-					for (int i = 0; i < saberButtons.size(); i++)
-					{
-						if (saberButtons.at(i).wasClicked(mouse_x, mouse_y))
-						{
-							if (i == 0)
-								main_char = Luke;
-							else if (i == 1)
-								main_char = Anakin;
-							else
-								main_char = Vader;
-							switched = true, main_char.saber.on = false, soundOn = false;
-						}
-					}
-				}
-				//background select panel clicks
-				else if (bgSelect.visible)
-				{
-					for (int i = 0; i < bgButtons.size(); i++)
-					{
-						if (bgButtons.at(i).wasClicked(mouse_x, mouse_y))
-							background = i;
-					}
-				}
-				//mute button click
-				else if (muteIC.wasClicked(mouse_x, mouse_y))
-				{	
-					mute = !mute;
-					Mix_HaltChannel(2);	
-				}
-				else
-					main_char.saber.on = !main_char.saber.on;
+				handleSaberSelectMouseDown(saberSelect, saberButtons, main_char,
+										   Luke, Anakin, Vader, switched, 
+										   soundOn, mouse_x, mouse_y);
 				
-				if (main_char.saber.on && !switched && !soundOn)
-				{
-					if (!mute)
-						Mix_PlayChannel(2, main_char.ON_SOUND, 0);
-					soundOn = true;
-					soundOff = false;
-				}
-				else if (!main_char.saber.on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible)
-				{	
-					if (!mute)
-						Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
-					soundOff = true;
-					soundOn = false;
-				}
+				//background select panel clicks
+				handleBackgroundSelectMouseDown(bgSelect, bgButtons, background,
+												mouse_x, mouse_y);
+				
+				//mute button click
+				handleMuteMouseDown(muteIC, mute, mouse_x, mouse_y);
+			
+				//saber on switch and sound
+				handleSaberOnSwitchMouseDown(main_char, muteIC, mouse_x, mouse_y,
+											 switched, mute, soundOn, soundOff, 
+											 saberSelect, bgSelect);
+				
 			}
 			if (e.type == SDL_KEYDOWN)
 			{

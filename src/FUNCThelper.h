@@ -1,6 +1,74 @@
 #ifndef FUNCTHELPER_H
 #define FUNCTHELPER_H
 
+void handleSaberSelectMouseDown(panel saberSelect, vector <button> saberButtons, Character &main_char,
+								Character &Luke, Character &Anakin, Character &Vader, bool &switched, 
+								bool &soundOn, int mouse_x, int mouse_y)
+{
+	//saber select panel clicks
+	if (saberSelect.visible)
+	{
+		for (int i = 0; i < saberButtons.size(); i++)
+		{
+			if (saberButtons.at(i).wasClicked(mouse_x, mouse_y))
+			{
+				if (i == 0)
+					main_char = Luke;
+				else if (i == 1)
+					main_char = Anakin;
+				else
+					main_char = Vader;
+				switched = true, main_char.saber.on = false, soundOn = false;
+			}
+		}
+	}
+}
+
+void handleBackgroundSelectMouseDown(panel bgSelect, vector <button> bgButtons, int &background,
+		 							 int mouse_x, int mouse_y)
+{
+	if (bgSelect.visible)
+	{
+		for (int i = 0; i < bgButtons.size(); i++)
+		{
+			if (bgButtons.at(i).wasClicked(mouse_x, mouse_y))
+				background = i;
+		}
+	}
+}
+
+void handleMuteMouseDown(button muteIC, bool &mute, int mouse_x, int mouse_y)
+{
+	if (muteIC.wasClicked(mouse_x, mouse_y))
+	{	
+		mute = !mute;
+		Mix_HaltChannel(2);	
+	}
+}
+
+void handleSaberOnSwitchMouseDown(Character &main_char, button muteIC, int mouse_x, int mouse_y,
+								  bool switched, bool mute, bool &soundOn, 
+								  bool &soundOff, panel saberSelect, panel bgSelect)
+{
+	if (!saberSelect.visible && !bgSelect.visible && !muteIC.wasClicked(mouse_x, mouse_y))
+		main_char.saber.on = !main_char.saber.on;
+				
+	if (main_char.saber.on && !switched && !soundOn)
+	{
+		if (!mute)
+			Mix_PlayChannel(2, main_char.ON_SOUND, 0);
+		soundOn = true;
+		soundOff = false;
+	}
+	else if (!main_char.saber.on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible)
+	{	
+		if (!mute)
+			Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
+		soundOff = true;
+		soundOn = false;
+	}
+}
+
 void handleBackgroundSelectGUI(panel &bgSelect, vector <button> &bgButtons, int mouse_x, int mouse_y)
 {
 	if (mouse_x > bgSelect.rect.x && mouse_y > SCREEN_HEIGHT - 20)
