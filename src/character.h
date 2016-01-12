@@ -6,9 +6,9 @@ using namespace std;
 struct Character
 {
 	string name;
-	LTexture hilt;
-	LTexture blade;
-	LTexture bladetip;
+	LTexture *hilt;
+	LTexture *blade;
+	LTexture *bladetip;
 	Mix_Chunk *ON_SOUND;
 	Mix_Chunk *OFF_SOUND;
 	Mix_Chunk *HUM;
@@ -17,9 +17,9 @@ struct Character
 	Character()
 	{
 		name = "Luke";
-		hilt = hilts.at(0);
-		blade = blade_G;
-		bladetip = bladetip_G;
+		hilt = &hilts.at(0);
+		blade = &blade_G;
+		bladetip = &bladetip_G;
 		ON_SOUND = ON_SOUND_1;
 		OFF_SOUND = OFF_SOUND_1;
 		HUM = HUM_1;
@@ -29,27 +29,27 @@ struct Character
 		name = n;
 		if (n == "Luke")
 		{
-			hilt = hilts.at(0);
-			blade = blade_G;
-			bladetip = bladetip_G;
+			hilt = &hilts.at(0);
+			blade = &blade_G;
+			bladetip = &bladetip_G;
 			ON_SOUND = ON_SOUND_1;
 			OFF_SOUND = OFF_SOUND_1;
 			HUM = HUM_1;
 		}
 		else if (name == "Anakin")
 		{
-			hilt = hilts.at(1);
-			blade = blade_B;
-			bladetip = bladetip_B;
+			hilt = &hilts.at(1);
+			blade = &blade_B;
+			bladetip = &bladetip_B;
 			ON_SOUND = ON_SOUND_2;
 			OFF_SOUND = OFF_SOUND_2;
 			HUM = HUM_2;
 		}
 		else if (name == "Vader")
 		{
-			hilt = hilts.at(2);
-			blade = blade_R;
-			bladetip = bladetip_R;
+			hilt = &hilts.at(2);
+			blade = &blade_R;
+			bladetip = &bladetip_R;
 			ON_SOUND = ON_SOUND_3;
 			OFF_SOUND = OFF_SOUND_3;
 			HUM = HUM_3;
@@ -107,23 +107,23 @@ struct Character
 	{
 		if (saber.on)
 		{
-			SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &saber.blade, 
+			SDL_RenderCopyEx(RENDERER, blade->mTexture, NULL, &saber.blade, 
 						 	 saber.angle, &saber.bladeCenter, SDL_FLIP_NONE);
-			SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &saber.bladetip, 
+			SDL_RenderCopyEx(RENDERER, bladetip->mTexture, NULL, &saber.bladetip, 
 						 	 saber.angle, &saber.bladetipCenter, SDL_FLIP_NONE);
 		}
 		if (!saber.on && saber.blade.h > 0)
 		{
-			SDL_RenderCopyEx(RENDERER, blade.mTexture, NULL, &saber.blade, 
+			SDL_RenderCopyEx(RENDERER, blade->mTexture, NULL, &saber.blade, 
 						 	 saber.angle, &saber.bladeCenter, SDL_FLIP_NONE);
-			SDL_RenderCopyEx(RENDERER, bladetip.mTexture, NULL, &saber.bladetip, 
+			SDL_RenderCopyEx(RENDERER, bladetip->mTexture, NULL, &saber.bladetip, 
 						 	 saber.angle, &saber.bladetipCenter, SDL_FLIP_NONE);
 		}
 	}
 
 	void renderHilt(SDL_Renderer *RENDERER)
 	{
-		SDL_RenderCopyEx(RENDERER, hilt.mTexture, NULL, &saber.hilt,
+		SDL_RenderCopyEx(RENDERER, hilt->mTexture, NULL, &saber.hilt,
 						 saber.angle, &saber.hiltCenter, SDL_FLIP_NONE);
 	}
 };

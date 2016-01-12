@@ -160,7 +160,7 @@ bool loadMedia(string CurrentPath)
 	//load hilt images
 	if (!loadImage(hilts.at(0), CurrentPath, "/content/Luke_hilt.png"))
 		return false;	
-	
+
 	if (!loadImage(hilts.at(1), CurrentPath, "/content/Anakin_hilt.png"))
 		return false;	
 	
