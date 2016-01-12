@@ -23,6 +23,7 @@ SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;
 TTF_Font *FONT = NULL;
 
+LTexture menuBackground;
 vector <LTexture> backgrounds (3);
 LTexture muteOn;
 LTexture muteOff;
@@ -139,6 +140,10 @@ bool loadMedia(string CurrentPath)
 
 	//clear stringstream
 	path.str("");	
+	
+	//load backgrounds
+	if (!loadImage(menuBackground, CurrentPath, "/content/MenuBackground.jpg"))
+		return false;
 
 	//load backgrounds
 	if (!loadImage(backgrounds.at(0), CurrentPath, "/content/background1.jpg"))
@@ -282,6 +287,7 @@ bool loadMedia(string CurrentPath)
 void close()
 {
 	//free loaded images
+	menuBackground.free();
 	for (int i = 0; i < backgrounds.size(); i++)
 		backgrounds.at(i).free();
 	muteOn.free();

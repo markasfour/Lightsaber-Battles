@@ -23,9 +23,8 @@
 #include "character.h"
 #include "button.h"
 #include "panel.h"
-#include "FUNCThelper.h"
-
-#define PI 3.14159265 
+#include "Menu.h"
+#include "Simulator.h"
 
 using namespace std;
 
@@ -57,7 +56,8 @@ int main()
 
 	//frame rate regulator
 	Timer fps;
-
+	
+	Menu main_menu;
 	Simulator simulator;
 
 	//Main loop
@@ -82,7 +82,10 @@ int main()
 			}
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
-				simulator.handleMouseDown(mouse_x, mouse_y);
+				if (main_menu.games.at(0))
+					simulator.handleMouseDown(mouse_x, mouse_y);
+				else
+					main_menu.handleMouseDown(mouse_x, mouse_y);
 			}
 			if (e.type == SDL_KEYDOWN)
 			{
@@ -93,10 +96,17 @@ int main()
 				input.keyUpEvent(e);
 		}
 		
-		simulator.handleGame(mouse_x, mouse_y);	
 		
-		simulator.renderEverything(RENDERER, mouse_x, mouse_y);	
-		
+		if (main_menu.games.at(0))
+			simulator.handleGame(mouse_x, mouse_y);	
+		else
+			main_menu.handleBackgroundMovement(mouse_x, mouse_y);
+
+		if (main_menu.games.at(0))
+			simulator.renderEverything(RENDERER, mouse_x, mouse_y);	
+		else
+			main_menu.renderEverything(RENDERER, mouse_x, mouse_y);
+
 		//cap the frame rate
 		if (fps.get_ticks() < 1000/FRAMES_PER_SECOND)
 			SDL_Delay((1000/FRAMES_PER_SECOND) - fps.get_ticks());
