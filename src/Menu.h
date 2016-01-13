@@ -1,6 +1,9 @@
 #ifndef MENU_H
 #define MENU_H
 
+//global game being played vector
+vector <bool> GAMES;
+
 struct Menu
 {
 	//background rendering rectangle
@@ -18,7 +21,7 @@ struct Menu
 	
 	LTexture Simulator_text;
 
-	vector <bool> games;
+	
 
 	Menu()
 	{
@@ -41,19 +44,19 @@ struct Menu
 		Title_rect2.y += 200;
 
 		SDL_Color color = {0xFF, 0xFF, 0x00};
-		Title_text1.loadFromRenderedText(RENDERER, FONT, "STAR", color);
-		Title_text2.loadFromRenderedText(RENDERER, FONT, "WARS", color);
+		Title_text1.loadFromRenderedText(RENDERER, FONT, "StaR", color);
+		Title_text2.loadFromRenderedText(RENDERER, FONT, "warS", color);
 		
 		color = {0x00, 0xFF, 0xFF};
 		Simulator_text.loadFromRenderedText(RENDERER, FONT, "Simulator", color);
 
-		games.push_back(false);
+		GAMES.push_back(false);
 	}
 
 	void handleMouseDown(int mouse_x, int mouse_y)
 	{
 		if (Simulator.wasClicked(mouse_x, mouse_y))
-			games.at(0) = true;
+			GAMES.at(0) = true;
 	}
 
 	void handleBackgroundMovement(int mouse_x, int mouse_y)

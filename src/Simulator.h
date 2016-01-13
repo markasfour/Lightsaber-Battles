@@ -23,11 +23,9 @@ struct Simulator
 	bool switched;
 	vector <button> saberButtons;
 	vector <button> saberIcons;
-	
 	button LukeBG;
 	button AnakinBG;	
 	button VaderBG;
-	
 	button LukeIC;
 	button AnakinIC;
 	button VaderIC;
@@ -39,12 +37,16 @@ struct Simulator
 	button CarbonFreezing;
 	button EmperorsThrone;
 	button HothEchoBase;
-	
+
+	//mute
 	bool mute;
 	bool soundOn;
 	bool soundOff;
 	button muteIC;
 	
+	//back
+	button back;
+	LTexture back_text;
 
 	Simulator()
 	{
@@ -111,11 +113,17 @@ struct Simulator
 		soundOff = false;
 		button mIC (SCREEN_WIDTH - 25, 5, 20, 20);
 		muteIC = mIC;
+
+		button B(0x0F, 0x0F, 0x0F, 0xFF, 0, 0, 50, 30);
+		back = B;
+		SDL_Color color = {0xFF, 0xFF, 0xFF};
+		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
 
 	void handleSaberSelectMouseDown(int mosue_x, int mouse_y);
 	void handleBackgroundSelectMouseDown(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
+	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y);
 	void handleBackgroundSelectGUI(int mouse_x, int mouse_y);
 	void handleSaberSelectGUI(int mouse_x, int mouse_y);
@@ -124,6 +132,7 @@ struct Simulator
 	void renderSaberSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 };
 
@@ -169,9 +178,18 @@ void Simulator::handleMuteMouseDown(int mouse_x, int mouse_y)
 	}
 }
 
+void Simulator::handleBackMouseDown(int mouse_x, int mouse_y)
+{
+	if (back.wasClicked(mouse_x, mouse_y))
+	{	
+		GAMES.at(0) = false;	
+		SDL_ShowCursor(1);
+	}
+}
+
 void Simulator::handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y)
 {
-	if (!saberSelect.visible && !bgSelect.visible && !muteIC.wasClicked(mouse_x, mouse_y))
+	if (!saberSelect.visible && !bgSelect.visible && !muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
 		main_char.saber.on = !main_char.saber.on;
 				
 	if (main_char.saber.on && !switched && !soundOn)
@@ -181,7 +199,7 @@ void Simulator::handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y)
 		soundOn = true;
 		soundOff = false;
 	}
-	else if (!main_char.saber.on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible)
+	else if (!main_char.saber.on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible && GAMES.at(0))
 	{	
 		if (!mute)
 			Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
@@ -310,6 +328,9 @@ void Simulator::handleMouseDown(int mouse_x, int mouse_y)
 	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
+	
+	//back button click
+	handleBackMouseDown(mouse_x, mouse_y);
 
 	//saber on switch and sound
 	handleSaberOnSwitchMouseDown(mouse_x, mouse_y);
@@ -372,6 +393,21 @@ void Simulator::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 		}
 }
 
+void Simulator::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
+	if (back.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &back.hover);
+		SDL_RenderCopy(RENDERER, back_text.mTexture, NULL, &back.hover);
+	}
+	else if (!back.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &back.rect);
+		SDL_RenderCopy(RENDERER, back_text.mTexture, NULL, &back.rect);
+	}
+}
+
 void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	//render everything
@@ -396,7 +432,10 @@ void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 			
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
-	
+
+	//back button
+	renderBackButton(RENDERER, mouse_x, mouse_y);
+
 	//display
 	SDL_RenderPresent(RENDERER);
 }

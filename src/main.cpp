@@ -82,7 +82,7 @@ int main()
 			}
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
-				if (main_menu.games.at(0))
+				if (GAMES.at(0))
 					simulator.handleMouseDown(mouse_x, mouse_y);
 				else
 					main_menu.handleMouseDown(mouse_x, mouse_y);
@@ -97,12 +97,12 @@ int main()
 		}
 		
 		
-		if (main_menu.games.at(0))
+		if (GAMES.at(0))
 			simulator.handleGame(mouse_x, mouse_y);	
 		else
 			main_menu.handleBackgroundMovement(mouse_x, mouse_y);
 
-		if (main_menu.games.at(0))
+		if (GAMES.at(0))
 			simulator.renderEverything(RENDERER, mouse_x, mouse_y);	
 		else
 			main_menu.renderEverything(RENDERER, mouse_x, mouse_y);
