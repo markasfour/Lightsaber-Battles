@@ -1,9 +1,6 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 using namespace std;
 
 //Texture wrapper class
@@ -24,6 +21,9 @@ class LTexture
 	//Deallocates memory
 	~LTexture();
 
+	//Creates image from font string
+	bool loadFromRenderedText(SDL_Renderer *RENDERER, TTF_Font *FONT, string textureText, SDL_Color textColor);
+	
 	//loads image from path
 	bool loadFromFile(string path, SDL_Renderer *RENDERER);
 
@@ -46,6 +46,40 @@ LTexture::~LTexture()
 {
 	//deallocate
 	free();
+}
+
+bool LTexture::loadFromRenderedText(SDL_Renderer *RENDERER, TTF_Font *FONT, string textureText, SDL_Color textColor )
+{
+    //Get rid of preexisting texture
+    free();
+
+    //Render text surface
+    SDL_Surface* textSurface = TTF_RenderText_Solid(FONT, textureText.c_str(), textColor);
+    if( textSurface == NULL )
+    {
+        cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << endl;
+    }
+    else
+    {
+        //Create texture from surface pixels
+        mTexture = SDL_CreateTextureFromSurface(RENDERER, textSurface);
+        if( mTexture == NULL )
+        {
+            cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << endl;
+        }
+        else
+        {
+            //Get image dimensions
+            mWidth = textSurface->w;
+            mHeight = textSurface->h;
+        }
+
+        //Get rid of old surface
+        SDL_FreeSurface(textSurface);
+    }
+    
+    //Return success
+    return mTexture != NULL;
 }
 
 bool LTexture::loadFromFile(string path, SDL_Renderer *RENDERER)

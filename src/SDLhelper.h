@@ -134,7 +134,7 @@ bool loadMedia(string CurrentPath)
 	
 	//load fonts
 	path << CurrentPath << "/content/Starjedi.ttf";
-	FONT = TTF_OpenFont(path.str().c_str(), 28 );
+	FONT = TTF_OpenFont(path.str().c_str(), 200);
 	if( FONT == NULL )
 		return false;
 
