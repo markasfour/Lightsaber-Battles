@@ -191,7 +191,7 @@ void Simulator::handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y)
 {
 	if (!saberSelect.visible && !bgSelect.visible && !muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
 		main_char.saber.on = !main_char.saber.on;
-				
+	
 	if (main_char.saber.on && !switched && !soundOn)
 	{
 		if (!mute)

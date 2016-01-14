@@ -57,6 +57,14 @@ int main()
 	//frame rate regulator
 	Timer fps;
 	
+	//mouse timer
+	Timer mouse_timer;
+	bool mouse_held = false;
+	bool mouse_tap = false;
+	bool mouse_down = false;
+	double release_time = -1;
+	double total_time = -1;
+
 	Menu main_menu;
 	Simulator simulator;
 
@@ -82,21 +90,54 @@ int main()
 			}
 			if (e.type == SDL_MOUSEBUTTONDOWN)
 			{
-				if (GAMES.at(0))
-					simulator.handleMouseDown(mouse_x, mouse_y);
-				else
-					main_menu.handleMouseDown(mouse_x, mouse_y);
+				mouse_timer.start();
+				mouse_down = true;
+				release_time = 0;
 			}
-			if (e.type == SDL_KEYDOWN)
+			if (e.type == SDL_MOUSEBUTTONUP)
 			{
-				if (e.key.repeat == 0) 
-					input.keyDownEvent(e);
+				mouse_timer.stop();	
+				mouse_down = false;
+				
 			}
-			else if (e.type == SDL_KEYUP) 
-				input.keyUpEvent(e);
 		}
-		
-		
+	
+		//handle mouse tap / hold
+		if (mouse_down)
+			release_time = mouse_timer.get_ticks();
+		else if (!mouse_down)
+		{
+			if (release_time > -1)
+				total_time = release_time;
+			release_time = -1;		
+		}
+				
+		if (total_time <= 75 && total_time > -1)
+		{
+			mouse_held = false;
+			mouse_tap = true;
+		}
+		else if (mouse_down && mouse_timer.get_ticks() > 75)
+		{
+			mouse_held = true;
+			mouse_tap = false;
+		}
+		else
+		{
+			mouse_tap = false;
+			mouse_held = false;
+		}
+
+		if (mouse_tap)
+		{
+			if (GAMES.at(0))
+				simulator.handleMouseDown(mouse_x, mouse_y);
+			else
+				main_menu.handleMouseDown(mouse_x, mouse_y);
+		}
+		total_time = -1;
+	
+
 		if (GAMES.at(0))
 			simulator.handleGame(mouse_x, mouse_y);	
 		else

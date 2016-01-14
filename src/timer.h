@@ -10,9 +10,9 @@ class Timer
 {
     private:
 		//The clock time when the timer started
-		int startTicks;
+		double startTicks;
 		//The ticks stored when the timer was paused
-		int pausedTicks;
+		double pausedTicks;
 		//The timer status
 		bool paused;
 		bool started;
@@ -25,7 +25,7 @@ class Timer
 		void pause();
 		void unpause();
 		//Gets the timer's time
-		int get_ticks();
+		double get_ticks();
 		//Checks the status of the timer
 		bool is_started();
 		bool is_paused();
@@ -89,7 +89,7 @@ void Timer::unpause()
 	}
 }
 
-int Timer::get_ticks()
+double Timer::get_ticks()
 {
 	//if the timer is running
 	if(started)
