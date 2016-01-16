@@ -22,6 +22,7 @@ struct Customize
 
 	//color selection panel
 	panel colorSelect;
+	vector <button> colorButtons;
 	button green;
 	button blue;
 	button red;
@@ -49,10 +50,10 @@ struct Customize
 		custom.saber.blade.y = custom.saber.hilt.y - 300;
 		custom.saber.bladetip.y = custom.saber.blade.y - 7;
 		
-		panel h(SCREEN_WIDTH - 55, 0, 3, 45, 10);
+		panel h(SCREEN_WIDTH - 65, 0, 3, 45, 10, true);
 		hiltSelect = h;
 
-		button LBG(0x00, 0x00, 0x00, 0xFF, SCREEN_WIDTH + 5, 0, 45, 45);
+		button LBG(0x00, 0x00, 0x00, 0xFF, hiltSelect.rect.x + 10, 10, 45, 45);
 		LukeBG = LBG;
 		button ABG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, LukeBG.rect.y + 45 + 10, 45, 45);	
 		AnakinBG = ABG;
@@ -63,7 +64,7 @@ struct Customize
 		LukeIC = LIC;
 		button AIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, AnakinBG.rect.y + 3, 9, 40);
 		AnakinIC = AIC;
-		button VIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, AnakinBG.rect.y + 3, 9, 40);
+		button VIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, VaderBG.rect.y + 3, 9, 40);
 		VaderIC = VIC;
 
 		hiltButtons.push_back(LukeBG);
@@ -74,34 +75,46 @@ struct Customize
 		hiltIcons.push_back(AnakinIC);
 		hiltIcons.push_back(VaderIC);
 
-		panel c(0 - 55, 0, 3, 45, 10);
+		panel c(0, 0, 3, 45, 10, true);
 		colorSelect = c;
 
-		button g(0x00, 0xFF, 0x00, 0xFF, 0 - 45, 0, 45, 45);
+		button g(0x00, 0xFF, 0x00, 0xFF, colorSelect.rect.x + 10, 10, 45, 45);
 		green = g;
 		button b(0x00, 0x00, 0xFF, 0xFF, green.rect.x, green.rect.y + 45 + 10, 45, 45);
 		blue = b;
 		button r(0xFF, 0x00, 0x00, 0xFF, green.rect.x, blue.rect.y + 45 + 10, 45, 45);
 		red = r;
 
+		colorButtons.push_back(green);
+		colorButtons.push_back(blue);
+		colorButtons.push_back(red);
+
 		mute = false;
-		button mIC (SCREEN_WIDTH - 25, 5, 20, 20);
+		button mIC (SCREEN_WIDTH - 25 - 65, 5, 20, 20);
 		muteIC = mIC;
 
-		button B(0x0F, 0x0F, 0x0F, 0xFF, 0, 0, 50, 30);
+		button B(0x0F, 0x0F, 0x0F, 0xFF, colorSelect.rect.x + 65, 0, 50, 30);
 		back = B;
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
 	
+	void handleHiltSelectMouseDown(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
+	void renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);	
 
 };
+
+void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y)
+{
+
+}
 
 void Customize::handleMuteMouseDown(int mouse_x, int mouse_y)
 {
@@ -125,6 +138,50 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y)
 	
 	//back button click
 	handleBackMouseDown(mouse_x, mouse_y);
+}
+
+void Customize::renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
+	SDL_RenderFillRect(RENDERER, &hiltSelect.rect);
+	//buttons
+	for (int i = 0; i < hiltButtons.size(); i++)
+	{
+		SDL_SetRenderDrawColor(RENDERER, hiltButtons.at(i).r, hiltButtons.at(i).g, hiltButtons.at(i).b, hiltButtons.at(i).a);
+		if (hiltButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+		{
+			SDL_RenderFillRect(RENDERER, &hiltButtons.at(i).hover);
+			hiltIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+			SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &hiltIcons.at(i).hover,
+						 	 45, NULL, SDL_FLIP_NONE);	
+		}
+		else if (!hiltButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+		{
+			SDL_RenderFillRect(RENDERER, &hiltButtons.at(i).rect);
+			hiltIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+			SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &hiltIcons.at(i).rect,
+						 	 45, NULL, SDL_FLIP_NONE);
+		}
+	}
+}
+
+void Customize::renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
+	SDL_RenderFillRect(RENDERER, &colorSelect.rect);
+	//buttons
+	for (int i = 0; i < colorButtons.size(); i++)
+	{
+		SDL_SetRenderDrawColor(RENDERER, colorButtons.at(i).r, colorButtons.at(i).g, colorButtons.at(i).b, colorButtons.at(i).a);
+		if (colorButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+		{
+			SDL_RenderFillRect(RENDERER, &colorButtons.at(i).hover);
+		}
+		else if (!colorButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+		{
+			SDL_RenderFillRect(RENDERER, &colorButtons.at(i).rect);
+		}
+	}
 }
 
 void Customize::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -175,12 +232,18 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 		//hilt
 		custom.renderHilt(RENDERER);
 
+		//hilt select GUI
+		renderHiltSelectGUI(RENDERER, mouse_x, mouse_y);
+		
+		//color select GUI
+		renderColorSelectGUI(RENDERER, mouse_x, mouse_y);
+
 		//mute button
 		renderMuteButton(RENDERER, mouse_x, mouse_y);
 
 		//back button
 		renderBackButton(RENDERER, mouse_x, mouse_y);
-		
+				
 		//display
 		SDL_RenderPresent(RENDERER);
 	}
