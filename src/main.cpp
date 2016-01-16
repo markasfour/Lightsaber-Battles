@@ -25,6 +25,7 @@
 #include "panel.h"
 #include "Menu.h"
 #include "Simulator.h"
+#include "Customize.h"
 
 using namespace std;
 
@@ -67,6 +68,7 @@ int main()
 
 	Menu main_menu;
 	Simulator simulator;
+	Customize customize;
 
 	//Main loop
 	while (!quit)
@@ -132,6 +134,8 @@ int main()
 		{
 			if (GAMES.at(0))
 				simulator.handleMouseDown(mouse_x, mouse_y);
+			else if (GAMES.at(1))
+				customize.handleMouseDown(mouse_x, mouse_y);
 			else
 				main_menu.handleMouseDown(mouse_x, mouse_y);
 		}
@@ -145,6 +149,8 @@ int main()
 
 		if (GAMES.at(0))
 			simulator.renderEverything(RENDERER, mouse_x, mouse_y);	
+		else if (GAMES.at(1))
+			customize.renderEverything(RENDERER, mouse_x, mouse_y);
 		else
 			main_menu.renderEverything(RENDERER, mouse_x, mouse_y);
 

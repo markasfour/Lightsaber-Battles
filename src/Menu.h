@@ -12,16 +12,14 @@ struct Menu
 	//player center
 	SDL_Point center;
 	
+	SDL_Rect Title_rect;
+	LTexture Title_text;
+	
+	vector <button> menuButtons; 
 	button Simulator;
-	
-	SDL_Rect Title_rect1;
-	LTexture Title_text1;
-	SDL_Rect Title_rect2;
-	LTexture Title_text2;
-	
 	LTexture Simulator_text;
-
-	
+	button Customize;
+	LTexture Customize_text;
 
 	Menu()
 	{
@@ -32,31 +30,36 @@ struct Menu
 
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
 		
+		Title_rect.w = 500;
+		Title_rect.h = 200;
+		Title_rect.x = SCREEN_WIDTH / 2 - 250;
+		Title_rect.y = SCREEN_HEIGHT / 2 - 200;
+		
+		SDL_Color color = {0xFF, 0xFF, 0x00};
+		Title_text.loadFromRenderedText(RENDERER, FONT, "Lightsaber Battles", color);
+		
 		button s(0x4F, 0x4F, 0x4F, 0xFF, (SCREEN_WIDTH / 2) - 100, SCREEN_HEIGHT / 2, 200, 30);
 		Simulator = s;
-
-		Title_rect1.w = 400;
-		Title_rect1.h = 200;
-		Title_rect1.x = SCREEN_WIDTH / 2 - 200;
-		Title_rect1.y = SCREEN_HEIGHT / 2 - 200;
-		
-		Title_rect2 = Title_rect1;
-		Title_rect2.y += 200;
-
-		SDL_Color color = {0xFF, 0xFF, 0x00};
-		Title_text1.loadFromRenderedText(RENDERER, FONT, "StaR", color);
-		Title_text2.loadFromRenderedText(RENDERER, FONT, "warS", color);
-		
+		menuButtons.push_back(Simulator);
 		color = {0x00, 0xFF, 0xFF};
 		Simulator_text.loadFromRenderedText(RENDERER, FONT, "Simulator", color);
 
-		GAMES.push_back(false);
+		button c(0x4F, 0x4F, 0x4F, 0xFF, (SCREEN_WIDTH / 2) - 100, Simulator.rect.y + 30 + 10, 200, 30);
+		Customize = c;
+		menuButtons.push_back(Customize);
+		color = {0x00, 0xFF, 0xFF};
+		Customize_text.loadFromRenderedText(RENDERER, FONT, "Customize", color);
+
+		GAMES.push_back(false); //simulator
+		GAMES.push_back(false); //customize
 	}
 
 	void handleMouseDown(int mouse_x, int mouse_y)
 	{
 		if (Simulator.wasClicked(mouse_x, mouse_y))
 			GAMES.at(0) = true;
+		else if (Customize.wasClicked(mouse_x, mouse_y))
+			GAMES.at(1) = true;
 	}
 
 	void handleBackgroundMovement(int mouse_x, int mouse_y)
@@ -70,15 +73,24 @@ struct Menu
 	{
 		SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
 		
-		if (Simulator.mouseHover(mouse_x, mouse_y, true))
+		for (int i = 0; i < menuButtons.size(); i++)
 		{
-			SDL_RenderFillRect(RENDERER, &Simulator.hover);
-			SDL_RenderCopy(RENDERER, Simulator_text.mTexture, NULL, &Simulator.hover);
-		}
-		else if (!Simulator.mouseHover(mouse_x, mouse_y, true))
-		{	
-			SDL_RenderFillRect(RENDERER, &Simulator.rect);
-			SDL_RenderCopy(RENDERER, Simulator_text.mTexture, NULL, &Simulator.rect);
+			if (menuButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+			{
+				SDL_RenderFillRect(RENDERER, &menuButtons.at(i).hover);
+				if (i == 0)
+					SDL_RenderCopy(RENDERER, Simulator_text.mTexture, NULL, &menuButtons.at(0).hover);
+				if (i == 1)
+					SDL_RenderCopy(RENDERER, Customize_text.mTexture, NULL, &menuButtons.at(1).hover);
+			}
+			else if (!menuButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+			{	
+				SDL_RenderFillRect(RENDERER, &menuButtons.at(i).rect);
+				if (i == 0)
+					SDL_RenderCopy(RENDERER, Simulator_text.mTexture, NULL, &menuButtons.at(0).rect);
+				if (i == 1)
+					SDL_RenderCopy(RENDERER, Customize_text.mTexture, NULL, &menuButtons.at(1).rect);
+			}
 		}
 	}
 
@@ -93,8 +105,7 @@ struct Menu
 		SDL_RenderCopy(RENDERER, menuBackground.mTexture, NULL, &backgroundRect);
 		
 		//title
-		SDL_RenderCopy(RENDERER, Title_text1.mTexture, NULL, &Title_rect1);
-		SDL_RenderCopy(RENDERER, Title_text2.mTexture, NULL, &Title_rect2);
+		SDL_RenderCopy(RENDERER, Title_text.mTexture, NULL, &Title_rect);
 
 		//buttons
 		renderButtons(RENDERER, mouse_x, mouse_y);

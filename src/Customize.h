@@ -1,0 +1,188 @@
+#ifndef CUSTOMIZE_H
+#define CUSTOMIZE_H
+
+struct Customize
+{
+	//background
+	SDL_Rect backgroundRect;
+	
+	//saber to display
+	Character custom;
+
+	//hilt selection panel
+	panel hiltSelect;
+	vector <button> hiltButtons;
+	vector <button> hiltIcons;
+	button LukeBG;
+	button LukeIC;
+	button AnakinBG;
+	button AnakinIC;
+	button VaderBG;
+	button VaderIC;
+
+	//color selection panel
+	panel colorSelect;
+	button green;
+	button blue;
+	button red;
+	
+	//mute
+	bool mute;
+	button muteIC;
+	
+	//back
+	button back;
+	LTexture back_text;
+
+	Customize()
+	{
+		backgroundRect.w = SCREEN_WIDTH * 1.05;
+		backgroundRect.h = SCREEN_HEIGHT * 1.05;
+		backgroundRect.x = (SCREEN_WIDTH - backgroundRect.w) / 2;
+		backgroundRect.y = SCREEN_HEIGHT - backgroundRect.h;
+	
+		custom.saber.blade.h = 300;
+		custom.saber.hilt.x = SCREEN_WIDTH / 2;
+		custom.saber.blade.x = custom.saber.hilt.x - 3;
+		custom.saber.bladetip.x = custom.saber.blade.x;
+		custom.saber.hilt.y = 3 * SCREEN_HEIGHT / 4;
+		custom.saber.blade.y = custom.saber.hilt.y - 300;
+		custom.saber.bladetip.y = custom.saber.blade.y - 7;
+		
+		panel h(SCREEN_WIDTH - 55, 0, 3, 45, 10);
+		hiltSelect = h;
+
+		button LBG(0x00, 0x00, 0x00, 0xFF, SCREEN_WIDTH + 5, 0, 45, 45);
+		LukeBG = LBG;
+		button ABG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, LukeBG.rect.y + 45 + 10, 45, 45);	
+		AnakinBG = ABG;
+		button VBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, AnakinBG.rect.y + 45 + 10, 45, 45);
+		VaderBG = VBG;
+
+		button LIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, LukeBG.rect.y + 3, 9, 40);
+		LukeIC = LIC;
+		button AIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, AnakinBG.rect.y + 3, 9, 40);
+		AnakinIC = AIC;
+		button VIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, AnakinBG.rect.y + 3, 9, 40);
+		VaderIC = VIC;
+
+		hiltButtons.push_back(LukeBG);
+		hiltButtons.push_back(AnakinBG);
+		hiltButtons.push_back(VaderBG);
+		
+		hiltIcons.push_back(LukeIC);
+		hiltIcons.push_back(AnakinIC);
+		hiltIcons.push_back(VaderIC);
+
+		panel c(0 - 55, 0, 3, 45, 10);
+		colorSelect = c;
+
+		button g(0x00, 0xFF, 0x00, 0xFF, 0 - 45, 0, 45, 45);
+		green = g;
+		button b(0x00, 0x00, 0xFF, 0xFF, green.rect.x, green.rect.y + 45 + 10, 45, 45);
+		blue = b;
+		button r(0xFF, 0x00, 0x00, 0xFF, green.rect.x, blue.rect.y + 45 + 10, 45, 45);
+		red = r;
+
+		mute = false;
+		button mIC (SCREEN_WIDTH - 25, 5, 20, 20);
+		muteIC = mIC;
+
+		button B(0x0F, 0x0F, 0x0F, 0xFF, 0, 0, 50, 30);
+		back = B;
+		SDL_Color color = {0xFF, 0xFF, 0xFF};
+		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
+	}
+	
+	void handleMuteMouseDown(int mouse_x, int mouse_y);
+	void handleBackMouseDown(int mouse_x, int mouse_y);
+	void handleMouseDown(int mouse_x, int mouse_y);
+	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);	
+
+};
+
+void Customize::handleMuteMouseDown(int mouse_x, int mouse_y)
+{
+	if (muteIC.wasClicked(mouse_x, mouse_y))
+	{	
+		mute = !mute;
+		Mix_HaltChannel(2);	
+	}
+}
+
+void Customize::handleBackMouseDown(int mouse_x, int mouse_y)
+{
+	if (back.wasClicked(mouse_x, mouse_y))
+		GAMES.at(1) = false;	
+}
+
+void Customize::handleMouseDown(int mouse_x, int mouse_y)
+{
+	//mute button click
+	handleMuteMouseDown(mouse_x, mouse_y);
+	
+	//back button click
+	handleBackMouseDown(mouse_x, mouse_y);
+}
+
+void Customize::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (mute)
+		{
+			if (muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteOn.mTexture, NULL, &muteIC.hover);
+			else if (!muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteOn.mTexture, NULL, &muteIC.rect);
+		}
+		else if (!mute)
+		{
+			if (muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteOff.mTexture, NULL, &muteIC.hover);
+			else if (!muteIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteOff.mTexture, NULL, &muteIC.rect);
+		}
+}
+
+void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
+	if (back.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &back.hover);
+		SDL_RenderCopy(RENDERER, back_text.mTexture, NULL, &back.hover);
+	}
+	else if (!back.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &back.rect);
+		SDL_RenderCopy(RENDERER, back_text.mTexture, NULL, &back.rect);
+	}
+}
+
+void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+	{
+		//clear screen
+		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
+		SDL_RenderClear(RENDERER);
+		
+		//background
+		SDL_RenderCopy(RENDERER, backgrounds.at(0).mTexture, NULL, &backgroundRect);
+
+		//blade
+		custom.renderBlade(RENDERER);
+		
+		//hilt
+		custom.renderHilt(RENDERER);
+
+		//mute button
+		renderMuteButton(RENDERER, mouse_x, mouse_y);
+
+		//back button
+		renderBackButton(RENDERER, mouse_x, mouse_y);
+		
+		//display
+		SDL_RenderPresent(RENDERER);
+	}
+
+#endif

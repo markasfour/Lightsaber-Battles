@@ -47,7 +47,8 @@ struct Simulator
 	//back
 	button back;
 	LTexture back_text;
-
+	
+	
 	Simulator()
 	{
 		Character m("Luke");
