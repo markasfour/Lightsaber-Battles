@@ -69,6 +69,8 @@ int main()
 	Menu main_menu;
 	Simulator simulator;
 	Customize customize;
+	
+	Character custom;
 
 	//Main loop
 	while (!quit)
@@ -133,9 +135,9 @@ int main()
 		if (mouse_tap)
 		{
 			if (GAMES.at(0))
-				simulator.handleMouseDown(mouse_x, mouse_y);
+				simulator.handleMouseDown(mouse_x, mouse_y, custom);
 			else if (GAMES.at(1))
-				customize.handleMouseDown(mouse_x, mouse_y);
+				customize.handleMouseDown(mouse_x, mouse_y, custom);
 			else
 				main_menu.handleMouseDown(mouse_x, mouse_y);
 		}
@@ -148,7 +150,7 @@ int main()
 			main_menu.handleBackgroundMovement(mouse_x, mouse_y);
 
 		if (GAMES.at(0))
-			simulator.renderEverything(RENDERER, mouse_x, mouse_y);	
+			simulator.renderEverything(RENDERER, mouse_x, mouse_y, custom);	
 		else if (GAMES.at(1))
 			customize.renderEverything(RENDERER, mouse_x, mouse_y);
 		else

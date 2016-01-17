@@ -53,7 +53,8 @@ struct Customize
 		custom.saber.hilt.y = 3 * SCREEN_HEIGHT / 4;
 		custom.saber.blade.y = custom.saber.hilt.y - 300;
 		custom.saber.bladetip.y = custom.saber.blade.y - 7;
-		
+		custom.saber.on = false;
+
 		panel h(SCREEN_WIDTH - 65, 0, 3, 45, 10, true);
 		hiltSelect = h;
 
@@ -115,11 +116,11 @@ struct Customize
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
 	
-	void handleHiltSelectMouseDown(int mouse_x, int mouse_y);
-	void handleColorSelectMouseDown(int mouse_x, int mouse_y);
+	void handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c);
+	void handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
-	void handleMouseDown(int mouse_x, int mouse_y);
+	void handleMouseDown(int mouse_x, int mouse_y, Character &c);
 	void renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -128,7 +129,7 @@ struct Customize
 
 };
 
-void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y)
+void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c)
 {
 	for (int i = 0; i < hiltButtons.size(); i++)
 	{
@@ -137,9 +138,10 @@ void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y)
 			custom.hilt = &hilts.at(i); 
 		}
 	}
+	c = custom;
 }
 
-void Customize::handleColorSelectMouseDown(int mouse_x, int mouse_y)
+void Customize::handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c)
 {
 	for (int i = 0; i < colorButtons.size(); i++)
 	{
@@ -149,6 +151,7 @@ void Customize::handleColorSelectMouseDown(int mouse_x, int mouse_y)
 			custom.bladetip = &bladetips.at(i);
 		}
 	}
+	c = custom;
 }
 
 void Customize::handleMuteMouseDown(int mouse_x, int mouse_y)
@@ -166,13 +169,13 @@ void Customize::handleBackMouseDown(int mouse_x, int mouse_y)
 		GAMES.at(1) = false;	
 }
 
-void Customize::handleMouseDown(int mouse_x, int mouse_y)
+void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c)
 {
 	//hilt select
-	handleHiltSelectMouseDown(mouse_x, mouse_y);
+	handleHiltSelectMouseDown(mouse_x, mouse_y, c);
 	
 	//color select
-	handleColorSelectMouseDown(mouse_x, mouse_y);
+	handleColorSelectMouseDown(mouse_x, mouse_y, c);
 	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
