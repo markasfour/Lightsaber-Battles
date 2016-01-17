@@ -28,11 +28,8 @@ vector <LTexture> backgrounds (3);
 LTexture muteOn;
 LTexture muteOff;
 vector <LTexture> hilts (3);
-vector <LTexture> blades (3);
-vector <LTexture> bladetips (3);
-//LTexture LukeIcon;
-//LTexture AnakinIcon;
-//LTexture VaderIcon;
+vector <LTexture> blades (7);
+vector <LTexture> bladetips (7);
 
 Mix_Chunk *ON_SOUND_1 = NULL;
 Mix_Chunk *ON_SOUND_2 = NULL;
@@ -175,7 +172,19 @@ bool loadMedia(string CurrentPath)
 	
 	if (!loadImage(blades.at(2), CurrentPath, "/content/blade_R.png"))
 		return false;
-	
+
+	if (!loadImage(blades.at(3), CurrentPath, "/content/blade_P.png"))
+		return false;
+
+	if (!loadImage(blades.at(4), CurrentPath, "/content/blade_Y.png"))
+		return false;
+
+	if (!loadImage(blades.at(5), CurrentPath, "/content/blade_W.png"))
+		return false;
+
+	if (!loadImage(blades.at(6), CurrentPath, "/content/blade_BL.png"))
+		return false;
+
 	if (!loadImage(bladetips.at(0), CurrentPath, "/content/bladetip_G.png"))
 		return false;
 	
@@ -185,6 +194,18 @@ bool loadMedia(string CurrentPath)
 	if (!loadImage(bladetips.at(2), CurrentPath, "/content/bladetip_R.png"))
 		return false;
 
+	if (!loadImage(bladetips.at(3), CurrentPath, "/content/bladetip_P.png"))
+		return false;
+
+	if (!loadImage(bladetips.at(4), CurrentPath, "/content/bladetip_Y.png"))
+		return false;
+
+	if (!loadImage(bladetips.at(5), CurrentPath, "/content/bladetip_W.png"))
+		return false;
+
+	if (!loadImage(bladetips.at(6), CurrentPath, "/content/bladetip_BL.png"))
+		return false;
+	
 	//load sound effects 
 	path << CurrentPath << "/content/SaberOn_1.wav";
 	ON_SOUND_1 = Mix_LoadWAV(path.str().c_str());

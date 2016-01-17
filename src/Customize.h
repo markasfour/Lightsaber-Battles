@@ -26,7 +26,11 @@ struct Customize
 	button green;
 	button blue;
 	button red;
-	
+	button purple;
+	button yellow;
+	button white;
+	button black;
+
 	//mute
 	bool mute;
 	button muteIC;
@@ -75,7 +79,7 @@ struct Customize
 		hiltIcons.push_back(AnakinIC);
 		hiltIcons.push_back(VaderIC);
 
-		panel c(0, 0, 3, 45, 10, true);
+		panel c(0, 0, 7, 45, 10, true);
 		colorSelect = c;
 
 		button g(0x00, 0xFF, 0x00, 0xFF, colorSelect.rect.x + 10, 10, 45, 45);
@@ -84,10 +88,22 @@ struct Customize
 		blue = b;
 		button r(0xFF, 0x00, 0x00, 0xFF, green.rect.x, blue.rect.y + 45 + 10, 45, 45);
 		red = r;
+		button p(0xFF, 0x00, 0xFF, 0xFF, green.rect.x, red.rect.y + 45 + 10, 45, 45);
+		purple = p;
+		button y(0xFF, 0xFF, 0x00, 0xFF, green.rect.x, purple.rect.y + 45 + 10, 45, 45);
+		yellow = y;
+		button w(0xFF, 0xFF, 0xFF, 0xFF, green.rect.x, yellow.rect.y + 45 + 10, 45, 45);
+		white = w;
+		button bl(0x00, 0x00, 0x00, 0xFF, green.rect.x, white.rect.y + 45 + 10, 45, 45);
+		black = bl;
 
 		colorButtons.push_back(green);
 		colorButtons.push_back(blue);
 		colorButtons.push_back(red);
+		colorButtons.push_back(purple);
+		colorButtons.push_back(yellow);
+		colorButtons.push_back(white);
+		colorButtons.push_back(black);
 
 		mute = false;
 		button mIC (SCREEN_WIDTH - 25 - 65, 5, 20, 20);
