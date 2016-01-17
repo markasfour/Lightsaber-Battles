@@ -30,9 +30,9 @@ struct Menu
 
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
 		
-		Title_rect.w = 500;
+		Title_rect.w = 600;
 		Title_rect.h = 200;
-		Title_rect.x = SCREEN_WIDTH / 2 - 250;
+		Title_rect.x = SCREEN_WIDTH / 2 - 300;
 		Title_rect.y = SCREEN_HEIGHT / 2 - 200;
 		
 		SDL_Color color = {0xFF, 0xFF, 0x00};

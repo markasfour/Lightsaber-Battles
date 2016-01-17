@@ -18,8 +18,8 @@ struct Character
 	{
 		name = "Luke";
 		hilt = &hilts.at(0);
-		blade = &blade_G;
-		bladetip = &bladetip_G;
+		blade = &blades.at(0);
+		bladetip = &bladetips.at(0);
 		ON_SOUND = ON_SOUND_1;
 		OFF_SOUND = OFF_SOUND_1;
 		HUM = HUM_1;
@@ -30,8 +30,8 @@ struct Character
 		if (n == "Luke")
 		{
 			hilt = &hilts.at(0);
-			blade = &blade_G;
-			bladetip = &bladetip_G;
+			blade = &blades.at(0);
+			bladetip = &bladetips.at(0);
 			ON_SOUND = ON_SOUND_1;
 			OFF_SOUND = OFF_SOUND_1;
 			HUM = HUM_1;
@@ -39,8 +39,8 @@ struct Character
 		else if (name == "Anakin")
 		{
 			hilt = &hilts.at(1);
-			blade = &blade_B;
-			bladetip = &bladetip_B;
+			blade = &blades.at(1);
+			bladetip = &bladetips.at(1);
 			ON_SOUND = ON_SOUND_2;
 			OFF_SOUND = OFF_SOUND_2;
 			HUM = HUM_2;
@@ -48,8 +48,8 @@ struct Character
 		else if (name == "Vader")
 		{
 			hilt = &hilts.at(2);
-			blade = &blade_R;
-			bladetip = &bladetip_R;
+			blade = &blades.at(2);
+			bladetip = &bladetips.at(2);
 			ON_SOUND = ON_SOUND_3;
 			OFF_SOUND = OFF_SOUND_3;
 			HUM = HUM_3;

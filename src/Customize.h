@@ -100,6 +100,7 @@ struct Customize
 	}
 	
 	void handleHiltSelectMouseDown(int mouse_x, int mouse_y);
+	void handleColorSelectMouseDown(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
@@ -113,7 +114,25 @@ struct Customize
 
 void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y)
 {
+	for (int i = 0; i < hiltButtons.size(); i++)
+	{
+		if (hiltButtons.at(i).wasClicked(mouse_x, mouse_y))
+		{
+			custom.hilt = &hilts.at(i); 
+		}
+	}
+}
 
+void Customize::handleColorSelectMouseDown(int mouse_x, int mouse_y)
+{
+	for (int i = 0; i < colorButtons.size(); i++)
+	{
+		if (colorButtons.at(i).wasClicked(mouse_x, mouse_y))
+		{
+			custom.blade = &blades.at(i); 
+			custom.bladetip = &bladetips.at(i);
+		}
+	}
 }
 
 void Customize::handleMuteMouseDown(int mouse_x, int mouse_y)
@@ -133,6 +152,12 @@ void Customize::handleBackMouseDown(int mouse_x, int mouse_y)
 
 void Customize::handleMouseDown(int mouse_x, int mouse_y)
 {
+	//hilt select
+	handleHiltSelectMouseDown(mouse_x, mouse_y);
+	
+	//color select
+	handleColorSelectMouseDown(mouse_x, mouse_y);
+	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
 	

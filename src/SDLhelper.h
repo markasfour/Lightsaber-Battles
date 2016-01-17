@@ -28,16 +28,11 @@ vector <LTexture> backgrounds (3);
 LTexture muteOn;
 LTexture muteOff;
 vector <LTexture> hilts (3);
-LTexture blade_G;
-LTexture blade_B;
-LTexture blade_R;
-LTexture bladetip_G;
-LTexture bladetip_B;
-LTexture bladetip_R;
-LTexture glow_R;
-LTexture LukeIcon;
-LTexture AnakinIcon;
-LTexture VaderIcon;
+vector <LTexture> blades (3);
+vector <LTexture> bladetips (3);
+//LTexture LukeIcon;
+//LTexture AnakinIcon;
+//LTexture VaderIcon;
 
 Mix_Chunk *ON_SOUND_1 = NULL;
 Mix_Chunk *ON_SOUND_2 = NULL;
@@ -145,7 +140,6 @@ bool loadMedia(string CurrentPath)
 	if (!loadImage(menuBackground, CurrentPath, "/content/MenuBackground.jpg"))
 		return false;
 
-	//load backgrounds
 	if (!loadImage(backgrounds.at(0), CurrentPath, "/content/background1.jpg"))
 		return false;
 	
@@ -173,27 +167,23 @@ bool loadMedia(string CurrentPath)
 		return false;	
 
 	//load blade images
-	if (!loadImage(blade_G, CurrentPath, "/content/blade_G.png"))
-		return false;	
+	if (!loadImage(blades.at(0), CurrentPath, "/content/blade_G.png"))
+		return false;
+	
+	if (!loadImage(blades.at(1), CurrentPath, "/content/blade_B.png"))
+		return false;
+	
+	if (!loadImage(blades.at(2), CurrentPath, "/content/blade_R.png"))
+		return false;
+	
+	if (!loadImage(bladetips.at(0), CurrentPath, "/content/bladetip_G.png"))
+		return false;
+	
+	if (!loadImage(bladetips.at(1), CurrentPath, "/content/bladetip_B.png"))
+		return false;
 
-	if (!loadImage(blade_B, CurrentPath, "/content/blade_B.png"))
-		return false;	
-
-	if (!loadImage(blade_R, CurrentPath, "/content/blade_R.png"))
-		return false;	
-
-	if (!loadImage(bladetip_G, CurrentPath, "/content/bladetip_G.png"))
-		return false;	
-
-	if (!loadImage(bladetip_B, CurrentPath, "/content/bladetip_B.png"))
-		return false;	
-
-	if (!loadImage(bladetip_R, CurrentPath, "/content/bladetip_R.png"))
-		return false;	
-
-	//load glow
-	if (!loadImage(glow_R, CurrentPath, "/content/glow_R.png"))
-		return false;	
+	if (!loadImage(bladetips.at(2), CurrentPath, "/content/bladetip_R.png"))
+		return false;
 
 	//load sound effects 
 	path << CurrentPath << "/content/SaberOn_1.wav";
@@ -294,12 +284,16 @@ void close()
 	muteOff.free();
 	for (int i = 0; i < hilts.size(); i++)
 		hilts.at(i).free();
-	blade_G.free();
-	blade_B.free();
-	blade_R.free();
-	bladetip_G.free();
-	bladetip_B.free();
-	bladetip_R.free();
+	for (int i = 0; i < blades.size(); i++)
+		blades.at(i).free();
+	for (int i = 0; i < bladetips.size(); i++)
+		bladetips.at(i).free();
+	//blade_G.free();
+	//blade_B.free();
+	//blade_R.free();
+	//bladetip_G.free();
+	//bladetip_B.free();
+	//bladetip_R.free();
 
 	//free loaded music
 
