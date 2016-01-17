@@ -53,7 +53,6 @@ struct Customize
 		custom.saber.hilt.y = 3 * SCREEN_HEIGHT / 4;
 		custom.saber.blade.y = custom.saber.hilt.y - 300;
 		custom.saber.bladetip.y = custom.saber.blade.y - 7;
-		custom.saber.on = false;
 
 		panel h(SCREEN_WIDTH - 65, 0, 3, 45, 10, true);
 		hiltSelect = h;
@@ -119,7 +118,7 @@ struct Customize
 	void handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
-	void handleBackMouseDown(int mouse_x, int mouse_y);
+	void handleBackMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMouseDown(int mouse_x, int mouse_y, Character &c);
 	void renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -163,10 +162,15 @@ void Customize::handleMuteMouseDown(int mouse_x, int mouse_y)
 	}
 }
 
-void Customize::handleBackMouseDown(int mouse_x, int mouse_y)
+void Customize::handleBackMouseDown(int mouse_x, int mouse_y, Character &c)
 {
 	if (back.wasClicked(mouse_x, mouse_y))
-		GAMES.at(1) = false;	
+	{
+		custom.saber.blade.h = 0;
+		custom.saber.on = false;
+		c = custom;
+		GAMES.at(1) = false;
+	}
 }
 
 void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c)
@@ -181,7 +185,7 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c)
 	handleMuteMouseDown(mouse_x, mouse_y);
 	
 	//back button click
-	handleBackMouseDown(mouse_x, mouse_y);
+	handleBackMouseDown(mouse_x, mouse_y, c);
 }
 
 void Customize::renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -263,6 +267,8 @@ void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 
 void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	{
+		custom.saber.blade.h = 300;
+
 		//clear screen
 		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
 		SDL_RenderClear(RENDERER);
