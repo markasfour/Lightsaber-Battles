@@ -19,6 +19,12 @@ struct Customize
 	button AnakinIC;
 	button VaderBG;
 	button VaderIC;
+	button SidiusBG;
+	button SidiusIC;
+	button WinduBG;
+	button WinduIC;
+	button FistoBG;
+	button FistoIC;
 
 	//color selection panel
 	panel colorSelect;
@@ -51,10 +57,10 @@ struct Customize
 		custom.saber.blade.x = custom.saber.hilt.x - 3;
 		custom.saber.bladetip.x = custom.saber.blade.x;
 		custom.saber.hilt.y = 3 * SCREEN_HEIGHT / 4;
-		custom.saber.blade.y = custom.saber.hilt.y - 300;
+		custom.saber.blade.y = custom.saber.hilt.y - 300 + 6;
 		custom.saber.bladetip.y = custom.saber.blade.y - 7;
 
-		panel h(SCREEN_WIDTH - 65, 0, 3, 45, 10, true);
+		panel h(SCREEN_WIDTH - 65, 0, 6, 45, 10, true);
 		hiltSelect = h;
 
 		button LBG(0x00, 0x00, 0x00, 0xFF, hiltSelect.rect.x + 10, 10, 45, 45);
@@ -63,6 +69,12 @@ struct Customize
 		AnakinBG = ABG;
 		button VBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, AnakinBG.rect.y + 45 + 10, 45, 45);
 		VaderBG = VBG;
+		button SBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, VaderBG.rect.y + 45 + 10, 45, 45);
+		SidiusBG = SBG;
+		button WBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, SidiusBG.rect.y + 45 + 10, 45, 45);
+		WinduBG = WBG;
+		button FBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, WinduBG.rect.y + 45 + 10, 45, 45);
+		FistoBG = FBG;
 
 		button LIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, LukeBG.rect.y + 3, 9, 40);
 		LukeIC = LIC;
@@ -70,14 +82,26 @@ struct Customize
 		AnakinIC = AIC;
 		button VIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, VaderBG.rect.y + 3, 9, 40);
 		VaderIC = VIC;
+		button SIC(SidiusBG.rect.x + (SidiusBG.rect.w / 2) - 3, SidiusBG.rect.y + 3, 9, 40);
+		SidiusIC = SIC;
+		button WIC(WinduBG.rect.x + (WinduBG.rect.w / 2) - 3, WinduBG.rect.y + 3, 9, 40);
+		WinduIC = WIC;
+		button FIC(FistoBG.rect.x + (FistoBG.rect.w / 2) - 3, FistoBG.rect.y + 3, 9, 40);
+		FistoIC = FIC;
 
 		hiltButtons.push_back(LukeBG);
 		hiltButtons.push_back(AnakinBG);
 		hiltButtons.push_back(VaderBG);
-		
+		hiltButtons.push_back(SidiusBG);
+		hiltButtons.push_back(WinduBG);
+		hiltButtons.push_back(FistoBG);
+
 		hiltIcons.push_back(LukeIC);
 		hiltIcons.push_back(AnakinIC);
 		hiltIcons.push_back(VaderIC);
+		hiltIcons.push_back(SidiusIC);
+		hiltIcons.push_back(WinduIC);
+		hiltIcons.push_back(FistoIC);
 
 		panel c(0, 0, 7, 45, 10, true);
 		colorSelect = c;
@@ -125,7 +149,7 @@ struct Customize
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);	
-
+	void close();
 };
 
 void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c)
@@ -266,36 +290,41 @@ void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 }
 
 void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
-	{
-		custom.saber.blade.h = 300;
+{
+	custom.saber.blade.h = 300;
 
-		//clear screen
-		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
-		SDL_RenderClear(RENDERER);
-		
-		//background
-		SDL_RenderCopy(RENDERER, backgrounds.at(0).mTexture, NULL, &backgroundRect);
+	//clear screen
+	SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
+	SDL_RenderClear(RENDERER);
+	
+	//background
+	SDL_RenderCopy(RENDERER, backgrounds.at(0).mTexture, NULL, &backgroundRect);
 
-		//blade
-		custom.renderBlade(RENDERER);
-		
-		//hilt
-		custom.renderHilt(RENDERER);
+	//blade
+	custom.renderBlade(RENDERER);
+	
+	//hilt
+	custom.renderHilt(RENDERER);
 
-		//hilt select GUI
-		renderHiltSelectGUI(RENDERER, mouse_x, mouse_y);
-		
-		//color select GUI
-		renderColorSelectGUI(RENDERER, mouse_x, mouse_y);
+	//hilt select GUI
+	renderHiltSelectGUI(RENDERER, mouse_x, mouse_y);
+	
+	//color select GUI
+	renderColorSelectGUI(RENDERER, mouse_x, mouse_y);
 
-		//mute button
-		renderMuteButton(RENDERER, mouse_x, mouse_y);
+	//mute button
+	renderMuteButton(RENDERER, mouse_x, mouse_y);
 
-		//back button
-		renderBackButton(RENDERER, mouse_x, mouse_y);
-				
-		//display
-		SDL_RenderPresent(RENDERER);
-	}
+	//back button
+	renderBackButton(RENDERER, mouse_x, mouse_y);
+			
+	//display
+	SDL_RenderPresent(RENDERER);
+}
+
+void Customize::close()
+{
+	back_text.free();
+}
 
 #endif

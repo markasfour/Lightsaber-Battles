@@ -19,8 +19,8 @@ struct Saber
 	
 	Saber()
 	{
-		hilt.w = 14;
-		hilt.h = 60;
+		hilt.w = 15;
+		hilt.h = 75;
 		blade.w = 21;
 		blade.h = 1;
 		bladetip.w = 21;
@@ -90,8 +90,8 @@ struct Saber
 	void handleBladePosition(int mouse_x, int mouse_y, bool switched)
 	{
 		//handle blade position
-		blade.x = mouse_x - (blade.w / 2);
-		blade.y = mouse_y - (hilt.h / 2) - blade.h; 
+		blade.x = mouse_x - (blade.w / 2) + (6 * cos((angle + 90) * (PI/180)));
+		blade.y = mouse_y - (hilt.h / 2) - (blade.h - (6 * sin((angle + 90) * (PI/180)))); 
 		handleOnOffSwitch(switched);
 	}
 

@@ -160,7 +160,9 @@ int main()
 		if (fps.get_ticks() < 1000/FRAMES_PER_SECOND)
 			SDL_Delay((1000/FRAMES_PER_SECOND) - fps.get_ticks());
 	}
-
+	main_menu.close();	
+	simulator.close();
+	customize.close();
 	close();
 	return 0;
 }

@@ -143,6 +143,7 @@ struct Simulator
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
+	void close();
 };
 
 void Simulator::handleSaberSelectMouseDown(int mouse_x, int mouse_y, Character custom)
@@ -459,6 +460,11 @@ void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 
 	//display
 	SDL_RenderPresent(RENDERER);
+}
+
+void Simulator::close()
+{
+	back_text.free();
 }
 
 #endif

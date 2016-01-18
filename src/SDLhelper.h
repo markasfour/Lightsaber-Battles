@@ -27,7 +27,7 @@ LTexture menuBackground;
 vector <LTexture> backgrounds (3);
 LTexture muteOn;
 LTexture muteOff;
-vector <LTexture> hilts (3);
+vector <LTexture> hilts (6);
 vector <LTexture> blades (7);
 vector <LTexture> bladetips (7);
 
@@ -162,6 +162,15 @@ bool loadMedia(string CurrentPath)
 	
 	if (!loadImage(hilts.at(2), CurrentPath, "/content/Vader_hilt.png"))
 		return false;	
+
+	if (!loadImage(hilts.at(3), CurrentPath, "/content/Sidius_hilt.png"))
+		return false;
+
+	if (!loadImage(hilts.at(4), CurrentPath, "/content/Windu_hilt.png"))
+		return false;
+
+	if (!loadImage(hilts.at(5), CurrentPath, "/content/Fisto_hilt.png"))
+		return false;
 
 	//load blade images
 	if (!loadImage(blades.at(0), CurrentPath, "/content/blade_G.png"))
@@ -309,12 +318,6 @@ void close()
 		blades.at(i).free();
 	for (int i = 0; i < bladetips.size(); i++)
 		bladetips.at(i).free();
-	//blade_G.free();
-	//blade_B.free();
-	//blade_R.free();
-	//bladetip_G.free();
-	//bladetip_B.free();
-	//bladetip_R.free();
 
 	//free loaded music
 

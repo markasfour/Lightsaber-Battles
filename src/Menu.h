@@ -113,6 +113,13 @@ struct Menu
 		//display
 		SDL_RenderPresent(RENDERER);
 	}
+
+	void close()
+	{
+		Title_text.free();
+		Simulator_text.free();
+		Customize_text.free();
+	}
 };
 
 #endif
