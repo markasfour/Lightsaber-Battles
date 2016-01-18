@@ -26,6 +26,7 @@
 #include "Menu.h"
 #include "Simulator.h"
 #include "Customize.h"
+#include "Battle.h"
 
 using namespace std;
 
@@ -66,11 +67,12 @@ int main()
 	double release_time = -1;
 	double total_time = -1;
 
+	Character custom;
+
 	Menu main_menu;
 	Simulator simulator;
 	Customize customize;
-	
-	Character custom;
+	Battle battle;
 
 	//Main loop
 	while (!quit)
@@ -132,27 +134,35 @@ int main()
 			mouse_held = false;
 		}
 
+		//handle mouse input
 		if (mouse_tap)
 		{
 			if (GAMES.at(0))
 				simulator.handleMouseDown(mouse_x, mouse_y, custom);
 			else if (GAMES.at(1))
 				customize.handleMouseDown(mouse_x, mouse_y, custom);
+			else if (GAMES.at(2))
+				battle.handleMouseDown(mouse_x, mouse_y);
 			else
 				main_menu.handleMouseDown(mouse_x, mouse_y);
 		}
 		total_time = -1;
 	
-
+		//handle game mechanics
 		if (GAMES.at(0))
 			simulator.handleGame(mouse_x, mouse_y);	
+		else if (GAMES.at(2))
+			battle.handleGame(mouse_x, mouse_y, custom);
 		else
 			main_menu.handleBackgroundMovement(mouse_x, mouse_y);
 
+		//handle rendering
 		if (GAMES.at(0))
 			simulator.renderEverything(RENDERER, mouse_x, mouse_y, custom);	
 		else if (GAMES.at(1))
 			customize.renderEverything(RENDERER, mouse_x, mouse_y);
+		else if (GAMES.at(2))
+			battle.renderEverything(RENDERER, mouse_x, mouse_y, custom);
 		else
 			main_menu.renderEverything(RENDERER, mouse_x, mouse_y);
 

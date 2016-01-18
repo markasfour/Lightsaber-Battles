@@ -20,6 +20,8 @@ struct Menu
 	LTexture Simulator_text;
 	button Customize;
 	LTexture Customize_text;
+	button Battle;
+	LTexture Battle_text;
 
 	Menu()
 	{
@@ -50,8 +52,15 @@ struct Menu
 		color = {0x00, 0xFF, 0xFF};
 		Customize_text.loadFromRenderedText(RENDERER, FONT, "Customize", color);
 
+		button b(0x4F, 0x4F, 0x4F, 0xFF, (SCREEN_WIDTH / 2) - 100, Customize.rect.y + 30 + 10, 200, 30);
+		Battle = b;
+		menuButtons.push_back(Battle);
+		color = {0x00, 0xFF, 0xFF};
+		Battle_text.loadFromRenderedText(RENDERER, FONT, "Battle", color);
+
 		GAMES.push_back(false); //simulator
 		GAMES.push_back(false); //customize
+		GAMES.push_back(false); //battles
 	}
 
 	void handleMouseDown(int mouse_x, int mouse_y)
@@ -60,6 +69,8 @@ struct Menu
 			GAMES.at(0) = true;
 		else if (Customize.wasClicked(mouse_x, mouse_y))
 			GAMES.at(1) = true;
+		else if (Battle.wasClicked(mouse_x, mouse_y))
+			GAMES.at(2) = true;
 	}
 
 	void handleBackgroundMovement(int mouse_x, int mouse_y)
@@ -82,6 +93,8 @@ struct Menu
 					SDL_RenderCopy(RENDERER, Simulator_text.mTexture, NULL, &menuButtons.at(0).hover);
 				if (i == 1)
 					SDL_RenderCopy(RENDERER, Customize_text.mTexture, NULL, &menuButtons.at(1).hover);
+				if (i == 2)
+					SDL_RenderCopy(RENDERER, Battle_text.mTexture, NULL, &menuButtons.at(2).hover);
 			}
 			else if (!menuButtons.at(i).mouseHover(mouse_x, mouse_y, true))
 			{	
@@ -90,6 +103,8 @@ struct Menu
 					SDL_RenderCopy(RENDERER, Simulator_text.mTexture, NULL, &menuButtons.at(0).rect);
 				if (i == 1)
 					SDL_RenderCopy(RENDERER, Customize_text.mTexture, NULL, &menuButtons.at(1).rect);
+				if (i == 2)
+					SDL_RenderCopy(RENDERER, Battle_text.mTexture, NULL, &menuButtons.at(2).rect);
 			}
 		}
 	}
@@ -119,6 +134,7 @@ struct Menu
 		Title_text.free();
 		Simulator_text.free();
 		Customize_text.free();
+		Battle_text.free();
 	}
 };
 

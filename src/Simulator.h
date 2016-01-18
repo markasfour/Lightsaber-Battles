@@ -188,7 +188,10 @@ void Simulator::handleMuteMouseDown(int mouse_x, int mouse_y)
 	if (muteIC.wasClicked(mouse_x, mouse_y))
 	{	
 		mute = !mute;
-		Mix_HaltChannel(2);	
+		Mix_HaltChannel(1);
+		Mix_HaltChannel(2);
+		Mix_HaltChannel(3);
+		Mix_HaltChannel(4);
 	}
 }
 
