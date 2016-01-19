@@ -80,6 +80,11 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 	{	
 		GAMES.at(2) = false;	
 		SDL_ShowCursor(1);
+		Mix_HaltChannel(1);
+		Mix_HaltChannel(2);
+		Mix_HaltChannel(3);
+		Mix_HaltChannel(4);
+		start = true;
 	}
 }
 
@@ -94,8 +99,15 @@ void Battle::handleMouseDown(int mouse_x, int mouse_y)
 
 void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 {
-	main_char = custom;
-	
+	if (start)
+	{
+		main_char = custom;
+		main_char.saber.on = true;
+		main_char.saber.handleOnOffSwitch(false);
+		if (!mute)
+			Mix_PlayChannel(2, main_char.ON_SOUND, 0);
+	}
+
 	SDL_ShowCursor(0);
 	
 	if (start && mouse_x == 0 && mouse_y == 0)

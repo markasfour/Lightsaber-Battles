@@ -201,6 +201,10 @@ void Simulator::handleBackMouseDown(int mouse_x, int mouse_y)
 	{	
 		GAMES.at(0) = false;	
 		SDL_ShowCursor(1);
+		Mix_HaltChannel(1);
+		Mix_HaltChannel(2);
+		Mix_HaltChannel(3);
+		Mix_HaltChannel(4);
 	}
 }
 
