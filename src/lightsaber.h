@@ -64,14 +64,14 @@ struct Saber
 		//blade on
 		if (on)
 		{
-			if (blade.h < 300 && !switched)
+			if (blade.h < 250 && !switched)
 			{
 				blade.h += 10;
 				blade.y -= (10 * sin((angle + 90) * (PI/180)));
 				blade.x -= (10 * cos((angle + 90) * (PI/180)));
 			}
 			else
-				blade.h = 300;
+				blade.h = 250;
 		}
 		//blade off
 		if (!on)

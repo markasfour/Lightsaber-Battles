@@ -52,12 +52,12 @@ struct Customize
 		backgroundRect.x = (SCREEN_WIDTH - backgroundRect.w) / 2;
 		backgroundRect.y = SCREEN_HEIGHT - backgroundRect.h;
 	
-		custom.saber.blade.h = 300;
+		custom.saber.blade.h = 250;
 		custom.saber.hilt.x = SCREEN_WIDTH / 2;
 		custom.saber.blade.x = custom.saber.hilt.x - 3;
 		custom.saber.bladetip.x = custom.saber.blade.x;
 		custom.saber.hilt.y = 3 * SCREEN_HEIGHT / 4;
-		custom.saber.blade.y = custom.saber.hilt.y - 300 + 6;
+		custom.saber.blade.y = custom.saber.hilt.y - 250 + 6;
 		custom.saber.bladetip.y = custom.saber.blade.y - 7;
 
 		panel h(SCREEN_WIDTH - 65, 0, 6, 45, 10, true);

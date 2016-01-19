@@ -17,6 +17,8 @@ struct Battle
 	//characters
 	Character main_char;
 	Character opponent;
+	SDL_Rect op_rect;
+	SDL_Point op_point;
 
 	//mute
 	bool mute;
@@ -40,7 +42,26 @@ struct Battle
 		background = rand() % backgrounds.size();
 
 		start = true;
-		
+	
+		op_rect.x = SCREEN_WIDTH / 2 - 100;
+		op_rect.y = SCREEN_HEIGHT / 2 - 150;
+		op_rect.w = 200;
+		op_rect.h = 300;
+	
+		op_point.x = rand() % op_rect.w + op_rect.x;
+		op_point.y = rand() % op_rect.h + op_rect.y;
+
+		opponent.saber.hilt.w *= 3.0/4;
+		opponent.saber.hilt.h *= 3.0/4;
+		opponent.saber.blade.w *= 3.0/4;
+		opponent.saber.blade.h *= 3.0/4;
+		opponent.saber.bladetip.w *= 3.0/4;
+		opponent.saber.bladetip.h *= 3.0/4;
+		opponent.hilt = &hilts.at(rand() % hilts.size());
+		int x = rand() % blades.size();
+		opponent.blade = &blades.at(x);
+		opponent.bladetip = &bladetips.at(x);
+
 		mute = false;
 		soundOn = false;
 		soundOff = false;
@@ -85,6 +106,12 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 		Mix_HaltChannel(3);
 		Mix_HaltChannel(4);
 		start = true;
+		op_point.x = rand() % op_rect.w + op_rect.x;
+		op_point.y = rand() % op_rect.h + op_rect.y;
+		opponent.hilt = &hilts.at(rand() % hilts.size());
+		int x = rand() % blades.size();
+		opponent.blade = &blades.at(x);
+		opponent.bladetip = &bladetips.at(x);
 	}
 }
 
@@ -106,6 +133,10 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 		main_char.saber.handleOnOffSwitch(false);
 		if (!mute)
 			Mix_PlayChannel(2, main_char.ON_SOUND, 0);
+		opponent.saber.on = true;
+		opponent.saber.handleOnOffSwitch(false);	
+		if (!mute)
+			Mix_PlayChannel(2, opponent.ON_SOUND, 0);
 	}
 
 	SDL_ShowCursor(0);
@@ -120,10 +151,13 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 	
 	//handle hum sound 
 	main_char.handleHumSound(mute);
-	
+	opponent.handleHumSound(mute);
+
 	//get center points
 	center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
+	op_center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 	main_char.saber.setCenterPoints();
+	opponent.saber.setCenterPoints();
 
 	//move background
 	backgroundRect.x = (-1 * (((center.x - mouse_x) / double(center.x)) * ((SCREEN_WIDTH - backgroundRect.w))/2)) - ((backgroundRect.w - SCREEN_WIDTH)/2);
@@ -131,6 +165,8 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 
 	//handle angle
 	main_char.saber.handleAngle(center, mouse_x, mouse_y);
+	opponent.saber.handleAngle(op_center, op_point.x, op_point.y);
+	opponent.saber.angle /= 2;
 
 	//handle swing
 	main_char.saber.handleSwing();
@@ -138,6 +174,7 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 
 	//handle saber position
 	main_char.saber.handleSaberPosition(mouse_x, mouse_y, false);
+	opponent.saber.handleSaberPosition(op_point.x, op_point.y, false);
 }
 
 void Battle::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -182,13 +219,23 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	
 	//background
 	SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
+
+	//opponent rect
+	SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
+	SDL_RenderDrawRect(RENDERER, &op_rect);
 	
-	//blade
+	//opponent blade
+	opponent.renderBlade(RENDERER);
+	
+	//opponent hilt
+	opponent.renderHilt(RENDERER);
+
+	//main char blade
 	main_char.renderBlade(RENDERER);
 	
-	//hilt
+	//main char hilt
 	main_char.renderHilt(RENDERER);
-	
+
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
 
