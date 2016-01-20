@@ -298,8 +298,6 @@ void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 
 void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
-	custom.saber.blade.h = 300;
-
 	//clear screen
 	SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
 	SDL_RenderClear(RENDERER);
