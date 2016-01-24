@@ -26,6 +26,12 @@ struct Battle
 	Character opponent;
 	SDL_Rect op_rect;
 	SDL_Point op_point;
+	
+	//attack
+	bool main_char_attack;
+	bool main_char_zoomIn;
+	bool main_char_zoomOut;
+	bool opponent_attack;
 
 	//mute
 	bool mute;
@@ -58,23 +64,20 @@ struct Battle
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;
 
-		opponent.saber.hilt.w *= 3.0/4;
-		opponent.saber.hilt.h *= 3.0/4;
-		opponent.saber.blade.w *= 3.0/4;
-		opponent.saber.blade.h *= 3.0/4;
-		opponent.saber.bladetip.w *= 3.0/4;
-		opponent.saber.bladetip.h *= 3.0/4;
-		opponent.hilt = &hilts.at(rand() % hilts.size());
-		int x = rand() % blades.size();
-		opponent.blade = &blades.at(x);
-		opponent.bladetip = &bladetips.at(x);
-
+		Character o(1.00);
+		opponent = o;
+		
 		rReady = false;
 		rFight = false;
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
 		ready.loadFromRenderedText(RENDERER, FONT, "Ready", color);
 		color = {0xFF, 0xFF, 0xFF};
 		fight.loadFromRenderedText(RENDERER, FONT, "Fight", color);
+
+		main_char_attack = false;
+		main_char_zoomIn = false;
+		main_char_zoomOut = false;
+		opponent_attack = false;
 
 		mute = false;
 		soundOn = false;
@@ -88,6 +91,7 @@ struct Battle
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
 	
+	void handleAttack(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
@@ -97,6 +101,15 @@ struct Battle
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
 };
+
+void Battle::handleAttack(int mouse_x, int mouse_y)
+{
+	if (!muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
+	{
+		main_char_attack = true;
+		main_char_zoomIn = true;
+	}
+}
 
 void Battle::handleMuteMouseDown(int mouse_x, int mouse_y)
 {
@@ -134,6 +147,9 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 
 void Battle::handleMouseDown(int mouse_x, int mouse_y)
 {
+	//main char attack
+	handleAttack(mouse_x, mouse_y);
+	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
 	
@@ -170,17 +186,23 @@ void Battle::handleStart(Character custom)
 		if (ready_time.get_ticks() > 1500)
 		{
 			rReady = false;
-			main_char.saber.on = true;
-			main_char.saber.handleOnOffSwitch(false);
-			//if (!mute && !Mix_Playing(2))
-			//	Mix_PlayChannel(2, main_char.ON_SOUND, 0);
-			opponent.saber.on = true;
-			opponent.saber.handleOnOffSwitch(false);	
-
+			
 			if (!wait.is_started())
 				wait.start();
+			
+			main_char.saber.on = true;
+			main_char.saber.handleOnOffSwitch(false);
+			if (!mute && !Mix_Playing(2) && wait.get_ticks() < 2000)
+				Mix_PlayChannel(2, main_char.ON_SOUND, 0);
+			if (wait.get_ticks() > 2000)
+			{
+				opponent.saber.on = true;
+				opponent.saber.handleOnOffSwitch(false);	
+				if (!mute && !Mix_Playing(2) && wait.get_ticks() < 2500)
+					Mix_PlayChannel(2, opponent.ON_SOUND, 0);
+			}
 		}
-		if (wait.get_ticks() > 1500)
+		if (wait.get_ticks() > 3000)
 		{
 			rFight = true;
 			if (!fight_time.is_started())
@@ -204,6 +226,29 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 		
 	if (!start)	
 	{
+		//handle main_char attack
+		if (main_char_attack)
+		{
+			if (main_char.depth < 1 && main_char_zoomIn)
+			{
+				main_char.zoomIn();
+				if (main_char.depth >= 1)
+				{
+					main_char_zoomIn = false;
+					main_char_zoomOut = true;
+				}
+			}
+			else if (main_char.depth > 0 && main_char_zoomOut)
+			{	
+				main_char.zoomOut();
+				if (main_char.depth <= 0)
+				{
+					main_char_zoomOut = false;
+					main_char_attack = false;
+				}
+			}
+		}
+
 		//handle hum sound 
 		main_char.handleHumSound(mute);
 		opponent.handleHumSound(mute);

@@ -13,6 +13,7 @@ struct Character
 	Mix_Chunk *OFF_SOUND;
 	Mix_Chunk *HUM;
 	Saber saber;
+	double depth;
 
 	Character()
 	{
@@ -23,6 +24,7 @@ struct Character
 		ON_SOUND = ON_SOUND_1;
 		OFF_SOUND = OFF_SOUND_1;
 		HUM = HUM_1;
+		depth = 0;
 	}
 	Character(string n)
 	{
@@ -35,6 +37,7 @@ struct Character
 			ON_SOUND = ON_SOUND_1;
 			OFF_SOUND = OFF_SOUND_1;
 			HUM = HUM_1;
+			depth = 0;
 		}
 		else if (name == "Anakin")
 		{
@@ -44,6 +47,7 @@ struct Character
 			ON_SOUND = ON_SOUND_2;
 			OFF_SOUND = OFF_SOUND_2;
 			HUM = HUM_2;
+			depth = 0;
 		}
 		else if (name == "Vader")
 		{
@@ -53,7 +57,25 @@ struct Character
 			ON_SOUND = ON_SOUND_3;
 			OFF_SOUND = OFF_SOUND_3;
 			HUM = HUM_3;
+			depth = 0;
 		}
+	}
+	Character(double d)
+	{
+		depth = d;
+		saber.hilt.w *= d * (3.0/4);
+		saber.hilt.h *= d * 3.0/4;
+		saber.blade.w *= d * 3.0/4;
+		saber.blade.h *= d * 3.0/4;
+		saber.bladetip.w *= d * 3.0/4;
+		saber.bladetip.h *= d * 3.0/4;
+		hilt = &hilts.at(rand() % hilts.size());
+		int x = rand() % blades.size();
+		blade = &blades.at(x);
+		bladetip = &bladetips.at(x);
+		ON_SOUND = ON_SOUND_3;
+		OFF_SOUND = OFF_SOUND_3;
+		HUM = HUM_3;
 	}
 	Character(const Character &c)
 	{
@@ -65,6 +87,45 @@ struct Character
 		OFF_SOUND = c.OFF_SOUND;
 		HUM = c.HUM;
 		saber = c.saber;
+		depth = c.depth;
+	}
+	
+	void zoomIn() //from depth <1 to 1 (going into the screen)
+	{
+		if (depth >= 1)
+		{
+			depth = 1;
+			return;
+		}
+		else
+		{
+			depth += .133;
+			saber.hilt.w = 15.0 - ((15.0 - (15.0 * 0.75)) * depth);
+			saber.hilt.h = 75.0 - ((75.0 - (75.0 * 0.75)) * depth);
+			saber.blade.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
+			saber.blade.h = 250.0 - ((250.0 - (250.0 * 0.75)) * depth);
+			saber.bladetip.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
+			saber.bladetip.h = 7.0  - ((7.0 - (7.0 * 0.75)) * depth);
+		}
+	}
+
+	void zoomOut() //from depth >0 to 0 (going out of the screen)
+	{
+		if (depth <= 0)
+		{
+			depth = 0;
+			return;
+		}
+		else
+		{
+			depth -= .133;
+			saber.hilt.w = 15.0 - ((15.0 - (15.0 * 0.75)) * depth);
+			saber.hilt.h = 75.0 - ((75.0 - (75.0 * 0.75)) * depth);
+			saber.blade.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
+			saber.blade.h = 250.0 - ((250.0 - (250.0 * 0.75)) * depth);
+			saber.bladetip.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
+			saber.bladetip.h = 7.0  - ((7.0 - (7.0 * 0.75)) * depth);
+		}
 	}
 
 	void handleHumSound(bool mute)
