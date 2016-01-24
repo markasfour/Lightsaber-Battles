@@ -106,6 +106,9 @@ void Battle::handleAttack(int mouse_x, int mouse_y)
 {
 	if (!muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
 	{
+		int x = rand() % HITS.size();
+		if (!mute)
+			Mix_PlayChannel(-1, HITS.at(x), 0);
 		main_char_attack = true;
 		main_char_zoomIn = true;
 	}
@@ -116,10 +119,7 @@ void Battle::handleMuteMouseDown(int mouse_x, int mouse_y)
 	if (muteIC.wasClicked(mouse_x, mouse_y))
 	{	
 		mute = !mute;
-		Mix_HaltChannel(1);
-		Mix_HaltChannel(2);
-		Mix_HaltChannel(3);
-		Mix_HaltChannel(4);
+		Mix_HaltChannel(-1);
 	}
 }
 
@@ -129,10 +129,7 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 	{	
 		GAMES.at(2) = false;	
 		SDL_ShowCursor(1);
-		Mix_HaltChannel(1);
-		Mix_HaltChannel(2);
-		Mix_HaltChannel(3);
-		Mix_HaltChannel(4);
+		Mix_HaltChannel(-1);
 		start = true;
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;

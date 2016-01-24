@@ -42,6 +42,7 @@ Mix_Chunk *HUM_2 = NULL;
 Mix_Chunk *HUM_3 = NULL;
 Mix_Chunk *SWING_SOUND_1 = NULL;
 Mix_Chunk *SWING_SOUND_2 = NULL;
+vector <Mix_Chunk*> HITS(7);
 
 bool init()
 {
@@ -299,6 +300,62 @@ bool loadMedia(string CurrentPath)
 	path << CurrentPath << "/content/swing2.wav";
 	SWING_SOUND_2 = Mix_LoadWAV(path.str().c_str());
 	if (SWING_SOUND_2 == NULL)
+		return false;
+	
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/hit_1.wav";
+	HITS.at(0) = Mix_LoadWAV(path.str().c_str());
+	if (HITS.at(0) == NULL)
+		return false;
+	
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/hit_2.wav";
+	HITS.at(1) = Mix_LoadWAV(path.str().c_str());
+	if (HITS.at(1) == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/hit_3.wav";
+	HITS.at(2) = Mix_LoadWAV(path.str().c_str());
+	if (HITS.at(2) == NULL)
+		return false;
+	
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/hit_4.wav";
+	HITS.at(3) = Mix_LoadWAV(path.str().c_str());
+	if (HITS.at(3) == NULL)
+		return false;
+	
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/hit_5.wav";
+	HITS.at(4) = Mix_LoadWAV(path.str().c_str());
+	if (HITS.at(4) == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/hit_6.wav";
+	HITS.at(5) = Mix_LoadWAV(path.str().c_str());
+	if (HITS.at(5) == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/hit_7.wav";
+	HITS.at(6) = Mix_LoadWAV(path.str().c_str());
+	if (HITS.at(6) == NULL)
 		return false;
 
 	return true;
