@@ -26,7 +26,8 @@ struct Battle
 	Character opponent;
 	SDL_Rect op_rect;
 	SDL_Point op_point;
-	
+	SDL_Point temp_point;
+
 	//attack
 	bool main_char_attack;
 	bool main_char_zoomIn;
@@ -63,6 +64,7 @@ struct Battle
 	
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;
+		temp_point = op_point;
 
 		Character o(1.00);
 		opponent = o;
@@ -96,6 +98,7 @@ struct Battle
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
 	void handleStart(Character custom);
+	void handleOpponent(int mouse_x, int mouse_y);
 	void handleGame(int mouse_x, int mouse_y, Character custom);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -216,6 +219,26 @@ void Battle::handleStart(Character custom)
 	}
 }
 
+void Battle::handleOpponent(int mouse_x, int mouse_y)
+{
+	if (op_point.x == temp_point.x && op_point.y == temp_point.y)
+	{
+		temp_point.x = rand() % op_rect.w + op_rect.x;
+		temp_point.y = rand() % op_rect.h + op_rect.y;
+	}
+	if (op_point.x != temp_point.x || op_point.y != temp_point.y)
+	{
+		if (op_point.x < temp_point.x)
+			op_point.x++;
+		else if (op_point.x > temp_point.x)
+			op_point.x--;
+		if (op_point.y < temp_point.y)
+			op_point.y++;
+		else if (op_point.y > temp_point.y)
+			op_point.y--;
+	}
+}
+
 void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 {
 	//handle start
@@ -245,6 +268,9 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 				}
 			}
 		}
+		
+		//handle opponent
+		handleOpponent(mouse_x, mouse_y);
 
 		//handle hum sound 
 		main_char.handleHumSound(mute);
