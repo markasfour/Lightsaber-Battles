@@ -105,6 +105,8 @@ struct Battle
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
 	
+	bool bladeIntersect();
+	void handleBlock();
 	void handleAttack(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
@@ -117,6 +119,32 @@ struct Battle
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
 };
+
+bool Battle::bladeIntersect()
+{
+	int a_x1 = main_char.saber.blade.x + 10 + ((main_char.saber.blade.x + 10) * sin(main_char.saber.angle * PI/180));
+	int a_x2 = main_char.saber.blade.x + 10 + ((main_char.saber.blade.x + 10 - 250) * sin(main_char.saber.angle * PI/180));
+	int a_y1 = main_char.saber.blade.y + ((main_char.saber.blade.y) * cos(main_char.saber.angle * PI/180));
+	int a_y2 = main_char.saber.blade.y + ((main_char.saber.blade.y + 250) * cos(main_char.saber.angle * PI/180));
+
+	int b_x1 = opponent.saber.blade.x + 8 + ((opponent.saber.blade.x + 8) * sin(opponent.saber.angle * PI/180));
+	int b_x2 = opponent.saber.blade.x + 8 + ((opponent.saber.blade.x + 8 - 188) * sin(opponent.saber.angle * PI/180));
+	int b_y1 = opponent.saber.blade.y + ((opponent.saber.blade.y) * cos(opponent.saber.angle * PI/180)); 
+	int b_y2 = opponent.saber.blade.y + ((opponent.saber.blade.y + 188) * cos(opponent.saber.angle * PI/180));
+
+	//if statements here	
+
+	return false;		
+}
+
+void Battle::handleBlock()
+{
+	if (main_char_attack || opponent_attack)
+	{
+		if (bladeIntersect())
+			cout << "BLOCKED" << endl;
+	}
+}
 
 void Battle::handleAttack(int mouse_x, int mouse_y)
 {
@@ -306,6 +334,8 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 		
 	if (!start)	
 	{
+		handleBlock();
+
 		//handle main_char attack
 		if (main_char_attack)
 		{
