@@ -33,6 +33,10 @@ struct Battle
 	bool main_char_zoomIn;
 	bool main_char_zoomOut;
 	bool opponent_attack;
+	bool opponent_zoomIn;
+	bool opponent_zoomOut;
+	Timer attack_timer;
+	vector <int> attack_times;
 
 	//mute
 	bool mute;
@@ -69,6 +73,12 @@ struct Battle
 		Character o(1.00);
 		opponent = o;
 		
+		for (int i = 0; i < 100; i++)
+		{
+			int x = rand() % 3 + 1;
+			attack_times.push_back(x * 1000);
+		}
+
 		rReady = false;
 		rFight = false;
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
@@ -80,6 +90,8 @@ struct Battle
 		main_char_zoomIn = false;
 		main_char_zoomOut = false;
 		opponent_attack = false;
+		opponent_zoomIn = false;
+		opponent_zoomOut = false;
 
 		mute = false;
 		soundOn = false;
@@ -98,6 +110,7 @@ struct Battle
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
 	void handleStart(Character custom);
+	void handleOpponentAttack(int mouse_x, int mouse_y);
 	void handleOpponent(int mouse_x, int mouse_y);
 	void handleGame(int mouse_x, int mouse_y, Character custom);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -215,6 +228,29 @@ void Battle::handleStart(Character custom)
 			ready_time.stop();
 			wait.stop();
 			fight_time.stop();
+			attack_timer.start();		//opponent attack timer
+		}
+	}
+}
+
+void Battle::handleOpponentAttack(int mouse_x, int mouse_y)
+{
+	if (attack_timer.get_ticks() >= attack_times.at(0))
+	{
+		int x = rand() % HITS.size();
+		if (!mute)
+			Mix_PlayChannel(-1, HITS.at(x), 0);
+		opponent_attack = true;
+		opponent_zoomOut = true;
+		attack_timer.stop();
+		attack_timer.start();
+	}
+	if (attack_times.size() == 0)
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			int x = rand() % 5 + 1;
+			attack_times.push_back(x * 1000);
 		}
 	}
 }
@@ -236,6 +272,30 @@ void Battle::handleOpponent(int mouse_x, int mouse_y)
 			op_point.y++;
 		else if (op_point.y > temp_point.y)
 			op_point.y--;
+	}
+
+	//handle opponent attack
+	handleOpponentAttack(mouse_x, mouse_y);
+	if (opponent_attack)
+	{
+		if (opponent.depth > 0 && opponent_zoomOut)
+		{
+			opponent.zoomOut();
+			if (opponent.depth <= 0)
+			{
+				opponent_zoomOut = false;
+				opponent_zoomIn = true;
+			}
+		}
+		else if (opponent.depth < 1 && opponent_zoomIn)
+		{	
+			opponent.zoomIn();
+			if (opponent.depth >= 1)
+			{
+				opponent_zoomIn = false;
+				opponent_attack = false;
+			}
+		}
 	}
 }
 
