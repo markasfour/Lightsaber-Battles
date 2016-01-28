@@ -30,6 +30,7 @@ LTexture muteOff;
 vector <LTexture> hilts (6);
 vector <LTexture> blades (7);
 vector <LTexture> bladetips (7);
+vector <LTexture> bladebases (7);
 
 Mix_Chunk *ON_SOUND_1 = NULL;
 Mix_Chunk *ON_SOUND_2 = NULL;
@@ -194,7 +195,8 @@ bool loadMedia(string CurrentPath)
 
 	if (!loadImage(blades.at(6), CurrentPath, "/content/blade_BL.png"))
 		return false;
-
+	
+	//tips
 	if (!loadImage(bladetips.at(0), CurrentPath, "/content/bladetip_G.png"))
 		return false;
 	
@@ -215,7 +217,29 @@ bool loadMedia(string CurrentPath)
 
 	if (!loadImage(bladetips.at(6), CurrentPath, "/content/bladetip_BL.png"))
 		return false;
+
+	//bases
+	if (!loadImage(bladebases.at(0), CurrentPath, "/content/bladebase_G.png"))
+		return false;
 	
+	if (!loadImage(bladebases.at(1), CurrentPath, "/content/bladebase_B.png"))
+		return false;
+
+	if (!loadImage(bladebases.at(2), CurrentPath, "/content/bladebase_R.png"))
+		return false;
+
+	if (!loadImage(bladebases.at(3), CurrentPath, "/content/bladebase_P.png"))
+		return false;
+
+	if (!loadImage(bladebases.at(4), CurrentPath, "/content/bladebase_Y.png"))
+		return false;
+
+	if (!loadImage(bladebases.at(5), CurrentPath, "/content/bladebase_W.png"))
+		return false;
+
+	if (!loadImage(bladebases.at(6), CurrentPath, "/content/bladebase_BL.png"))
+		return false;
+
 	//load sound effects 
 	path << CurrentPath << "/content/SaberOn_1.wav";
 	ON_SOUND_1 = Mix_LoadWAV(path.str().c_str());
@@ -375,6 +399,8 @@ void close()
 		blades.at(i).free();
 	for (int i = 0; i < bladetips.size(); i++)
 		bladetips.at(i).free();
+	for (int i = 0; i < bladebases.size(); i++)
+		bladebases.at(i).free();
 
 	//free loaded music
 

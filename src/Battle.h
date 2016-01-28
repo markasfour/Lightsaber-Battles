@@ -37,7 +37,7 @@ struct Battle
 	bool opponent_zoomOut;
 	Timer attack_timer;
 	vector <int> attack_times;
-
+	
 	//mute
 	bool mute;
 	bool soundOn;
@@ -122,19 +122,10 @@ struct Battle
 
 bool Battle::bladeIntersect()
 {
-	int a_x1 = main_char.saber.blade.x + 10 + ((main_char.saber.blade.x + 10) * sin(main_char.saber.angle * PI/180));
-	int a_x2 = main_char.saber.blade.x + 10 + ((main_char.saber.blade.x + 10 - 250) * sin(main_char.saber.angle * PI/180));
-	int a_y1 = main_char.saber.blade.y + ((main_char.saber.blade.y) * cos(main_char.saber.angle * PI/180));
-	int a_y2 = main_char.saber.blade.y + ((main_char.saber.blade.y + 250) * cos(main_char.saber.angle * PI/180));
-
-	int b_x1 = opponent.saber.blade.x + 8 + ((opponent.saber.blade.x + 8) * sin(opponent.saber.angle * PI/180));
-	int b_x2 = opponent.saber.blade.x + 8 + ((opponent.saber.blade.x + 8 - 188) * sin(opponent.saber.angle * PI/180));
-	int b_y1 = opponent.saber.blade.y + ((opponent.saber.blade.y) * cos(opponent.saber.angle * PI/180)); 
-	int b_y2 = opponent.saber.blade.y + ((opponent.saber.blade.y + 188) * cos(opponent.saber.angle * PI/180));
-
-	//if statements here	
-
-	return false;		
+	if (SDL_HasIntersection(&main_char.saber.blade, &opponent.saber.blade))
+		return true;
+	else
+		return false;		
 }
 
 void Battle::handleBlock()
@@ -143,6 +134,8 @@ void Battle::handleBlock()
 	{
 		if (bladeIntersect())
 			cout << "BLOCKED" << endl;
+		else
+			cout << "HIT" << endl;
 	}
 }
 
@@ -456,6 +449,12 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//back button
 	renderBackButton(RENDERER, mouse_x, mouse_y);
 	
+	
+	//test
+	SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
+	SDL_RenderDrawRect(RENDERER, &opponent.saber.blade);
+	SDL_RenderDrawRect(RENDERER, &main_char.saber.blade);
+
 	//ready
 	SDL_Rect r;
 	r.x = SCREEN_WIDTH / 2 - 100;

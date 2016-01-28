@@ -315,7 +315,7 @@ void Simulator::handleGame(int mouse_x, int mouse_y)
 	//move background
 	backgroundRect.x = (-1 * (((center.x - mouse_x) / double(center.x)) * ((SCREEN_WIDTH - backgroundRect.w))/2)) - ((backgroundRect.w - SCREEN_WIDTH)/2);
 	backgroundRect.y = (((center.y - mouse_y) / double(center.y)) * (SCREEN_HEIGHT - backgroundRect.h)/2);
-
+	
 	//handle angle
 	main_char.saber.handleAngle(center, mouse_x, mouse_y);
 
@@ -325,7 +325,7 @@ void Simulator::handleGame(int mouse_x, int mouse_y)
 
 	//handle saber position
 	main_char.saber.handleSaberPosition(mouse_x, mouse_y, switched);
-	
+
 	//lightsaber select gui
 	handleSaberSelectGUI(mouse_x, mouse_y);
 

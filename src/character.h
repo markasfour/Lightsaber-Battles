@@ -9,6 +9,7 @@ struct Character
 	LTexture *hilt;
 	LTexture *blade;
 	LTexture *bladetip;
+	LTexture *bladebase;
 	Mix_Chunk *ON_SOUND;
 	Mix_Chunk *OFF_SOUND;
 	Mix_Chunk *HUM;
@@ -21,6 +22,7 @@ struct Character
 		hilt = &hilts.at(0);
 		blade = &blades.at(0);
 		bladetip = &bladetips.at(0);
+		bladebase = &bladebases.at(0);
 		ON_SOUND = ON_SOUND_1;
 		OFF_SOUND = OFF_SOUND_1;
 		HUM = HUM_1;
@@ -34,6 +36,7 @@ struct Character
 			hilt = &hilts.at(0);
 			blade = &blades.at(0);
 			bladetip = &bladetips.at(0);
+			bladebase = &bladebases.at(0);
 			ON_SOUND = ON_SOUND_1;
 			OFF_SOUND = OFF_SOUND_1;
 			HUM = HUM_1;
@@ -44,6 +47,7 @@ struct Character
 			hilt = &hilts.at(1);
 			blade = &blades.at(1);
 			bladetip = &bladetips.at(1);
+			bladebase = &bladebases.at(1);
 			ON_SOUND = ON_SOUND_2;
 			OFF_SOUND = OFF_SOUND_2;
 			HUM = HUM_2;
@@ -54,6 +58,7 @@ struct Character
 			hilt = &hilts.at(2);
 			blade = &blades.at(2);
 			bladetip = &bladetips.at(2);
+			bladebase = &bladebases.at(2);
 			ON_SOUND = ON_SOUND_3;
 			OFF_SOUND = OFF_SOUND_3;
 			HUM = HUM_3;
@@ -69,10 +74,13 @@ struct Character
 		saber.blade.h *= d * 3.0/4;
 		saber.bladetip.w *= d * 3.0/4;
 		saber.bladetip.h *= d * 3.0/4;
+		saber.bladebase.w *= d * 3.0/4;
+		saber.bladebase.h *= d * 3.0/4;
 		hilt = &hilts.at(rand() % hilts.size());
 		int x = rand() % blades.size();
 		blade = &blades.at(x);
 		bladetip = &bladetips.at(x);
+		bladebase = &bladebases.at(x);
 		ON_SOUND = ON_SOUND_3;
 		OFF_SOUND = OFF_SOUND_3;
 		HUM = HUM_3;
@@ -83,6 +91,7 @@ struct Character
 		hilt = c.hilt;
 		blade = c.blade;
 		bladetip = c.bladetip;
+		bladebase = c.bladebase;
 		ON_SOUND = c.ON_SOUND;
 		OFF_SOUND = c.OFF_SOUND;
 		HUM = c.HUM;
@@ -99,13 +108,15 @@ struct Character
 		}
 		else
 		{
-			depth += .133;
+			depth += .13333333;
 			saber.hilt.w = 15.0 - ((15.0 - (15.0 * 0.75)) * depth);
 			saber.hilt.h = 75.0 - ((75.0 - (75.0 * 0.75)) * depth);
 			saber.blade.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
 			saber.blade.h = 250.0 - ((250.0 - (250.0 * 0.75)) * depth);
 			saber.bladetip.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
 			saber.bladetip.h = 7.0  - ((7.0 - (7.0 * 0.75)) * depth);
+			saber.bladebase.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
+			saber.bladebase.h = 7.0  - ((7.0 - (7.0 * 0.75)) * depth);
 		}
 	}
 
@@ -118,13 +129,15 @@ struct Character
 		}
 		else
 		{
-			depth -= .133;
+			depth -= .13333333;
 			saber.hilt.w = 15.0 - ((15.0 - (15.0 * 0.75)) * depth);
 			saber.hilt.h = 75.0 - ((75.0 - (75.0 * 0.75)) * depth);
 			saber.blade.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
 			saber.blade.h = 250.0 - ((250.0 - (250.0 * 0.75)) * depth);
 			saber.bladetip.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
 			saber.bladetip.h = 7.0  - ((7.0 - (7.0 * 0.75)) * depth);
+			saber.bladebase.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
+			saber.bladebase.h = 7.0  - ((7.0 - (7.0 * 0.75)) * depth);
 		}
 	}
 
@@ -172,6 +185,8 @@ struct Character
 						 	 saber.angle, &saber.bladeCenter, SDL_FLIP_NONE);
 			SDL_RenderCopyEx(RENDERER, bladetip->mTexture, NULL, &saber.bladetip, 
 						 	 saber.angle, &saber.bladetipCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, bladebase->mTexture, NULL, &saber.bladebase, 
+						 	 saber.angle, &saber.bladebaseCenter, SDL_FLIP_NONE);
 		}
 		if (!saber.on && saber.blade.h > 0)
 		{
@@ -179,6 +194,8 @@ struct Character
 						 	 saber.angle, &saber.bladeCenter, SDL_FLIP_NONE);
 			SDL_RenderCopyEx(RENDERER, bladetip->mTexture, NULL, &saber.bladetip, 
 						 	 saber.angle, &saber.bladetipCenter, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(RENDERER, bladebase->mTexture, NULL, &saber.bladebase, 
+						 	 saber.angle, &saber.bladebaseCenter, SDL_FLIP_NONE);
 		}
 	}
 

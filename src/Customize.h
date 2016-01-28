@@ -56,9 +56,11 @@ struct Customize
 		custom.saber.hilt.x = SCREEN_WIDTH / 2;
 		custom.saber.blade.x = custom.saber.hilt.x - 3;
 		custom.saber.bladetip.x = custom.saber.blade.x;
+		custom.saber.bladebase.x = custom.saber.blade.x;
 		custom.saber.hilt.y = 3 * SCREEN_HEIGHT / 4;
-		custom.saber.blade.y = custom.saber.hilt.y - 250 + 6;
+		custom.saber.blade.y = custom.saber.hilt.y - 250;
 		custom.saber.bladetip.y = custom.saber.blade.y - 7;
+		custom.saber.bladebase.y = custom.saber.hilt.y;
 
 		panel h(SCREEN_WIDTH - 65, 0, 6, 45, 10, true);
 		hiltSelect = h;
@@ -172,6 +174,7 @@ void Customize::handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &
 		{
 			custom.blade = &blades.at(i); 
 			custom.bladetip = &bladetips.at(i);
+			custom.bladebase = &bladebases.at(i);
 		}
 	}
 	c = custom;
@@ -182,10 +185,7 @@ void Customize::handleMuteMouseDown(int mouse_x, int mouse_y)
 	if (muteIC.wasClicked(mouse_x, mouse_y))
 	{	
 		mute = !mute;
-		Mix_HaltChannel(1);
-		Mix_HaltChannel(2);	
-		Mix_HaltChannel(3);
-		Mix_HaltChannel(4);
+		Mix_HaltChannel(-1);
 	}
 }
 
@@ -197,10 +197,7 @@ void Customize::handleBackMouseDown(int mouse_x, int mouse_y, Character &c)
 		custom.saber.on = false;
 		c = custom;
 		GAMES.at(1) = false;
-		Mix_HaltChannel(1);
-		Mix_HaltChannel(2);	
-		Mix_HaltChannel(3);
-		Mix_HaltChannel(4);
+		Mix_HaltChannel(-1);
 	}
 }
 
@@ -298,6 +295,8 @@ void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 
 void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
+	custom.saber.on = true;
+	
 	//clear screen
 	SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
 	SDL_RenderClear(RENDERER);
