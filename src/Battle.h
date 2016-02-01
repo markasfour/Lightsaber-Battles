@@ -37,7 +37,7 @@ struct Battle
 	bool opponent_zoomOut;
 	Timer attack_timer;
 	vector <int> attack_times;
-	
+
 	//mute
 	bool mute;
 	bool soundOn;
@@ -105,6 +105,7 @@ struct Battle
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
 	
+	bool Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p4);
 	bool bladeIntersect();
 	void handleBlock();
 	void handleAttack(int mouse_x, int mouse_y);
@@ -120,9 +121,45 @@ struct Battle
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
 };
 
+bool Battle::Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p4)
+{
+	// Store the values for fast access and easy
+	// equations-to-code conversion
+	float x1 = p1.x, x2 = p2.x, x3 = p3.x, x4 = p4.x;
+	float y1 = p1.y, y2 = p2.y, y3 = p3.y, y4 = p4.y;
+ 	 
+	float d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+	// If d is zero, there is no intersection
+	if (d == 0) 
+		return false;
+ 	 
+	// Get the x and y
+	float pre = (x1*y2 - y1*x2), post = (x3*y4 - y3*x4);
+	float x = ( pre * (x3 - x4) - (x1 - x2) * post ) / d;
+	float y = ( pre * (y3 - y4) - (y1 - y2) * post ) / d;
+ 	 
+	// Check if the x and y coordinates are within both lines
+	if ( x < min(x1, x2) || x > max(x1, x2) ||
+		x < min(x3, x4) || x > max(x3, x4) ) 
+		return false;
+	if ( y < min(y1, y2) || y > max(y1, y2) ||
+		y < min(y3, y4) || y > max(y3, y4) ) 
+		return false;
+ 	 
+	// Return the point of intersection
+	SDL_Point* ret = new SDL_Point();
+	ret->x = x;
+	ret->y = y;
+	return true;
+}
+
 bool Battle::bladeIntersect()
 {
-	if (SDL_HasIntersection(&main_char.saber.blade, &opponent.saber.blade))
+	SDL_Point p1 = main_char.saber.edge_top;
+	SDL_Point p2 = main_char.saber.edge_bot;	
+	SDL_Point p3 = opponent.saber.edge_top;
+	SDL_Point p4 = opponent.saber.edge_bot;
+	if (Intersection(p1, p2, p3, p4))
 		return true;
 	else
 		return false;		
@@ -427,10 +464,6 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//background
 	SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
 
-	//opponent rect
-	SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
-	SDL_RenderDrawRect(RENDERER, &op_rect);
-	
 	//opponent blade
 	opponent.renderBlade(RENDERER);
 	
@@ -449,11 +482,28 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//back button
 	renderBackButton(RENDERER, mouse_x, mouse_y);
 	
-	
 	//test
-	SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
-	SDL_RenderDrawRect(RENDERER, &opponent.saber.blade);
-	SDL_RenderDrawRect(RENDERER, &main_char.saber.blade);
+	if (DEBUG)
+	{
+		//opponent rect
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
+		SDL_RenderDrawRect(RENDERER, &op_rect);
+	
+		//blade edge lines
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
+		SDL_RenderDrawRect(RENDERER, &opponent.saber.blade);
+		SDL_RenderDrawRect(RENDERER, &main_char.saber.blade);
+
+		SDL_Point p1 = main_char.saber.edge_top;
+		SDL_Point p2 = main_char.saber.edge_bot;
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
+		SDL_RenderDrawLine(RENDERER, p1.x, p1.y, p2.x, p2.y);
+		
+		SDL_Point p3 = opponent.saber.edge_top;
+		SDL_Point p4 = opponent.saber.edge_bot;
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
+		SDL_RenderDrawLine(RENDERER, p3.x, p3.y, p4.x, p4.y);
+	}
 
 	//ready
 	SDL_Rect r;

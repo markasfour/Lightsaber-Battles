@@ -18,7 +18,9 @@ struct Saber
 	SDL_Point bladeCenter;
 	SDL_Point bladetipCenter;
 	SDL_Point bladebaseCenter;
-
+	SDL_Point edge_top;
+	SDL_Point edge_bot;
+	
 	Saber()
 	{
 		hilt.w = 15;
@@ -98,8 +100,10 @@ struct Saber
 	void handleBladePosition(int mouse_x, int mouse_y, bool switched)
 	{
 		//handle blade position	
-		blade.x = mouse_x - (blade.w / 2) ;//+ (6 * cos((angle + 90) * (PI/180)));
-		blade.y = mouse_y - (hilt.h / 2) - (blade.h );//- (6 * sin((angle + 90) * (PI/180)))); 
+		blade.x = hilt.x - 3;
+		//blade.x = mouse_x - (blade.w / 2) ;//+ (6 * cos((angle + 90) * (PI/180)));
+		blade.y = hilt.y - blade.h;
+		//blade.y = mouse_y - (hilt.h / 2) - (blade.h );//- (6 * sin((angle + 90) * (PI/180)))); 
 		handleOnOffSwitch(switched);	
 	}
 
@@ -124,12 +128,29 @@ struct Saber
 		bladebase.y = hilt.y;//+ bladebase.h - 2;
 	}
 
+	void handleEdge(int mouse_x, int mouse_y)
+	{
+		edge_top.x = bladetip.x + bladetipCenter.x - 
+					 bladetipCenter.x*cos(angle/-58) - bladetipCenter.y*sin(angle/-58) + 
+					 min(int(cos(angle/-58)), 0)*bladetip.w + min(int(sin(angle/-58)), 0)*bladetip.h ;
+		edge_top.y = bladetip.y + bladetipCenter.y + 
+					 bladetipCenter.x*sin(angle/-58) - bladetipCenter.y*cos(angle/-58) + 
+					 min(int(cos(angle/-58)), 0)*bladetip.h - max(int(sin(angle/-58)), 0)*bladetip.w ;
+		edge_bot.x = bladebase.x + bladebaseCenter.x - 
+					 bladebaseCenter.x*cos(angle/-58) - bladebaseCenter.y*sin(angle/-58) + 
+					 min(int(cos(angle/-58)), 0)*bladetip.w + min(int(sin(angle/-58)), 0)*bladetip.h ;
+		edge_bot.y = bladebase.y + bladebaseCenter.y + 
+					 bladebaseCenter.x*sin(angle/-58) - bladebaseCenter.y*cos(angle/-58) + 
+					 min(int(cos(angle/-58)), 0)*bladebase.h - max(int(sin(angle/-58)), 0)*bladebase.w ;
+	}
+
 	void handleSaberPosition(int mouse_x, int mouse_y, bool switched)
 	{
 		handleHiltPosition(mouse_x, mouse_y);
 		handleBladePosition(mouse_x, mouse_y, switched);
 		handleBladeTipPosition(mouse_x, mouse_y);
 		handleBladeBasePosition(mouse_x, mouse_y);
+		handleEdge(mouse_x,mouse_y);
 	}
 };
 

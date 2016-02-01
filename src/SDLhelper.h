@@ -45,6 +45,8 @@ Mix_Chunk *SWING_SOUND_1 = NULL;
 Mix_Chunk *SWING_SOUND_2 = NULL;
 vector <Mix_Chunk*> HITS(7);
 
+bool DEBUG = false;
+
 bool init()
 {
 	//init SDL
@@ -381,7 +383,7 @@ bool loadMedia(string CurrentPath)
 	HITS.at(6) = Mix_LoadWAV(path.str().c_str());
 	if (HITS.at(6) == NULL)
 		return false;
-
+	
 	return true;
 }
 

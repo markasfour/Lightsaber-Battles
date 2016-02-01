@@ -30,8 +30,14 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char **argv[])
 {
+	if (argc > 1)
+	{
+		DEBUG = true;
+		cout << "Debug mode" << endl;
+	}
+	
 	if (!init())
 		return -1;
 
