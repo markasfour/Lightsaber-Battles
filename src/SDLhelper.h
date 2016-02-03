@@ -31,6 +31,7 @@ vector <LTexture> hilts (6);
 vector <LTexture> blades (7);
 vector <LTexture> bladetips (7);
 vector <LTexture> bladebases (7);
+LTexture CLASH;
 
 Mix_Chunk *ON_SOUND_1 = NULL;
 Mix_Chunk *ON_SOUND_2 = NULL;
@@ -241,6 +242,10 @@ bool loadMedia(string CurrentPath)
 
 	if (!loadImage(bladebases.at(6), CurrentPath, "/content/bladebase_BL.png"))
 		return false;
+
+	//clash
+	if (!loadImage(CLASH, CurrentPath, "/content/clash.png"))
+		return false;	
 
 	//load sound effects 
 	path << CurrentPath << "/content/SaberOn_1.wav";

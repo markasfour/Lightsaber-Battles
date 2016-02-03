@@ -37,6 +37,9 @@ struct Battle
 	bool opponent_zoomOut;
 	Timer attack_timer;
 	vector <int> attack_times;
+	SDL_Point clash;
+	SDL_Rect clashRect;
+	bool clash_render;
 
 	//mute
 	bool mute;
@@ -92,6 +95,12 @@ struct Battle
 		opponent_attack = false;
 		opponent_zoomIn = false;
 		opponent_zoomOut = false;
+	
+		clash_render = false;
+		clashRect.x = 0;
+		clashRect.y = 0;
+		clashRect.w = 50;
+		clashRect.h = 50;
 
 		mute = false;
 		soundOn = false;
@@ -116,6 +125,7 @@ struct Battle
 	void handleOpponentAttack(int mouse_x, int mouse_y);
 	void handleOpponent(int mouse_x, int mouse_y);
 	void handleGame(int mouse_x, int mouse_y, Character custom);
+	void renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
@@ -147,9 +157,8 @@ bool Battle::Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p
 		return false;
  	 
 	// Return the point of intersection
-	SDL_Point* ret = new SDL_Point();
-	ret->x = x;
-	ret->y = y;
+	clashRect.x = x - (clashRect.w / 2);
+	clashRect.y = y - (clashRect.h / 2);
 	return true;
 }
 
@@ -170,9 +179,15 @@ void Battle::handleBlock()
 	if (main_char_attack || opponent_attack)
 	{
 		if (bladeIntersect())
+		{
+			clash_render = true;
 			cout << "BLOCKED" << endl;
+		}
 		else
+		{
+			clash_render = false;
 			cout << "HIT" << endl;
+		}
 	}
 }
 
@@ -391,6 +406,10 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 		
 		//handle opponent
 		handleOpponent(mouse_x, mouse_y);
+		
+		//clash image
+		if (!main_char_attack && !opponent_attack)
+			clash_render = false;
 
 		//handle hum sound 
 		main_char.handleHumSound(mute);
@@ -418,6 +437,16 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 		//handle saber position
 		main_char.saber.handleSaberPosition(mouse_x, mouse_y, false);
 		opponent.saber.handleSaberPosition(op_point.x, op_point.y, false);
+	}
+}
+
+void Battle::renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (clash_render)
+	{
+		SDL_Point c_center = {clashRect.w / 2, clashRect.h / 2};
+		SDL_RenderCopyEx(RENDERER, CLASH.mTexture, NULL, &clashRect,
+						 (main_char.saber.angle + opponent.saber.angle) / 2, &c_center, SDL_FLIP_NONE);
 	}
 }
 
@@ -475,6 +504,9 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	
 	//main char hilt
 	main_char.renderHilt(RENDERER);
+	
+	//render clash
+	renderClash(RENDERER, mouse_x, mouse_y);
 
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
