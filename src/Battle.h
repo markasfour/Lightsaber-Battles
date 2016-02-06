@@ -99,8 +99,8 @@ struct Battle
 		clash_render = false;
 		clashRect.x = 0;
 		clashRect.y = 0;
-		clashRect.w = 50;
-		clashRect.h = 50;
+		clashRect.w = 100;
+		clashRect.h = 100;
 
 		mute = false;
 		soundOn = false;
@@ -181,12 +181,12 @@ void Battle::handleBlock()
 		if (bladeIntersect())
 		{
 			clash_render = true;
-			cout << "BLOCKED" << endl;
+			//cout << "BLOCKED" << endl;
 		}
 		else
 		{
 			clash_render = false;
-			cout << "HIT" << endl;
+			//cout << "HIT" << endl;
 		}
 	}
 }
@@ -535,6 +535,10 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 		SDL_Point p4 = opponent.saber.edge_bot;
 		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
 		SDL_RenderDrawLine(RENDERER, p3.x, p3.y, p4.x, p4.y);
+
+		cout << main_char.saber.blade.h << endl;
+		cout << opponent.saber.blade.h << endl;
+		cout << endl;
 	}
 
 	//ready

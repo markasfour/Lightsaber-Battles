@@ -10,6 +10,7 @@ struct Customize
 	Character custom;
 
 	//hilt selection panel
+	button hiltIC;
 	panel hiltSelect;
 	vector <button> hiltButtons;
 	vector <button> hiltIcons;
@@ -25,6 +26,12 @@ struct Customize
 	button WinduIC;
 	button FistoBG;
 	button FistoIC;
+	
+	//background selection panel
+	button bgIC;
+	panel bgSelect;
+	vector <button> bgButtons;
+	bool BGvisible;
 
 	//color selection panel
 	panel colorSelect;
@@ -47,11 +54,13 @@ struct Customize
 
 	Customize()
 	{
+		//background
 		backgroundRect.w = SCREEN_WIDTH * 1.05;
 		backgroundRect.h = SCREEN_HEIGHT * 1.05;
 		backgroundRect.x = (SCREEN_WIDTH - backgroundRect.w) / 2;
 		backgroundRect.y = SCREEN_HEIGHT - backgroundRect.h;
 	
+		//lightsaber
 		custom.saber.blade.h = 250;
 		custom.saber.hilt.x = SCREEN_WIDTH / 2;
 		custom.saber.blade.x = custom.saber.hilt.x - 3;
@@ -62,7 +71,11 @@ struct Customize
 		custom.saber.bladetip.y = custom.saber.blade.y - 7;
 		custom.saber.bladebase.y = custom.saber.hilt.y;
 
-		panel h(SCREEN_WIDTH - 65, 0, 6, 45, 10, true);
+		//hilt
+		button hi (SCREEN_WIDTH - 55 - 5, 40, 55, 55);
+		hiltIC = hi;
+
+		panel h(SCREEN_WIDTH, 0, 6, 45, 10, true);
 		hiltSelect = h;
 
 		button LBG(0x00, 0x00, 0x00, 0xFF, hiltSelect.rect.x + 10, 10, 45, 45);
@@ -104,7 +117,8 @@ struct Customize
 		hiltIcons.push_back(SidiusIC);
 		hiltIcons.push_back(WinduIC);
 		hiltIcons.push_back(FistoIC);
-
+		
+		//colors
 		panel c(0, 0, 7, 45, 10, true);
 		colorSelect = c;
 
@@ -131,21 +145,26 @@ struct Customize
 		colorButtons.push_back(white);
 		colorButtons.push_back(black);
 
+		//mute
 		mute = false;
 		button mIC (SCREEN_WIDTH - 25 - 65, 5, 20, 20);
 		muteIC = mIC;
 
+		//back
 		button B(0x0F, 0x0F, 0x0F, 0xFF, colorSelect.rect.x + 65, 0, 50, 30);
 		back = B;
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
-	
+
+	void handleHiltIconMouseDown(int mouse_x, int mouse_y);
 	void handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMouseDown(int mouse_x, int mouse_y, Character &c);
+	void handleGame(int mouse_x, int mouse_y);
+	void renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -154,6 +173,12 @@ struct Customize
 	void close();
 };
 
+void Customize::handleHiltIconMouseDown(int mouse_x, int mouse_y)
+{
+	if (hiltIC.wasClicked(mouse_x, mouse_y))
+		hiltSelect.visible = true;
+}
+
 void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c)
 {
 	for (int i = 0; i < hiltButtons.size(); i++)
@@ -161,6 +186,7 @@ void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c
 		if (hiltButtons.at(i).wasClicked(mouse_x, mouse_y))
 		{
 			custom.hilt = &hilts.at(i); 
+			hiltSelect.visible = false;
 		}
 	}
 	c = custom;
@@ -202,9 +228,13 @@ void Customize::handleBackMouseDown(int mouse_x, int mouse_y, Character &c)
 }
 
 void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c)
-{
+{	
+	//hilt icon
+	handleHiltIconMouseDown(mouse_x, mouse_y);
+
 	//hilt select
-	handleHiltSelectMouseDown(mouse_x, mouse_y, c);
+	if (hiltSelect.visible)
+		handleHiltSelectMouseDown(mouse_x, mouse_y, c);
 	
 	//color select
 	handleColorSelectMouseDown(mouse_x, mouse_y, c);
@@ -214,6 +244,19 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c)
 	
 	//back button click
 	handleBackMouseDown(mouse_x, mouse_y, c);
+}
+
+void Customize::handleGame(int mouse_x, int mouse_y)
+{
+	hiltSelect.move(0.5, hiltButtons, hiltIcons);
+}
+
+void Customize::renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (hiltIC.mouseHover(mouse_x, mouse_y, true))
+			SDL_RenderCopy(RENDERER, hilt_icon.mTexture, NULL, &hiltIC.hover);
+	else if (!hiltIC.mouseHover(mouse_x, mouse_y, true))
+		SDL_RenderCopy(RENDERER, hilt_icon.mTexture, NULL, &hiltIC.rect);
 }
 
 void Customize::renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -296,6 +339,7 @@ void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	custom.saber.on = true;
+	custom.saber.blade.h = 250;
 	
 	//clear screen
 	SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);
@@ -309,10 +353,13 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	
 	//hilt
 	custom.renderHilt(RENDERER);
+	
+	//hilt icon
+	renderHiltIcon(RENDERER, mouse_x, mouse_y);
 
 	//hilt select GUI
 	renderHiltSelectGUI(RENDERER, mouse_x, mouse_y);
-	
+
 	//color select GUI
 	renderColorSelectGUI(RENDERER, mouse_x, mouse_y);
 

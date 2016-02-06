@@ -214,7 +214,7 @@ void Simulator::handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y, Character
 		soundOn = true;
 		soundOff = false;
 	}
-	else if (!main_char.saber.on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible && GAMES.at(0))
+	else if (!main_char.saber.on && !switched && !soundOff )//&& !saberSelect.visible && !bgSelect.visible && GAMES.at(0))
 	{	
 		if (!mute)
 			Mix_PlayChannel(2, main_char.OFF_SOUND, 0);

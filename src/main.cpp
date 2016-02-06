@@ -157,6 +157,8 @@ int main(int argc, char **argv[])
 		//handle game mechanics
 		if (GAMES.at(0))
 			simulator.handleGame(mouse_x, mouse_y);	
+		else if (GAMES.at(1))
+			customize.handleGame(mouse_x, mouse_y);
 		else if (GAMES.at(2))
 			battle.handleGame(mouse_x, mouse_y, custom);
 		else

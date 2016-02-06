@@ -31,6 +31,8 @@ vector <LTexture> hilts (6);
 vector <LTexture> blades (7);
 vector <LTexture> bladetips (7);
 vector <LTexture> bladebases (7);
+LTexture hilt_icon;
+LTexture background_icon;
 LTexture CLASH;
 
 Mix_Chunk *ON_SOUND_1 = NULL;
@@ -242,6 +244,13 @@ bool loadMedia(string CurrentPath)
 
 	if (!loadImage(bladebases.at(6), CurrentPath, "/content/bladebase_BL.png"))
 		return false;
+	
+	//icons
+	if (!loadImage(hilt_icon, CurrentPath, "/content/hilt_icon.png"))
+		return false;	
+
+	if (!loadImage(background_icon, CurrentPath, "/content/background_icon.png"))
+		return false;
 
 	//clash
 	if (!loadImage(CLASH, CurrentPath, "/content/clash.png"))
@@ -408,6 +417,9 @@ void close()
 		bladetips.at(i).free();
 	for (int i = 0; i < bladebases.size(); i++)
 		bladebases.at(i).free();
+	hilt_icon.free();
+	background_icon.free();
+	CLASH.free();
 
 	//free loaded music
 

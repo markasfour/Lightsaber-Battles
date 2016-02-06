@@ -53,7 +53,7 @@ struct Saber
 			angle = 0;
 		else
 			angle = 180;
-		angle *= 2;
+		angle *= 3;
 	}
 
 	void handleSwing()
