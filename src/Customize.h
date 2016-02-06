@@ -24,13 +24,6 @@ struct Customize
 	//color selection panel
 	panel colorSelect;
 	vector <button> colorButtons;
-	button green;
-	button blue;
-	button red;
-	button purple;
-	button yellow;
-	button white;
-	button black;
 
 	//mute
 	bool mute;
@@ -122,27 +115,20 @@ struct Customize
 		colorSelect = c;
 
 		button g(0x00, 0xFF, 0x00, 0xFF, colorSelect.rect.x + 10, 10, 45, 45);
-		green = g;
-		button b(0x00, 0x00, 0xFF, 0xFF, green.rect.x, green.rect.y + 45 + 10, 45, 45);
-		blue = b;
-		button r(0xFF, 0x00, 0x00, 0xFF, green.rect.x, blue.rect.y + 45 + 10, 45, 45);
-		red = r;
-		button p(0xFF, 0x00, 0xFF, 0xFF, green.rect.x, red.rect.y + 45 + 10, 45, 45);
-		purple = p;
-		button y(0xFF, 0xFF, 0x00, 0xFF, green.rect.x, purple.rect.y + 45 + 10, 45, 45);
-		yellow = y;
-		button w(0xFF, 0xFF, 0xFF, 0xFF, green.rect.x, yellow.rect.y + 45 + 10, 45, 45);
-		white = w;
-		button bl(0x00, 0x00, 0x00, 0xFF, green.rect.x, white.rect.y + 45 + 10, 45, 45);
-		black = bl;
+		button b(0x00, 0x00, 0xFF, 0xFF, g.rect.x, g.rect.y + 45 + 10, 45, 45);
+		button r(0xFF, 0x00, 0x00, 0xFF, g.rect.x, b.rect.y + 45 + 10, 45, 45);
+		button p(0xFF, 0x00, 0xFF, 0xFF, g.rect.x, r.rect.y + 45 + 10, 45, 45);
+		button y(0xFF, 0xFF, 0x00, 0xFF, g.rect.x, p.rect.y + 45 + 10, 45, 45);
+		button w(0xFF, 0xFF, 0xFF, 0xFF, g.rect.x, y.rect.y + 45 + 10, 45, 45);
+		button bl(0x00, 0x00, 0x00, 0xFF, g.rect.x, w.rect.y + 45 + 10, 45, 45);
 
-		colorButtons.push_back(green);
-		colorButtons.push_back(blue);
-		colorButtons.push_back(red);
-		colorButtons.push_back(purple);
-		colorButtons.push_back(yellow);
-		colorButtons.push_back(white);
-		colorButtons.push_back(black);
+		colorButtons.push_back(g);
+		colorButtons.push_back(b);
+		colorButtons.push_back(r);
+		colorButtons.push_back(p);
+		colorButtons.push_back(y);
+		colorButtons.push_back(w);
+		colorButtons.push_back(bl);
 
 		//mute
 		mute = false;
