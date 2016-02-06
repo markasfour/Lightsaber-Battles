@@ -3,6 +3,7 @@
 
 struct Customize
 {
+	private: 
 	//background
 	SDL_Rect backgroundRect;
 	
@@ -32,7 +33,8 @@ struct Customize
 	//back
 	button back;
 	LTexture back_text;
-
+	
+	public:
 	Customize()
 	{
 		//background
@@ -141,7 +143,7 @@ struct Customize
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 	}
-
+	private:
 	void handleHiltIconMouseDown(int mouse_x, int mouse_y);
 	void handleBackgroundIconMouseDown(int mouse_x, int mouse_y);
 	void handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c);
@@ -149,8 +151,10 @@ struct Customize
 	void handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y, Character &c);
+	public:
 	void handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg);
 	void handleGame(int mouse_x, int mouse_y);
+	private:
 	void renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackgroundIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -158,6 +162,7 @@ struct Customize
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	public:
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, int bg);	
 	void close();
 };

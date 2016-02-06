@@ -5,7 +5,6 @@ struct Battle
 {
 	//background rendering rectangle
 	SDL_Rect backgroundRect;
-	int background;
 
 	//player center
 	SDL_Point center;
@@ -59,8 +58,6 @@ struct Battle
 		backgroundRect.h = SCREEN_HEIGHT * 1.05;
 		backgroundRect.x = (SCREEN_WIDTH - backgroundRect.w) / 2;
 		backgroundRect.y = SCREEN_HEIGHT - backgroundRect.h;
-
-		background = rand() % backgrounds.size();
 
 		start = true;
 	
@@ -128,7 +125,7 @@ struct Battle
 	void renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
-	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
+	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom, int bg);
 };
 
 bool Battle::Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p4)
@@ -483,7 +480,7 @@ void Battle::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	}
 }
 
-void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom)
+void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom, int bg)
 {
 	//render everything
 	//clear screen
@@ -491,7 +488,7 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	SDL_RenderClear(RENDERER);
 	
 	//background
-	SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
+	SDL_RenderCopy(RENDERER, backgrounds.at(bg).mTexture, NULL, &backgroundRect);
 
 	//opponent blade
 	opponent.renderBlade(RENDERER);

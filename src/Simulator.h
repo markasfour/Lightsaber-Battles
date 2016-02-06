@@ -142,7 +142,7 @@ struct Simulator
 	void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
-	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
+	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom, int bg);
 	void close();
 };
 
@@ -431,7 +431,7 @@ void Simulator::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	}
 }
 
-void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom)
+void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom, int bg)
 {
 	//render everything
 	//clear screen
@@ -439,7 +439,7 @@ void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	SDL_RenderClear(RENDERER);
 	
 	//background
-	SDL_RenderCopy(RENDERER, backgrounds.at(background).mTexture, NULL, &backgroundRect);
+	SDL_RenderCopy(RENDERER, backgrounds.at(bg).mTexture, NULL, &backgroundRect);
 	
 	//blade
 	main_char.renderBlade(RENDERER);

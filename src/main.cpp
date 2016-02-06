@@ -169,11 +169,11 @@ int main(int argc, char **argv[])
 
 		//handle rendering
 		if (GAMES.at(0))
-			simulator.renderEverything(RENDERER, mouse_x, mouse_y, custom);	
+			simulator.renderEverything(RENDERER, mouse_x, mouse_y, custom, bg);	
 		else if (GAMES.at(1))
 			customize.renderEverything(RENDERER, mouse_x, mouse_y, bg);
 		else if (GAMES.at(2))
-			battle.renderEverything(RENDERER, mouse_x, mouse_y, custom);
+			battle.renderEverything(RENDERER, mouse_x, mouse_y, custom, bg);
 		else
 			main_menu.renderEverything(RENDERER, mouse_x, mouse_y);
 
