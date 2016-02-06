@@ -14,24 +14,12 @@ struct Customize
 	panel hiltSelect;
 	vector <button> hiltButtons;
 	vector <button> hiltIcons;
-	button LukeBG;
-	button LukeIC;
-	button AnakinBG;
-	button AnakinIC;
-	button VaderBG;
-	button VaderIC;
-	button SidiusBG;
-	button SidiusIC;
-	button WinduBG;
-	button WinduIC;
-	button FistoBG;
-	button FistoIC;
 	
 	//background selection panel
 	button bgIC;
 	panel bgSelect;
 	vector <button> bgButtons;
-	bool BGvisible;
+	vector <button> bgIcons;
 
 	//color selection panel
 	panel colorSelect;
@@ -78,31 +66,19 @@ struct Customize
 		panel h(SCREEN_WIDTH, 0, 6, 45, 10, true);
 		hiltSelect = h;
 
-		button LBG(0x00, 0x00, 0x00, 0xFF, hiltSelect.rect.x + 10, 10, 45, 45);
-		LukeBG = LBG;
-		button ABG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, LukeBG.rect.y + 45 + 10, 45, 45);	
-		AnakinBG = ABG;
-		button VBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, AnakinBG.rect.y + 45 + 10, 45, 45);
-		VaderBG = VBG;
-		button SBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, VaderBG.rect.y + 45 + 10, 45, 45);
-		SidiusBG = SBG;
-		button WBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, SidiusBG.rect.y + 45 + 10, 45, 45);
-		WinduBG = WBG;
-		button FBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, WinduBG.rect.y + 45 + 10, 45, 45);
-		FistoBG = FBG;
+		button LukeBG(0x00, 0x00, 0x00, 0xFF, hiltSelect.rect.x + 10, 10, 45, 45);
+		button AnakinBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, LukeBG.rect.y + 45 + 10, 45, 45);	
+		button VaderBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, AnakinBG.rect.y + 45 + 10, 45, 45);
+		button SidiusBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, VaderBG.rect.y + 45 + 10, 45, 45);
+		button WinduBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, SidiusBG.rect.y + 45 + 10, 45, 45);
+		button FistoBG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x, WinduBG.rect.y + 45 + 10, 45, 45);
 
-		button LIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, LukeBG.rect.y + 3, 9, 40);
-		LukeIC = LIC;
-		button AIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, AnakinBG.rect.y + 3, 9, 40);
-		AnakinIC = AIC;
-		button VIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, VaderBG.rect.y + 3, 9, 40);
-		VaderIC = VIC;
-		button SIC(SidiusBG.rect.x + (SidiusBG.rect.w / 2) - 3, SidiusBG.rect.y + 3, 9, 40);
-		SidiusIC = SIC;
-		button WIC(WinduBG.rect.x + (WinduBG.rect.w / 2) - 3, WinduBG.rect.y + 3, 9, 40);
-		WinduIC = WIC;
-		button FIC(FistoBG.rect.x + (FistoBG.rect.w / 2) - 3, FistoBG.rect.y + 3, 9, 40);
-		FistoIC = FIC;
+		button LukeIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, LukeBG.rect.y + 3, 9, 40);
+		button AnakinIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, AnakinBG.rect.y + 3, 9, 40);
+		button VaderIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, VaderBG.rect.y + 3, 9, 40);
+		button SidiusIC(SidiusBG.rect.x + (SidiusBG.rect.w / 2) - 3, SidiusBG.rect.y + 3, 9, 40);
+		button WinduIC(WinduBG.rect.x + (WinduBG.rect.w / 2) - 3, WinduBG.rect.y + 3, 9, 40);
+		button FistoIC(FistoBG.rect.x + (FistoBG.rect.w / 2) - 3, FistoBG.rect.y + 3, 9, 40);
 
 		hiltButtons.push_back(LukeBG);
 		hiltButtons.push_back(AnakinBG);
@@ -118,6 +94,29 @@ struct Customize
 		hiltIcons.push_back(WinduIC);
 		hiltIcons.push_back(FistoIC);
 		
+		//background
+		button bg (SCREEN_WIDTH - 55 - 5, hiltIC.rect.y + hiltIC.rect.h + 20, 55, 55);
+		bgIC = bg;
+
+		panel btemp(SCREEN_WIDTH, 0, 3, 45, 10, true);
+		bgSelect = btemp;
+		
+		button BG1(0x00, 0x00, 0x00, 0xFF, bgSelect.rect.x + 10, 10, 45, 45);
+		button BG2(0x00, 0x00, 0x00, 0xFF, BG1.rect.x, BG1.rect.y + 45 + 10, 45, 45);	
+		button BG3(0x00, 0x00, 0x00, 0xFF, BG1.rect.x, BG2.rect.y + 45 + 10, 45, 45);
+	
+		button BG1IC(BG1.rect.x, BG1.rect.y, 45, 45);
+		button BG2IC(BG2.rect.x, BG2.rect.y, 45, 45);
+		button BG3IC(BG3.rect.x, BG3.rect.y, 45, 45);
+
+		bgButtons.push_back(BG1);
+		bgButtons.push_back(BG2);
+		bgButtons.push_back(BG3);
+
+		bgIcons.push_back(BG1IC);
+		bgIcons.push_back(BG2IC);
+		bgIcons.push_back(BG3IC);
+
 		//colors
 		panel c(0, 0, 7, 45, 10, true);
 		colorSelect = c;
@@ -158,25 +157,35 @@ struct Customize
 	}
 
 	void handleHiltIconMouseDown(int mouse_x, int mouse_y);
+	void handleBackgroundIconMouseDown(int mouse_x, int mouse_y);
 	void handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c);
+	void handleBackgroundSelectMouseDown(int mouse_x, int mouse_y, int &bg);
 	void handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y, Character &c);
-	void handleMouseDown(int mouse_x, int mouse_y, Character &c);
+	void handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg);
 	void handleGame(int mouse_x, int mouse_y);
 	void renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderBackgroundIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
-	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);	
+	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, int bg);	
 	void close();
 };
 
 void Customize::handleHiltIconMouseDown(int mouse_x, int mouse_y)
 {
-	if (hiltIC.wasClicked(mouse_x, mouse_y))
+	if (hiltIC.wasClicked(mouse_x, mouse_y) && !bgSelect.visible)
 		hiltSelect.visible = true;
+}
+
+void Customize::handleBackgroundIconMouseDown(int mouse_x, int mouse_y)
+{
+	if (bgIC.wasClicked(mouse_x, mouse_y) && !hiltSelect.visible)
+		bgSelect.visible = true;
 }
 
 void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c)
@@ -189,7 +198,20 @@ void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c
 			hiltSelect.visible = false;
 		}
 	}
+	//save hilt	
 	c = custom;
+}
+
+void Customize::handleBackgroundSelectMouseDown(int mouse_x, int mouse_y, int &bg)
+{
+	for (int i = 0; i < bgButtons.size(); i++)
+	{
+		if (bgButtons.at(i).wasClicked(mouse_x, mouse_y))
+		{
+			bg = i;
+			bgSelect.visible = false;
+		}
+	}
 }
 
 void Customize::handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c)
@@ -227,15 +249,20 @@ void Customize::handleBackMouseDown(int mouse_x, int mouse_y, Character &c)
 	}
 }
 
-void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c)
+void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg)
 {	
 	//hilt icon
 	handleHiltIconMouseDown(mouse_x, mouse_y);
 
+	//background icon
+	handleBackgroundIconMouseDown(mouse_x, mouse_y);
+
 	//hilt select
-	if (hiltSelect.visible)
-		handleHiltSelectMouseDown(mouse_x, mouse_y, c);
+	handleHiltSelectMouseDown(mouse_x, mouse_y, c);
 	
+	//background select
+	handleBackgroundSelectMouseDown(mouse_x, mouse_y, bg);	
+
 	//color select
 	handleColorSelectMouseDown(mouse_x, mouse_y, c);
 	
@@ -249,6 +276,8 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c)
 void Customize::handleGame(int mouse_x, int mouse_y)
 {
 	hiltSelect.move(0.5, hiltButtons, hiltIcons);
+
+	bgSelect.move(0.5, bgButtons, bgIcons);
 }
 
 void Customize::renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -257,6 +286,14 @@ void Customize::renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 			SDL_RenderCopy(RENDERER, hilt_icon.mTexture, NULL, &hiltIC.hover);
 	else if (!hiltIC.mouseHover(mouse_x, mouse_y, true))
 		SDL_RenderCopy(RENDERER, hilt_icon.mTexture, NULL, &hiltIC.rect);
+}
+
+void Customize::renderBackgroundIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (bgIC.mouseHover(mouse_x, mouse_y, true))
+			SDL_RenderCopy(RENDERER, background_icon.mTexture, NULL, &bgIC.hover);
+	else if (!bgIC.mouseHover(mouse_x, mouse_y, true))
+		SDL_RenderCopy(RENDERER, background_icon.mTexture, NULL, &bgIC.rect);
 }
 
 void Customize::renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -280,6 +317,29 @@ void Customize::renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mou
 			hiltIcons.at(i).mouseHover(mouse_x, mouse_y, false);
 			SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &hiltIcons.at(i).rect,
 						 	 45, NULL, SDL_FLIP_NONE);
+		}
+	}
+}
+
+void Customize::renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
+	SDL_RenderFillRect(RENDERER, &bgSelect.rect);
+	//buttons
+	for (int i = 0; i < bgButtons.size(); i++)
+	{
+		SDL_SetRenderDrawColor(RENDERER, bgButtons.at(i).r, bgButtons.at(i).g, bgButtons.at(i).b, bgButtons.at(i).a);
+		if (bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+		{
+			SDL_RenderFillRect(RENDERER, &bgButtons.at(i).hover);
+			bgIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+			SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgIcons.at(i).hover);
+		}
+		else if (!bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+		{
+			SDL_RenderFillRect(RENDERER, &bgButtons.at(i).rect);
+			bgIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+			SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgIcons.at(i).rect);
 		}
 	}
 }
@@ -336,7 +396,7 @@ void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	}
 }
 
-void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, int bg)
 {
 	custom.saber.on = true;
 	custom.saber.blade.h = 250;
@@ -346,7 +406,7 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	SDL_RenderClear(RENDERER);
 	
 	//background
-	SDL_RenderCopy(RENDERER, backgrounds.at(0).mTexture, NULL, &backgroundRect);
+	SDL_RenderCopy(RENDERER, backgrounds.at(bg).mTexture, NULL, &backgroundRect);
 
 	//blade
 	custom.renderBlade(RENDERER);
@@ -356,9 +416,15 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	
 	//hilt icon
 	renderHiltIcon(RENDERER, mouse_x, mouse_y);
+	
+	//background icon
+	renderBackgroundIcon(RENDERER, mouse_x, mouse_y);	
 
 	//hilt select GUI
 	renderHiltSelectGUI(RENDERER, mouse_x, mouse_y);
+	
+	//background select GUI
+	renderBackgroundSelectGUI(RENDERER, mouse_x, mouse_y);
 
 	//color select GUI
 	renderColorSelectGUI(RENDERER, mouse_x, mouse_y);

@@ -43,29 +43,34 @@ struct panel
 		{
 			//moves for duration of time
 			if (side == "right")
-				if (rect.x <= SCREEN_WIDTH + 1)
+			{	
+				if (rect.x < SCREEN_WIDTH)
 				{
-					rect.x += (rect.w) / 10;
+					rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
 					for (int i = 0; i < Buttons.size(); i++)
-						Buttons.at(i).rect.x += (rect.w) / 10;
+						Buttons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
 					for (int i = 0; i < Icons.size(); i++)
-						Icons.at(i).rect.x += (rect.w) / 10;
+						Icons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
 				}
+			}
 			else
+			{
 				if (rect.x >= 0)
 				{
 					rect.x -= (rect.w) / 10;
 					for (int i = 0; i < Buttons.size(); i++)
-						Buttons.at(i).rect.x -= (rect.w) / 10;
+						Buttons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
 					for (int i = 0; i < Icons.size(); i++)
-						Icons.at(i).rect.x -= (rect.w) / 10;
+						Icons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
 				}
+			}
 		}
 		//show
 		else
 		{
 			//moves for duration of time
 			if (side == "right")
+			{
 				if (rect.x > SCREEN_WIDTH - rect.w)
 				{	
 					rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
@@ -74,7 +79,9 @@ struct panel
 					for (int i = 0; i < Icons.size(); i++)
 						Icons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
 				}
+			}
 			else
+			{
 				if (rect.w < 0 + rect.w)
 				{	
 					rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
@@ -83,6 +90,7 @@ struct panel
 					for (int i = 0; i < Icons.size(); i++)
 						Icons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
 				}
+			}
 		}
 	}
 };

@@ -73,7 +73,10 @@ int main(int argc, char **argv[])
 	double release_time = -1;
 	double total_time = -1;
 
+	//custom character
 	Character custom;
+	//custom background
+	int bg = 0;
 
 	Menu main_menu;
 	Simulator simulator;
@@ -146,7 +149,7 @@ int main(int argc, char **argv[])
 			if (GAMES.at(0))
 				simulator.handleMouseDown(mouse_x, mouse_y, custom);
 			else if (GAMES.at(1))
-				customize.handleMouseDown(mouse_x, mouse_y, custom);
+				customize.handleMouseDown(mouse_x, mouse_y, custom, bg);
 			else if (GAMES.at(2))
 				battle.handleMouseDown(mouse_x, mouse_y);
 			else
@@ -168,7 +171,7 @@ int main(int argc, char **argv[])
 		if (GAMES.at(0))
 			simulator.renderEverything(RENDERER, mouse_x, mouse_y, custom);	
 		else if (GAMES.at(1))
-			customize.renderEverything(RENDERER, mouse_x, mouse_y);
+			customize.renderEverything(RENDERER, mouse_x, mouse_y, bg);
 		else if (GAMES.at(2))
 			battle.renderEverything(RENDERER, mouse_x, mouse_y, custom);
 		else
