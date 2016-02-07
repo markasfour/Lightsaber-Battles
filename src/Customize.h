@@ -23,6 +23,7 @@ struct Customize
 	vector <button> bgIcons;
 
 	//color selection panel
+	button colorIC;
 	panel colorSelect;
 	vector <button> colorButtons;
 
@@ -113,7 +114,10 @@ struct Customize
 		bgIcons.push_back(BG3IC);
 
 		//colors
-		panel c(0, 0, 7, 45, 10, true);
+		button cIC (0 + 5, hiltIC.rect.y, 55, 55);
+		colorIC = cIC;
+		
+		panel c(0 - 65, 0, 7, 45, 10, true);
 		colorSelect = c;
 
 		button g(0x00, 0xFF, 0x00, 0xFF, colorSelect.rect.x + 10, 10, 45, 45);
@@ -146,23 +150,23 @@ struct Customize
 	private:
 	void handleHiltIconMouseDown(int mouse_x, int mouse_y);
 	void handleBackgroundIconMouseDown(int mouse_x, int mouse_y);
+	void handleColorIconMouseDown(int mouse_x, int mouse_y);
 	void handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleBackgroundSelectMouseDown(int mouse_x, int mouse_y, int &bg);
 	void handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y, Character &c);
-	public:
-	void handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg);
-	void handleGame(int mouse_x, int mouse_y);
-	private:
 	void renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackgroundIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderColorIcon(SDL_Renderer *REDNERER, int mouse_x, int mouse_y);
 	void renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	public:
+	void handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg);
+	void handleGame(int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, int bg);	
 	void close();
 };
@@ -177,6 +181,12 @@ void Customize::handleBackgroundIconMouseDown(int mouse_x, int mouse_y)
 {
 	if (bgIC.wasClicked(mouse_x, mouse_y) && !hiltSelect.visible)
 		bgSelect.visible = true;
+}
+
+void Customize::handleColorIconMouseDown(int mouse_x, int mouse_y)
+{
+	if (colorIC.wasClicked(mouse_x, mouse_y))
+		colorSelect.visible = true;
 }
 
 void Customize::handleHiltSelectMouseDown(int mouse_x, int mouse_y, Character &c)
@@ -214,6 +224,7 @@ void Customize::handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &
 			custom.blade = &blades.at(i); 
 			custom.bladetip = &bladetips.at(i);
 			custom.bladebase = &bladebases.at(i);
+			colorSelect.visible = false;
 		}
 	}
 	c = custom;
@@ -248,6 +259,9 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg)
 	//background icon
 	handleBackgroundIconMouseDown(mouse_x, mouse_y);
 
+	//color icon
+	handleColorIconMouseDown(mouse_x, mouse_y);
+
 	//hilt select
 	handleHiltSelectMouseDown(mouse_x, mouse_y, c);
 	
@@ -269,6 +283,9 @@ void Customize::handleGame(int mouse_x, int mouse_y)
 	hiltSelect.move(0.5, hiltButtons, hiltIcons);
 
 	bgSelect.move(0.5, bgButtons, bgIcons);
+
+	vector <button> temp (0);
+	colorSelect.move(0.5, colorButtons, temp);
 }
 
 void Customize::renderHiltIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -285,6 +302,14 @@ void Customize::renderBackgroundIcon(SDL_Renderer *RENDERER, int mouse_x, int mo
 			SDL_RenderCopy(RENDERER, background_icon.mTexture, NULL, &bgIC.hover);
 	else if (!bgIC.mouseHover(mouse_x, mouse_y, true))
 		SDL_RenderCopy(RENDERER, background_icon.mTexture, NULL, &bgIC.rect);
+}
+
+void Customize::renderColorIcon(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (colorIC.mouseHover(mouse_x, mouse_y, true))
+			SDL_RenderCopy(RENDERER, color_icon.mTexture, NULL, &colorIC.hover);
+	else if (!colorIC.mouseHover(mouse_x, mouse_y, true))
+		SDL_RenderCopy(RENDERER, color_icon.mTexture, NULL, &colorIC.rect);
 }
 
 void Customize::renderHiltSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -410,6 +435,9 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	
 	//background icon
 	renderBackgroundIcon(RENDERER, mouse_x, mouse_y);	
+
+	//color icon
+	renderColorIcon(RENDERER, mouse_x, mouse_y);
 
 	//hilt select GUI
 	renderHiltSelectGUI(RENDERER, mouse_x, mouse_y);

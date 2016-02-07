@@ -3,6 +3,7 @@
 
 struct panel
 {
+	int spacing;
 	bool visible;
 	SDL_Rect rect;
 	string side;
@@ -17,6 +18,8 @@ struct panel
 		rect.y = y;
 		rect.w = sp + (n * (sp + b_dim));
 		rect.h = b_dim + (2 * sp);
+	
+		spacing = sp;
 	}
 
 	//vertical
@@ -28,6 +31,8 @@ struct panel
 		rect.h = sp + (n * (sp + b_dim));
 		rect.w = b_dim + (2 * sp);
 
+		spacing = sp;
+
 		//determine side closest to
 		if (rect.x > SCREEN_WIDTH / 2)
 			side = "right";
@@ -38,6 +43,10 @@ struct panel
 	//hide/show vertical panel
 	void move(double time, vector <button> &Buttons, vector <button> &Icons)
 	{
+		bool noIcons = false;
+		if (Icons.size() == 0)
+			noIcons = true;
+		
 		//hide
 		if (!visible)
 		{
@@ -49,19 +58,36 @@ struct panel
 					rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
 					for (int i = 0; i < Buttons.size(); i++)
 						Buttons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
-					for (int i = 0; i < Icons.size(); i++)
-						Icons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
+					if (!noIcons)
+					{
+						for (int i = 0; i < Icons.size(); i++)
+							Icons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
+					}
 				}
 			}
 			else
 			{
-				if (rect.x >= 0)
+				if (rect.x + rect.w >= 0)
 				{
-					rect.x -= (rect.w) / 10;
+					rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
 					for (int i = 0; i < Buttons.size(); i++)
 						Buttons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
-					for (int i = 0; i < Icons.size(); i++)
-						Icons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
+					if (!noIcons)
+					{
+						for (int i = 0; i < Icons.size(); i++)
+							Icons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
+					}
+				}
+				else
+				{
+					rect.x = 0 - rect.w;
+					for (int i = 0; i < Buttons.size(); i++)
+						Buttons.at(i).rect.x = rect.x + spacing;
+					if (!noIcons)
+					{
+						for (int i = 0; i < Icons.size(); i++)
+							Icons.at(i).rect.x = rect.x + spacing;
+					}
 				}
 			}
 		}
@@ -76,19 +102,36 @@ struct panel
 					rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
 					for (int i = 0; i < Buttons.size(); i++)
 						Buttons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
-					for (int i = 0; i < Icons.size(); i++)
-						Icons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
+					if (!noIcons)
+					{
+						for (int i = 0; i < Icons.size(); i++)
+							Icons.at(i).rect.x -= (rect.w) / (time * FRAMES_PER_SECOND);
+					}
 				}
 			}
 			else
 			{
-				if (rect.w < 0 + rect.w)
+				if (rect.x + rect.w < 0 + rect.w)
 				{	
 					rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
 					for (int i = 0; i < Buttons.size(); i++)
 						Buttons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
-					for (int i = 0; i < Icons.size(); i++)
-						Icons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
+					if (!noIcons)
+					{
+						for (int i = 0; i < Icons.size(); i++)
+							Icons.at(i).rect.x += (rect.w) / (time * FRAMES_PER_SECOND);
+					}
+				}
+				else
+				{
+					rect.x = 0;
+					for (int i = 0; i < Buttons.size(); i++)
+						Buttons.at(i).rect.x = rect.x + spacing;
+					if (!noIcons)
+					{
+						for (int i = 0; i < Icons.size(); i++)
+							Icons.at(i).rect.x = rect.x + spacing;
+					}
 				}
 			}
 		}
