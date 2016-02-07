@@ -34,7 +34,10 @@ struct Customize
 	//back
 	button back;
 	LTexture back_text;
-	
+
+	//bottom bar
+	SDL_Rect bottom;
+
 	public:
 	Customize()
 	{
@@ -89,9 +92,32 @@ struct Customize
 		hiltIcons.push_back(SidiusIC);
 		hiltIcons.push_back(WinduIC);
 		hiltIcons.push_back(FistoIC);
+	
+		//colors
+		button cIC (SCREEN_WIDTH - 55 - 5, hiltIC.rect.y + hiltIC.rect.h + 20, 55, 55);
+		colorIC = cIC;
 		
+		panel c(SCREEN_WIDTH, 0, 7, 45, 10, true);
+		colorSelect = c;
+
+		button g(0x00, 0xFF, 0x00, 0xFF, colorSelect.rect.x + 10, 10, 45, 45);
+		button b(0x00, 0x00, 0xFF, 0xFF, g.rect.x, g.rect.y + 45 + 10, 45, 45);
+		button r(0xFF, 0x00, 0x00, 0xFF, g.rect.x, b.rect.y + 45 + 10, 45, 45);
+		button p(0xFF, 0x00, 0xFF, 0xFF, g.rect.x, r.rect.y + 45 + 10, 45, 45);
+		button y(0xFF, 0xFF, 0x00, 0xFF, g.rect.x, p.rect.y + 45 + 10, 45, 45);
+		button w(0xFF, 0xFF, 0xFF, 0xFF, g.rect.x, y.rect.y + 45 + 10, 45, 45);
+		button bl(0x00, 0x00, 0x00, 0xFF, g.rect.x, w.rect.y + 45 + 10, 45, 45);
+
+		colorButtons.push_back(g);
+		colorButtons.push_back(b);
+		colorButtons.push_back(r);
+		colorButtons.push_back(p);
+		colorButtons.push_back(y);
+		colorButtons.push_back(w);
+		colorButtons.push_back(bl);
+
 		//background
-		button bg (SCREEN_WIDTH - 55 - 5, hiltIC.rect.y + hiltIC.rect.h + 20, 55, 55);
+		button bg (SCREEN_WIDTH - 55 - 5, colorIC.rect.y + colorIC.rect.h + 20, 55, 55);
 		bgIC = bg;
 
 		panel btemp(SCREEN_WIDTH, 0, 3, 45, 10, true);
@@ -113,39 +139,22 @@ struct Customize
 		bgIcons.push_back(BG2IC);
 		bgIcons.push_back(BG3IC);
 
-		//colors
-		button cIC (0 + 5, hiltIC.rect.y, 55, 55);
-		colorIC = cIC;
-		
-		panel c(0 - 65, 0, 7, 45, 10, true);
-		colorSelect = c;
-
-		button g(0x00, 0xFF, 0x00, 0xFF, colorSelect.rect.x + 10, 10, 45, 45);
-		button b(0x00, 0x00, 0xFF, 0xFF, g.rect.x, g.rect.y + 45 + 10, 45, 45);
-		button r(0xFF, 0x00, 0x00, 0xFF, g.rect.x, b.rect.y + 45 + 10, 45, 45);
-		button p(0xFF, 0x00, 0xFF, 0xFF, g.rect.x, r.rect.y + 45 + 10, 45, 45);
-		button y(0xFF, 0xFF, 0x00, 0xFF, g.rect.x, p.rect.y + 45 + 10, 45, 45);
-		button w(0xFF, 0xFF, 0xFF, 0xFF, g.rect.x, y.rect.y + 45 + 10, 45, 45);
-		button bl(0x00, 0x00, 0x00, 0xFF, g.rect.x, w.rect.y + 45 + 10, 45, 45);
-
-		colorButtons.push_back(g);
-		colorButtons.push_back(b);
-		colorButtons.push_back(r);
-		colorButtons.push_back(p);
-		colorButtons.push_back(y);
-		colorButtons.push_back(w);
-		colorButtons.push_back(bl);
-
 		//mute
 		mute = false;
-		button mIC (SCREEN_WIDTH - 25 - 65, 5, 20, 20);
+		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);
 		muteIC = mIC;
 
 		//back
-		button B(0x0F, 0x0F, 0x0F, 0xFF, colorSelect.rect.x + 65, 0, 50, 30);
+		button B(0x0F, 0x0F, 0x0F, 0xFF, 3, SCREEN_HEIGHT - 25, 45, 25);
 		back = B;
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
+	
+		//bottom bar
+		bottom.x = 0;
+		bottom.y = SCREEN_HEIGHT - 28;
+		bottom.w = SCREEN_WIDTH;
+		bottom.h = 28;
 	}
 	private:
 	void handleHiltIconMouseDown(int mouse_x, int mouse_y);
@@ -164,6 +173,7 @@ struct Customize
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	public:
 	void handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg);
 	void handleGame(int mouse_x, int mouse_y);
@@ -173,19 +183,19 @@ struct Customize
 
 void Customize::handleHiltIconMouseDown(int mouse_x, int mouse_y)
 {
-	if (hiltIC.wasClicked(mouse_x, mouse_y) && !bgSelect.visible)
+	if (hiltIC.wasClicked(mouse_x, mouse_y) && !bgSelect.visible && !colorSelect.visible)
 		hiltSelect.visible = true;
 }
 
 void Customize::handleBackgroundIconMouseDown(int mouse_x, int mouse_y)
 {
-	if (bgIC.wasClicked(mouse_x, mouse_y) && !hiltSelect.visible)
+	if (bgIC.wasClicked(mouse_x, mouse_y) && !hiltSelect.visible && !colorSelect.visible)
 		bgSelect.visible = true;
 }
 
 void Customize::handleColorIconMouseDown(int mouse_x, int mouse_y)
 {
-	if (colorIC.wasClicked(mouse_x, mouse_y))
+	if (colorIC.wasClicked(mouse_x, mouse_y) && !hiltSelect.visible && !bgSelect.visible)
 		colorSelect.visible = true;
 }
 
@@ -412,6 +422,12 @@ void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	}
 }
 
+void Customize::renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &bottom);
+}
+
 void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, int bg)
 {
 	custom.saber.on = true;
@@ -447,6 +463,9 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 
 	//color select GUI
 	renderColorSelectGUI(RENDERER, mouse_x, mouse_y);
+
+	//bottom bar
+	renderBottomBar(RENDERER, mouse_x, mouse_y);
 
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
