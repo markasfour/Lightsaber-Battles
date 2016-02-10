@@ -290,10 +290,16 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg)
 
 void Customize::handleGame(int mouse_x, int mouse_y)
 {
+	//handle hum sound 
+	custom.handleHumSound(mute);
+
+	//hilt select gui
 	hiltSelect.move(0.5, hiltButtons, hiltIcons);
 
+	//background select gui
 	bgSelect.move(0.5, bgButtons, bgIcons);
 
+	//color select gui
 	vector <button> temp (0);
 	colorSelect.move(0.5, colorButtons, temp);
 }

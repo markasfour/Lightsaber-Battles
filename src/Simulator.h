@@ -50,7 +50,9 @@ struct Simulator
 	button back;
 	LTexture back_text;
 	
-	
+	//bottom bar
+	SDL_Rect bottom;
+
 	Simulator()
 	{
 		Character m("Luke");
@@ -117,16 +119,24 @@ struct Simulator
 		bgButtons.push_back(EmperorsThrone);
 		bgButtons.push_back(HothEchoBase);
 
+		//mute
 		mute = false;
 		soundOn = false;
 		soundOff = false;
-		button mIC (SCREEN_WIDTH - 25, 5, 20, 20);
+		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);
 		muteIC = mIC;
 
-		button B(0x0F, 0x0F, 0x0F, 0xFF, 0, 0, 50, 30);
+		//back
+		button B(0x0F, 0x0F, 0x0F, 0xFF, 3, SCREEN_HEIGHT - 25, 45, 25);
 		back = B;
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
+	
+		//bottom bar
+		bottom.x = 0;
+		bottom.y = SCREEN_HEIGHT - 28;
+		bottom.w = SCREEN_WIDTH;
+		bottom.h = 28;
 	}
 
 	void handleSaberSelectMouseDown(int mosue_x, int mouse_y, Character custom);
@@ -142,6 +152,7 @@ struct Simulator
 	void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom, int bg);
 	void close();
 };
@@ -431,6 +442,12 @@ void Simulator::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	}
 }
 
+void Simulator::renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &bottom);
+}
+
 void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom, int bg)
 {
 	//render everything
@@ -453,6 +470,9 @@ void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	//background select
 	renderBackgroundSelectGUI(RENDERER, mouse_x, mouse_y);
 			
+	//bottom bar
+	renderBottomBar(RENDERER, mouse_x, mouse_y);
+	
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
 
