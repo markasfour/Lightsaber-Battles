@@ -77,6 +77,8 @@ int main(int argc, char **argv[])
 	Character custom;
 	//custom background
 	int bg = 0;
+	//mute
+	bool mute = false;
 
 	Menu main_menu;
 	Simulator simulator;

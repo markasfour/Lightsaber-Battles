@@ -41,7 +41,6 @@ struct Simulator
 	button HothEchoBase;
 
 	//mute
-	bool mute;
 	bool soundOn;
 	bool soundOff;
 	button muteIC;
@@ -120,7 +119,6 @@ struct Simulator
 		bgButtons.push_back(HothEchoBase);
 
 		//mute
-		mute = false;
 		soundOn = false;
 		soundOff = false;
 		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);

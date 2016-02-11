@@ -18,6 +18,8 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 const int FRAMES_PER_SECOND = 60;
 
+bool mute = false;
+
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 SDL_Surface *SCREENSURFACE = NULL;

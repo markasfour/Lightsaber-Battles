@@ -28,7 +28,6 @@ struct Customize
 	vector <button> colorButtons;
 
 	//mute
-	bool mute;
 	button muteIC;
 	
 	//back
@@ -140,7 +139,6 @@ struct Customize
 		bgIcons.push_back(BG3IC);
 
 		//mute
-		mute = false;
 		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);
 		muteIC = mIC;
 

@@ -41,7 +41,6 @@ struct Battle
 	bool clash_render;
 
 	//mute
-	bool mute;
 	bool soundOn;
 	bool soundOff;
 	button muteIC;
@@ -103,7 +102,6 @@ struct Battle
 		clashRect.h = 100;
 
 		//mute
-		mute = false;
 		soundOn = false;
 		soundOff = false;
 		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);
