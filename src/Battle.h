@@ -49,6 +49,14 @@ struct Battle
 	button back;
 	LTexture back_text;
 
+	//simulator
+	button simulator;
+	LTexture sim_text;
+
+	//customize
+	button customize;
+	LTexture customize_text;
+	
 	//bottom bar
 	SDL_Rect bottom;
 
@@ -112,6 +120,18 @@ struct Battle
 		back = B;
 		color = {0xFF, 0xFF, 0xFF};
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
+	
+		//simulator
+		button s(0x0F, 0x0F, 0x0F, 0xFF, SCREEN_WIDTH / 2 - 160, SCREEN_HEIGHT - 25, 100, 25);
+		simulator = s;
+		color = {0xFF, 0xFF, 0xFF};
+		sim_text.loadFromRenderedText(RENDERER, FONT, "simulator", color);
+
+		//customize
+		button cu(0x0F, 0x0F, 0x0F, 0xFF, SCREEN_WIDTH / 2 + 70, SCREEN_HEIGHT - 25, 100, 25);
+		customize = cu;
+		color = {0xFF, 0xFF, 0xFF};
+		customize_text.loadFromRenderedText(RENDERER, FONT, "customize", color);
 
 		//bottom bar
 		bottom.x = 0;
@@ -126,6 +146,8 @@ struct Battle
 	void handleAttack(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
+	void handleSimulatorMouseDown(int mouse_x, int mouse_y);
+	void handleCustomizeMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
 	void handleStart(Character custom);
 	void handleOpponentAttack(int mouse_x, int mouse_y);
@@ -134,6 +156,8 @@ struct Battle
 	void renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderSimulatorButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderCustomizeButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom, int bg);
 };
@@ -200,7 +224,8 @@ void Battle::handleBlock()
 
 void Battle::handleAttack(int mouse_x, int mouse_y)
 {
-	if (!muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
+	if (!muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y) &&
+		!simulator.wasClicked(mouse_x, mouse_y) && !customize.wasClicked(mouse_x, mouse_y))
 	{
 		int x = rand() % HITS.size();
 		if (!mute)
@@ -234,7 +259,50 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 		opponent.saber.blade.h = 0;
 		opponent.blade = &blades.at(x);
 		opponent.bladetip = &bladetips.at(x);
+		opponent.bladebase = &bladebases.at(x);
 		opponent.saber.on = false;
+	}
+}
+
+void Battle::handleSimulatorMouseDown(int mouse_x, int mouse_y)
+{
+	if (simulator.wasClicked(mouse_x, mouse_y))
+	{
+		GAMES.at(2) = false;	
+		SDL_ShowCursor(1);
+		Mix_HaltChannel(-1);
+		start = true;
+		op_point.x = rand() % op_rect.w + op_rect.x;
+		op_point.y = rand() % op_rect.h + op_rect.y;
+		opponent.hilt = &hilts.at(rand() % hilts.size());
+		int x = rand() % blades.size();
+		opponent.saber.blade.h = 0;
+		opponent.blade = &blades.at(x);
+		opponent.bladetip = &bladetips.at(x);
+		opponent.bladebase = &bladebases.at(x);
+		opponent.saber.on = false;
+		GAMES.at(0) = true;
+	}
+}
+
+void Battle::handleCustomizeMouseDown(int mouse_x, int mouse_y)
+{
+	if (customize.wasClicked(mouse_x, mouse_y))
+	{
+		GAMES.at(2) = false;	
+		SDL_ShowCursor(1);
+		Mix_HaltChannel(-1);
+		start = true;
+		op_point.x = rand() % op_rect.w + op_rect.x;
+		op_point.y = rand() % op_rect.h + op_rect.y;
+		opponent.hilt = &hilts.at(rand() % hilts.size());
+		int x = rand() % blades.size();
+		opponent.saber.blade.h = 0;
+		opponent.blade = &blades.at(x);
+		opponent.bladetip = &bladetips.at(x);
+		opponent.bladebase = &bladebases.at(x);
+		opponent.saber.on = false;
+		GAMES.at(1) = true;
 	}
 }
 
@@ -248,6 +316,12 @@ void Battle::handleMouseDown(int mouse_x, int mouse_y)
 	
 	//back button click
 	handleBackMouseDown(mouse_x, mouse_y);
+
+	//simulator button click
+	handleSimulatorMouseDown(mouse_x, mouse_y);
+	
+	//customize button click
+	handleCustomizeMouseDown(mouse_x, mouse_y);
 }
 
 void Battle::handleStart(Character custom)
@@ -490,6 +564,36 @@ void Battle::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	}
 }
 
+void Battle::renderSimulatorButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
+	if (simulator.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &simulator.hover);
+		SDL_RenderCopy(RENDERER, sim_text.mTexture, NULL, &simulator.hover);
+	}
+	else if (!simulator.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &simulator.rect);
+		SDL_RenderCopy(RENDERER, sim_text.mTexture, NULL, &simulator.rect);
+	}
+}
+
+
+void Battle::renderCustomizeButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
+	if (customize.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &customize.hover);
+		SDL_RenderCopy(RENDERER, customize_text.mTexture, NULL, &customize.hover);
+	}
+	else if (!customize.mouseHover(mouse_x, mouse_y, true))
+	{
+		SDL_RenderFillRect(RENDERER, &customize.rect);
+		SDL_RenderCopy(RENDERER, customize_text.mTexture, NULL, &customize.rect);
+	}
+}
 void Battle::renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
@@ -530,6 +634,12 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//back button
 	renderBackButton(RENDERER, mouse_x, mouse_y);
 	
+	//simulator button
+	renderSimulatorButton(RENDERER, mouse_x, mouse_y);
+	
+	//customize button
+	renderCustomizeButton(RENDERER, mouse_x, mouse_y);
+
 	//test
 	if (DEBUG)
 	{
