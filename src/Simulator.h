@@ -14,31 +14,31 @@ struct Simulator
 	
 	//characters
 	Character main_char;
-	Character Luke;
-	Character Anakin;
-	Character Vader;
+	//Character Luke;
+	//Character Anakin;
+	//Character Vader;
 
 	//lightsaber selection panel
-	panel saberSelect;
-	bool switched;
-	vector <button> saberButtons;
-	vector <button> saberIcons;
-	button LukeBG;
-	button AnakinBG;	
-	button VaderBG;
-	button CustomBG;
-	button LukeIC;
-	button AnakinIC;
-	button VaderIC;
-	button CustomIC;
+	//panel saberSelect;
+	//bool switched;
+	//vector <button> saberButtons;
+	//vector <button> saberIcons;
+	//button LukeBG;
+	//button AnakinBG;	
+	//button VaderBG;
+	//button CustomBG;
+	//button LukeIC;
+	//button AnakinIC;
+	//button VaderIC;
+	//button CustomIC;
 
 	//background selection panel
-	int background;
-	panel bgSelect;
-	vector <button> bgButtons;
-	button CarbonFreezing;
-	button EmperorsThrone;
-	button HothEchoBase;
+	//int background;
+	//panel bgSelect;
+	//vector <button> bgButtons;
+	//button CarbonFreezing;
+	//button EmperorsThrone;
+	//button HothEchoBase;
 
 	//mute
 	bool soundOn;
@@ -52,16 +52,16 @@ struct Simulator
 	//bottom bar
 	SDL_Rect bottom;
 
-	Simulator()
+	Simulator(Character custom)
 	{
-		Character m("Luke");
-		main_char = m;
-		Character l("Luke");
-		Luke = l;
-		Character a("Anakin");
-		Anakin = a;
-		Character v("Vader");
-		Vader = v;
+		//Character m("Luke");
+		main_char = custom;
+		//Character l("Luke");
+		//Luke = l;
+		//Character a("Anakin");
+		//Anakin = a;
+		//Character v("Vader");
+		//Vader = v;
 
 		backgroundRect.w = SCREEN_WIDTH * 1.05;
 		backgroundRect.h = SCREEN_HEIGHT * 1.05;
@@ -69,54 +69,54 @@ struct Simulator
 		backgroundRect.y = SCREEN_HEIGHT - backgroundRect.h;
 
 		start = true;
-		switched = false;
+		//switched = false;
 
-		panel s(0, SCREEN_HEIGHT, 4, 45, 10);
-		saberSelect = s;
+		//panel s(0, SCREEN_HEIGHT, 4, 45, 10);
+		//saberSelect = s;
 		
-		button LBG(0x00, 0x00, 0x00, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
-		LukeBG = LBG;
-		button ABG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);	
-		AnakinBG = ABG;
-		button VBG(0x00, 0x00, 0x00, 0xFF, AnakinBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
-		VaderBG = VBG;
-		button CBG(0x00, 0x00, 0x00, 0xFF, VaderBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
-		CustomBG = CBG;
+		//button LBG(0x00, 0x00, 0x00, 0xFF, 10, SCREEN_HEIGHT, 45, 45);
+		//LukeBG = LBG;
+		//button ABG(0x00, 0x00, 0x00, 0xFF, LukeBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);	
+		//AnakinBG = ABG;
+		//button VBG(0x00, 0x00, 0x00, 0xFF, AnakinBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+		//VaderBG = VBG;
+		//button CBG(0x00, 0x00, 0x00, 0xFF, VaderBG.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+		//CustomBG = CBG;
 
-		button LIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
-		LukeIC = LIC;
-		button AIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
-		AnakinIC = AIC;
-		button VIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
-		VaderIC = VIC;
-		button CIC(CustomBG.rect.x + (CustomBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
-		CustomIC = CIC;
+		//button LIC(LukeBG.rect.x + (LukeBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+		//LukeIC = LIC;
+		//button AIC(AnakinBG.rect.x + (AnakinBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+		//AnakinIC = AIC;
+		//button VIC(VaderBG.rect.x + (VaderBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+		//VaderIC = VIC;
+		//button CIC(CustomBG.rect.x + (CustomBG.rect.w / 2) - 3, SCREEN_HEIGHT + 3, 9, 40);
+		//CustomIC = CIC;
 
-		saberButtons.push_back(LukeBG);
-		saberButtons.push_back(AnakinBG);
-		saberButtons.push_back(VaderBG);
-		saberButtons.push_back(CustomBG);
+		//saberButtons.push_back(LukeBG);
+		//saberButtons.push_back(AnakinBG);
+		//saberButtons.push_back(VaderBG);
+		//saberButtons.push_back(CustomBG);
 
-		saberIcons.push_back(LukeIC);
-		saberIcons.push_back(AnakinIC);
-		saberIcons.push_back(VaderIC);
-		saberIcons.push_back(CustomIC);
+		//saberIcons.push_back(LukeIC);
+		//saberIcons.push_back(AnakinIC);
+		//saberIcons.push_back(VaderIC);
+		//saberIcons.push_back(CustomIC);
 
-		background = 0;
+		//background = 0;
 		
-		panel bgs(465, SCREEN_HEIGHT, 3, 45, 10);
-		bgSelect = bgs;
+		//panel bgs(465, SCREEN_HEIGHT, 3, 45, 10);
+		//bgSelect = bgs;
 		
-		button CF(bgSelect.rect.x + 10, SCREEN_HEIGHT, 45, 45);
-		CarbonFreezing = CF;
-		button ET(CarbonFreezing.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
-		EmperorsThrone = ET;
-		button HEB(EmperorsThrone.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
-		HothEchoBase = HEB;
+		//button CF(bgSelect.rect.x + 10, SCREEN_HEIGHT, 45, 45);
+		//CarbonFreezing = CF;
+		//button ET(CarbonFreezing.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+		//EmperorsThrone = ET;
+		//button HEB(EmperorsThrone.rect.x + 45 + 10, SCREEN_HEIGHT, 45, 45);
+		//HothEchoBase = HEB;
 
-		bgButtons.push_back(CarbonFreezing);
-		bgButtons.push_back(EmperorsThrone);
-		bgButtons.push_back(HothEchoBase);
+		//bgButtons.push_back(CarbonFreezing);
+		//bgButtons.push_back(EmperorsThrone);
+		//bgButtons.push_back(HothEchoBase);
 
 		//mute
 		soundOn = false;
@@ -137,17 +137,17 @@ struct Simulator
 		bottom.h = 28;
 	}
 
-	void handleSaberSelectMouseDown(int mosue_x, int mouse_y, Character custom);
-	void handleBackgroundSelectMouseDown(int mouse_x, int mouse_y);
+	//void handleSaberSelectMouseDown(int mosue_x, int mouse_y, Character custom);
+	//void handleBackgroundSelectMouseDown(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y, Character &custom);
-	void handleBackgroundSelectGUI(int mouse_x, int mouse_y);
-	void handleSaberSelectGUI(int mouse_x, int mouse_y);
-	void handleGame(int mouse_x, int mouse_y);
+	//void handleBackgroundSelectGUI(int mouse_x, int mouse_y);
+	//void handleSaberSelectGUI(int mouse_x, int mouse_y);
+	void handleGame(int mouse_x, int mouse_y, Character custom);
 	void handleMouseDown(int mouse_x, int mouse_y, Character &custom);
-	void renderSaberSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
-	void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	//void renderSaberSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
+	//void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -155,42 +155,42 @@ struct Simulator
 	void close();
 };
 
-void Simulator::handleSaberSelectMouseDown(int mouse_x, int mouse_y, Character custom)
-{
+//void Simulator::handleSaberSelectMouseDown(int mouse_x, int mouse_y, Character custom)
+//{
 	//saber select panel clicks
-	if (saberSelect.visible)
-	{
-		for (int i = 0; i < saberButtons.size(); i++)
-		{
-			if (saberButtons.at(i).wasClicked(mouse_x, mouse_y))
-			{
-				if (i == 0)
-					main_char = Luke;
-				else if (i == 1)
-					main_char = Anakin;
-				else if (i == 2)
-					main_char = Vader;
-				else if (i == saberButtons.size() - 1)
-					main_char = custom;
-				switched = true; 
-				main_char.saber.on = false; 
-				soundOn = false;
-			}
-		}
-	}
-}
+//	if (saberSelect.visible)
+//	{
+//		for (int i = 0; i < saberButtons.size(); i++)
+//		{
+//			if (saberButtons.at(i).wasClicked(mouse_x, mouse_y))
+//			{
+//				if (i == 0)
+//					main_char = Luke;
+//				else if (i == 1)
+//					main_char = Anakin;
+//				else if (i == 2)
+//					main_char = Vader;
+//				else if (i == saberButtons.size() - 1)
+//					main_char = custom;
+//				switched = true; 
+//				main_char.saber.on = false; 
+//				soundOn = false;
+//			}
+//		}
+//	}
+//}
 
-void Simulator::handleBackgroundSelectMouseDown(int mouse_x, int mouse_y)
-{
-	if (bgSelect.visible)
-	{
-		for (int i = 0; i < bgButtons.size(); i++)
-		{
-			if (bgButtons.at(i).wasClicked(mouse_x, mouse_y))
-				background = i;
-		}
-	}
-}
+//void Simulator::handleBackgroundSelectMouseDown(int mouse_x, int mouse_y)
+//{
+//	if (bgSelect.visible)
+//	{
+//		for (int i = 0; i < bgButtons.size(); i++)
+//		{
+//			if (bgButtons.at(i).wasClicked(mouse_x, mouse_y))
+//				background = i;
+//		}
+//	}
+//}
 
 void Simulator::handleMuteMouseDown(int mouse_x, int mouse_y)
 {
@@ -213,17 +213,20 @@ void Simulator::handleBackMouseDown(int mouse_x, int mouse_y)
 
 void Simulator::handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y, Character &custom)
 {
-	if (!saberSelect.visible && !bgSelect.visible && !muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
+	//if (!saberSelect.visible && !bgSelect.visible && !muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
+	if (!muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))	
 		main_char.saber.on = !main_char.saber.on;
 	
-	if (main_char.saber.on && !switched && !soundOn)
+	//if (main_char.saber.on && !switched && !soundOn)
+	if (main_char.saber.on && !soundOn)
 	{
 		if (!mute)
 			Mix_PlayChannel(2, main_char.ON_SOUND, 0);
 		soundOn = true;
 		soundOff = false;
 	}
-	else if (!main_char.saber.on && !switched && !soundOff )//&& !saberSelect.visible && !bgSelect.visible && GAMES.at(0))
+	//else if (!main_char.saber.on && !switched && !soundOff && !saberSelect.visible && !bgSelect.visible && GAMES.at(0))
+	else if (!main_char.saber.on && !soundOff && GAMES.at(0))
 	{	
 		if (!mute)
 			Mix_PlayChannel(2, main_char.OFF_SOUND, 0);
@@ -232,76 +235,79 @@ void Simulator::handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y, Character
 	}
 }
 
-void Simulator::handleBackgroundSelectGUI(int mouse_x, int mouse_y)
-{
-	if (mouse_x > bgSelect.rect.x && mouse_y > SCREEN_HEIGHT - 20)
-		bgSelect.visible = true;
-	if (bgSelect.visible)
-	{
-		if (bgSelect.rect.y > SCREEN_HEIGHT - 60)
-			bgSelect.rect.y -= 10;
-		for (int i = 0; i < bgButtons.size(); i++)
-		{
-			if (bgButtons.at(i).rect.y > SCREEN_HEIGHT - 50)
-				bgButtons.at(i).rect.y -= 10;
-		}
-		if (mouse_x < bgSelect.rect.x || mouse_y < SCREEN_HEIGHT - 60)
-			bgSelect.visible = false;
-	}
-	if (!bgSelect.visible)
-	{
-		if (bgSelect.rect.y < SCREEN_HEIGHT)
-			bgSelect.rect.y += 10;
-		for (int i = 0; i < bgButtons.size(); i++)
-		{
-			if (bgButtons.at(i).rect.y < SCREEN_HEIGHT)
-				bgButtons.at(i).rect.y += 10;
-		}
-	}
-}
+//void Simulator::handleBackgroundSelectGUI(int mouse_x, int mouse_y)
+//{
+//	if (mouse_x > bgSelect.rect.x && mouse_y > SCREEN_HEIGHT - 20)
+//		bgSelect.visible = true;
+//	if (bgSelect.visible)
+//	{
+//		if (bgSelect.rect.y > SCREEN_HEIGHT - 60)
+//			bgSelect.rect.y -= 10;
+//		for (int i = 0; i < bgButtons.size(); i++)
+//		{
+//			if (bgButtons.at(i).rect.y > SCREEN_HEIGHT - 50)
+//				bgButtons.at(i).rect.y -= 10;
+//		}
+//		if (mouse_x < bgSelect.rect.x || mouse_y < SCREEN_HEIGHT - 60)
+//			bgSelect.visible = false;
+//	}
+//	if (!bgSelect.visible)
+//	{
+//		if (bgSelect.rect.y < SCREEN_HEIGHT)
+//			bgSelect.rect.y += 10;
+//		for (int i = 0; i < bgButtons.size(); i++)
+//		{
+//			if (bgButtons.at(i).rect.y < SCREEN_HEIGHT)
+//				bgButtons.at(i).rect.y += 10;
+//		}
+//	}
+//}
 
-void Simulator::handleSaberSelectGUI(int mouse_x, int mouse_y)
-{
-	if (mouse_x < saberSelect.rect.w && mouse_y > SCREEN_HEIGHT - 20)
-		saberSelect.visible = true;
-	if (saberSelect.visible)
-	{
-		if (saberSelect.rect.y > SCREEN_HEIGHT - 60)
-			saberSelect.rect.y -= 10;
-		for (int i = 0; i < saberButtons.size(); i++)
-		{
-			if (saberButtons.at(i).rect.y > SCREEN_HEIGHT - 50)
-			{
-				saberButtons.at(i).rect.y -= 10;
-				saberIcons.at(i).rect.y -= 10;
-			}
-		}
-		if (mouse_x > saberSelect.rect.w || mouse_y < SCREEN_HEIGHT - 60)
-			saberSelect.visible = false;
-	}
-	if (!saberSelect.visible)
-	{
-		if (saberSelect.rect.y < SCREEN_HEIGHT)
-			saberSelect.rect.y += 10;
-		for (int i = 0; i < saberButtons.size(); i++)
-		{
-			if (saberButtons.at(i).rect.y < SCREEN_HEIGHT)
-			{
-				saberButtons.at(i).rect.y += 10;
-				saberIcons.at(i).rect.y += 10;
-			}
-		}
-	}
-}
+//void Simulator::handleSaberSelectGUI(int mouse_x, int mouse_y)
+//{
+//	if (mouse_x < saberSelect.rect.w && mouse_y > SCREEN_HEIGHT - 20)
+//		saberSelect.visible = true;
+//	if (saberSelect.visible)
+//	{
+//		if (saberSelect.rect.y > SCREEN_HEIGHT - 60)
+//			saberSelect.rect.y -= 10;
+//		for (int i = 0; i < saberButtons.size(); i++)
+//		{
+//			if (saberButtons.at(i).rect.y > SCREEN_HEIGHT - 50)
+//			{
+//				saberButtons.at(i).rect.y -= 10;
+//				saberIcons.at(i).rect.y -= 10;
+//			}
+//		}
+//		if (mouse_x > saberSelect.rect.w || mouse_y < SCREEN_HEIGHT - 60)
+//			saberSelect.visible = false;
+//	}
+//	if (!saberSelect.visible)
+//	{
+//		if (saberSelect.rect.y < SCREEN_HEIGHT)
+//			saberSelect.rect.y += 10;
+//		for (int i = 0; i < saberButtons.size(); i++)
+//		{
+//			if (saberButtons.at(i).rect.y < SCREEN_HEIGHT)
+//			{
+//				saberButtons.at(i).rect.y += 10;
+//				saberIcons.at(i).rect.y += 10;
+//			}
+//		}
+//	}
+//}
 
-void Simulator::handleGame(int mouse_x, int mouse_y)
+void Simulator::handleGame(int mouse_x, int mouse_y, Character custom)
 {
 	//hide cursor
-	if (saberSelect.visible || bgSelect.visible)
-		SDL_ShowCursor(1);
-	else
+	//if (saberSelect.visible || bgSelect.visible)
+	//	SDL_ShowCursor(1);
+	//else
 		SDL_ShowCursor(0);
-	
+
+	if (main_char != custom)
+		main_char = custom;
+
 	if (start && mouse_x == 0 && mouse_y == 0)
 	{
 		mouse_x = SCREEN_WIDTH / 2;
@@ -310,7 +316,7 @@ void Simulator::handleGame(int mouse_x, int mouse_y)
 	if (start && mouse_x != SCREEN_WIDTH / 2 && mouse_y != SCREEN_HEIGHT / 4)
 		start = false;
 	
-	switched = false;
+	//switched = false;
 
 	//handle key presses here
 
@@ -333,22 +339,22 @@ void Simulator::handleGame(int mouse_x, int mouse_y)
 	main_char.handleSwingSound(mute);
 
 	//handle saber position
-	main_char.saber.handleSaberPosition(mouse_x, mouse_y, switched);
+	main_char.saber.handleSaberPosition(mouse_x, mouse_y, false);
 
 	//lightsaber select gui
-	handleSaberSelectGUI(mouse_x, mouse_y);
+	//handleSaberSelectGUI(mouse_x, mouse_y);
 
 	//background select gui
-	handleBackgroundSelectGUI(mouse_x, mouse_y);
+	//handleBackgroundSelectGUI(mouse_x, mouse_y);
 }
 
 void Simulator::handleMouseDown(int mouse_x, int mouse_y, Character &custom)
 {
 	//saber select panel clicks
-	handleSaberSelectMouseDown(mouse_x, mouse_y, custom);
+	//handleSaberSelectMouseDown(mouse_x, mouse_y, custom);
 	
 	//background select panel clicks
-	handleBackgroundSelectMouseDown(mouse_x, mouse_y);
+	//handleBackgroundSelectMouseDown(mouse_x, mouse_y);
 	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
@@ -360,52 +366,52 @@ void Simulator::handleMouseDown(int mouse_x, int mouse_y, Character &custom)
 	handleSaberOnSwitchMouseDown(mouse_x, mouse_y, custom);
 }
 
-void Simulator::renderSaberSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom)
-{
-	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
-	SDL_RenderFillRect(RENDERER, &saberSelect.rect);
+//void Simulator::renderSaberSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom)
+//{
+//	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0x0F);
+//	SDL_RenderFillRect(RENDERER, &saberSelect.rect);
 	//buttons
-	for (int i = 0; i < saberButtons.size(); i++)
-	{
-		SDL_SetRenderDrawColor(RENDERER, saberButtons.at(i).r, saberButtons.at(i).g, saberButtons.at(i).b, saberButtons.at(i).a);
-		if (saberSelect.visible && saberButtons.at(i).mouseHover(mouse_x, mouse_y, true))
-		{
-			SDL_RenderFillRect(RENDERER, &saberButtons.at(i).hover);
-			saberIcons.at(i).mouseHover(mouse_x, mouse_y, false);
-			if (i != saberButtons.size() - 1)
-				SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &saberIcons.at(i).hover,
-							 	 45, NULL, SDL_FLIP_NONE);	
-			else
-				SDL_RenderCopyEx(RENDERER, custom.hilt->mTexture, NULL, &saberIcons.at(i).hover,
-							 	 45, NULL, SDL_FLIP_NONE);
-		}
-		else if (saberSelect.visible && !saberButtons.at(i).mouseHover(mouse_x, mouse_y, true))
-		{
-			SDL_RenderFillRect(RENDERER, &saberButtons.at(i).rect);
-			saberIcons.at(i).mouseHover(mouse_x, mouse_y, false);
-			if (i != saberButtons.size() - 1)
-				SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &saberIcons.at(i).rect,
-							 	 45, NULL, SDL_FLIP_NONE);
-			else	
-				SDL_RenderCopyEx(RENDERER, custom.hilt->mTexture, NULL, &saberIcons.at(i).rect,
-							 	 45, NULL, SDL_FLIP_NONE);
-		}
-	}
-}
+//	for (int i = 0; i < saberButtons.size(); i++)
+//	{
+//		SDL_SetRenderDrawColor(RENDERER, saberButtons.at(i).r, saberButtons.at(i).g, saberButtons.at(i).b, saberButtons.at(i).a);
+//		if (saberSelect.visible && saberButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+//		{
+//			SDL_RenderFillRect(RENDERER, &saberButtons.at(i).hover);
+//			saberIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+//			if (i != saberButtons.size() - 1)
+//				SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &saberIcons.at(i).hover,
+//							 	 45, NULL, SDL_FLIP_NONE);	
+//			else
+//				SDL_RenderCopyEx(RENDERER, custom.hilt->mTexture, NULL, &saberIcons.at(i).hover,
+//							 	 45, NULL, SDL_FLIP_NONE);
+//		}
+//		else if (saberSelect.visible && !saberButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+//		{
+//			SDL_RenderFillRect(RENDERER, &saberButtons.at(i).rect);
+//			saberIcons.at(i).mouseHover(mouse_x, mouse_y, false);
+//			if (i != saberButtons.size() - 1)
+//				SDL_RenderCopyEx(RENDERER, hilts.at(i).mTexture, NULL, &saberIcons.at(i).rect,
+//							 	 45, NULL, SDL_FLIP_NONE);
+//			else	
+//				SDL_RenderCopyEx(RENDERER, custom.hilt->mTexture, NULL, &saberIcons.at(i).rect,
+//							 	 45, NULL, SDL_FLIP_NONE);
+//		}
+//	}
+//}
 
-void Simulator::renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
-{
-	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
-	SDL_RenderFillRect(RENDERER, &bgSelect.rect);
-	//buttons
-	for (int i = 0; i < bgButtons.size(); i++)
-	{
-		if (bgSelect.visible && bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
-			SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgButtons.at(i).hover);
-		else if (bgSelect.visible && !bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
-			SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgButtons.at(i).rect);
-	}
-}
+//void Simulator::renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+//{
+//	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
+//	SDL_RenderFillRect(RENDERER, &bgSelect.rect);
+//	//buttons
+//	for (int i = 0; i < bgButtons.size(); i++)
+//	{
+//		if (bgSelect.visible && bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+//			SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgButtons.at(i).hover);
+//		else if (bgSelect.visible && !bgButtons.at(i).mouseHover(mouse_x, mouse_y, true))
+//			SDL_RenderCopy(RENDERER, backgrounds.at(i).mTexture, NULL, &bgButtons.at(i).rect);
+//	}
+//}
 
 void Simulator::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
@@ -463,10 +469,10 @@ void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	main_char.renderHilt(RENDERER);
 	
 	//saber select
-	renderSaberSelectGUI(RENDERER, mouse_x, mouse_y, custom);
+	//renderSaberSelectGUI(RENDERER, mouse_x, mouse_y, custom);
 			
 	//background select
-	renderBackgroundSelectGUI(RENDERER, mouse_x, mouse_y);
+	//renderBackgroundSelectGUI(RENDERER, mouse_x, mouse_y);
 			
 	//bottom bar
 	renderBottomBar(RENDERER, mouse_x, mouse_y);

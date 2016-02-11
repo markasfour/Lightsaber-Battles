@@ -98,7 +98,15 @@ struct Character
 		saber = c.saber;
 		depth = c.depth;
 	}
-	
+	bool operator!=(const Character &r)
+	{
+		if (hilt != r.hilt || blade != r.blade ||
+			bladetip != r.bladetip || bladebase != r.bladebase ||
+			HUM != r.HUM)
+				return true;
+		return false;
+	}	
+
 	void zoomIn() //from depth <1 to 1 (going into the screen)
 	{
 		if (depth >= 1)

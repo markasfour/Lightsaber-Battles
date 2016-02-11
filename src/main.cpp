@@ -81,7 +81,7 @@ int main(int argc, char **argv[])
 	bool mute = false;
 
 	Menu main_menu;
-	Simulator simulator;
+	Simulator simulator(custom);
 	Customize customize;
 	Battle battle;
 
@@ -161,7 +161,7 @@ int main(int argc, char **argv[])
 	
 		//handle game mechanics
 		if (GAMES.at(0))
-			simulator.handleGame(mouse_x, mouse_y);	
+			simulator.handleGame(mouse_x, mouse_y, custom);	
 		else if (GAMES.at(1))
 			customize.handleGame(mouse_x, mouse_y);
 		else if (GAMES.at(2))
