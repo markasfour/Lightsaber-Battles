@@ -157,7 +157,7 @@ struct Customize
 		back_text.loadFromRenderedText(RENDERER, FONT, "back", color);
 
 		//simulator
-		button s(0x0F, 0x0F, 0x0F, 0xFF, SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT - 25, 100, 25);
+		button s(0x0F, 0x0F, 0x0F, 0xFF, SCREEN_WIDTH / 2 - 160, SCREEN_HEIGHT - 25, 100, 25);
 		simulator = s;
 		color = {0xFF, 0xFF, 0xFF};
 		sim_text.loadFromRenderedText(RENDERER, FONT, "simulator", color);
@@ -344,6 +344,9 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg)
 
 void Customize::handleGame(int mouse_x, int mouse_y)
 {
+	//show cursor
+	SDL_ShowCursor(1);
+	
 	//handle hum sound 
 	custom.handleHumSound(mute);
 
@@ -576,6 +579,8 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 void Customize::close()
 {
 	back_text.free();
+	sim_text.free();
+	battle_text.free();
 }
 
 #endif

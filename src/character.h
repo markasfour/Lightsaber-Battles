@@ -153,7 +153,7 @@ struct Character
 	{
 		if (saber.on && !mute)
 		{
-			Mix_Volume(1, MIX_MAX_VOLUME/2);	//play at half volume
+			Mix_Volume(1, MIX_MAX_VOLUME);	
 			if (Mix_Playing(1) == 0)
 				Mix_PlayChannel(1, HUM, 0);
 		}
