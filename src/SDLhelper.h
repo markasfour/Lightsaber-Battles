@@ -49,7 +49,12 @@ Mix_Chunk *HUM_2 = NULL;
 Mix_Chunk *HUM_3 = NULL;
 Mix_Chunk *SWING_SOUND_1 = NULL;
 Mix_Chunk *SWING_SOUND_2 = NULL;
+Mix_Chunk *CLICK_SOUND = NULL;
+Mix_Chunk *BATTLE_START = NULL;
 vector <Mix_Chunk*> HITS(7);
+
+Mix_Music *MENU_THEME = NULL;
+Mix_Music *BATTLE_THEME = NULL;
 
 bool DEBUG = false;
 
@@ -403,7 +408,39 @@ bool loadMedia(string CurrentPath)
 	HITS.at(6) = Mix_LoadWAV(path.str().c_str());
 	if (HITS.at(6) == NULL)
 		return false;
+
+	//clear stringstream
+	path.str("");
 	
+	path << CurrentPath << "/content/click_sound.wav";
+	CLICK_SOUND = Mix_LoadWAV(path.str().c_str());
+	if (CLICK_SOUND == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/battle_start.wav";
+	BATTLE_START = Mix_LoadWAV(path.str().c_str());
+	if (BATTLE_START == NULL)
+		return false;
+	
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/menu_theme.wav";
+	MENU_THEME = Mix_LoadMUS(path.str().c_str());
+	if (MENU_THEME == NULL)
+		return false;
+
+	//clear stringstream
+	path.str("");
+	
+	path << CurrentPath << "/content/battle_theme.wav";
+	BATTLE_THEME = Mix_LoadMUS(path.str().c_str());
+	if (BATTLE_THEME == NULL)
+		return false;
+
 	return true;
 }
 
@@ -453,6 +490,15 @@ void close()
 	SWING_SOUND_1 = NULL;
 	Mix_FreeChunk(SWING_SOUND_2);
 	SWING_SOUND_2 = NULL;
+	Mix_FreeChunk(CLICK_SOUND);
+	CLICK_SOUND = NULL;
+	Mix_FreeChunk(BATTLE_START);
+	BATTLE_START = NULL;
+	Mix_FreeMusic(MENU_THEME);
+	MENU_THEME = NULL;
+	Mix_FreeMusic(BATTLE_THEME);
+	BATTLE_THEME = NULL;
+	
 
 	//free loaded fonts
 	TTF_CloseFont(FONT);

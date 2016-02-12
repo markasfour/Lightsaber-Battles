@@ -65,7 +65,10 @@ struct button
 		if (mouse_x > rect.x && mouse_x < (rect.x + rect.w))
 		{
 			if (mouse_y > rect.y && mouse_y < (rect.y + rect.h))
+			{
+				Mix_PlayChannel(-1, CLICK_SOUND, 0);
 				return true;
+			}
 			return false;
 		}
 		return false;

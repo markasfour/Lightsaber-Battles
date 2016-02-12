@@ -66,11 +66,20 @@ struct Menu
 	void handleMouseDown(int mouse_x, int mouse_y)
 	{
 		if (Simulator.wasClicked(mouse_x, mouse_y))
+		{	
 			GAMES.at(0) = true;
+			Mix_HaltMusic();
+		}
 		else if (Customize.wasClicked(mouse_x, mouse_y))
+		{	
 			GAMES.at(1) = true;
+			Mix_HaltMusic();
+		}
 		else if (Battle.wasClicked(mouse_x, mouse_y))
+		{	
 			GAMES.at(2) = true;
+			Mix_HaltMusic();
+		}
 	}
 
 	void handleBackgroundMovement(int mouse_x, int mouse_y)
@@ -111,6 +120,10 @@ struct Menu
 
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	{
+		//play music
+		if (!Mix_PlayingMusic())
+			Mix_PlayMusic(MENU_THEME, -1);
+		
 		//render everything
 		//clear screen
 		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);

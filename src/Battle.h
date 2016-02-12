@@ -72,9 +72,9 @@ struct Battle
 		start = true;
 	
 		op_rect.x = SCREEN_WIDTH / 2 - 100;
-		op_rect.y = SCREEN_HEIGHT / 2 - 150;
+		op_rect.y = SCREEN_HEIGHT / 2;
 		op_rect.w = 200;
-		op_rect.h = 300;
+		op_rect.h = 100;
 	
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;
@@ -251,6 +251,7 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 		GAMES.at(2) = false;	
 		SDL_ShowCursor(1);
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 		start = true;
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;
@@ -271,6 +272,7 @@ void Battle::handleSimulatorMouseDown(int mouse_x, int mouse_y)
 		GAMES.at(2) = false;	
 		SDL_ShowCursor(1);
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 		start = true;
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;
@@ -292,6 +294,7 @@ void Battle::handleCustomizeMouseDown(int mouse_x, int mouse_y)
 		GAMES.at(2) = false;	
 		SDL_ShowCursor(1);
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 		start = true;
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;
@@ -328,16 +331,20 @@ void Battle::handleStart(Character custom)
 {
 	if (start)
 	{
+		//play music
+		if (!Mix_Playing(7))
+			Mix_PlayChannel(7, BATTLE_START, -1);
+		
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
-		op_center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
 		main_char.saber.setCenterPoints();
 		opponent.saber.setCenterPoints();
 
 		//handle angle
 		main_char.saber.handleAngle(center, SCREEN_WIDTH / 2, 3 * SCREEN_HEIGHT / 4);
 		opponent.saber.handleAngle(op_center, op_point.x, op_point.y);
-		opponent.saber.angle /= 2;
+		opponent.saber.angle *= -1;
 
 		main_char.saber.handleSaberPosition(SCREEN_WIDTH / 2, 3 * SCREEN_HEIGHT / 4, false);
 		opponent.saber.handleSaberPosition(op_point.x, op_point.y, false);
@@ -457,9 +464,15 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 {
 	//handle start
 	handleStart(custom);
-		
+	
 	if (!start)	
 	{
+		//play music
+		if (Mix_Playing(7))
+			Mix_HaltChannel(7);
+		if (!Mix_PlayingMusic())
+			Mix_PlayMusic(BATTLE_THEME, -1);
+		
 		handleBlock();
 
 		//handle main_char attack
@@ -498,7 +511,7 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
-		op_center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
 		main_char.saber.setCenterPoints();
 		opponent.saber.setCenterPoints();
 
@@ -509,7 +522,7 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 		//handle angle
 		main_char.saber.handleAngle(center, mouse_x, mouse_y);
 		opponent.saber.handleAngle(op_center, op_point.x, op_point.y);
-		opponent.saber.angle /= 2;
+		opponent.saber.angle *= -1;
 
 		//handle swing
 		main_char.saber.handleSwing();
@@ -665,6 +678,9 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 		cout << main_char.saber.blade.h << endl;
 		cout << opponent.saber.blade.h << endl;
 		cout << endl;
+
+		//opponent center
+		SDL_RenderDrawPoint(RENDERER, op_center.x, op_center.y);
 	}
 
 	//ready
