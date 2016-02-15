@@ -117,6 +117,8 @@ struct Character
 		else
 		{
 			depth += .13333333;
+			if (depth >= 1)
+				depth = 1;
 			saber.hilt.w = 15.0 - ((15.0 - (15.0 * 0.75)) * depth);
 			saber.hilt.h = 75.0 - ((75.0 - (75.0 * 0.75)) * depth);
 			saber.blade.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);
@@ -138,6 +140,8 @@ struct Character
 		else
 		{
 			depth -= .13333333;
+			if (depth <= 0)
+				depth = 0;
 			saber.hilt.w = 15.0 - ((15.0 - (15.0 * 0.75)) * depth);
 			saber.hilt.h = 75.0 - ((75.0 - (75.0 * 0.75)) * depth);
 			saber.blade.w = 21.0 - ((21.0 - (21.0 * 0.75)) * depth);

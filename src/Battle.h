@@ -23,6 +23,10 @@ struct Battle
 	//characters
 	Character main_char;
 	Character opponent;
+	double main_health;
+	double op_health;
+	SDL_Rect main_health_rect;
+	SDL_Rect op_health_rect;
 	SDL_Rect op_rect;
 	SDL_Point op_point;
 	SDL_Point temp_point;
@@ -138,6 +142,18 @@ struct Battle
 		bottom.y = SCREEN_HEIGHT - 28;
 		bottom.w = SCREEN_WIDTH;
 		bottom.h = 28;
+
+		//main char health bar
+		main_health_rect.x = 0;
+		main_health_rect.y = bottom.y - 10;
+		main_health_rect.w = SCREEN_WIDTH;
+		main_health_rect.h = 10;
+	
+		//opponent health bar
+		op_health_rect.x = 0;
+		op_health_rect.y = 0;
+		op_health_rect.w = SCREEN_WIDTH;
+		op_health_rect.h = 10;
 	}
 	
 	bool Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p4);
@@ -212,12 +228,22 @@ void Battle::handleBlock()
 		if (bladeIntersect())
 		{
 			clash_render = true;
-			//cout << "BLOCKED" << endl;
 		}
 		else
 		{
 			clash_render = false;
-			//cout << "HIT" << endl;
+			if (main_char_attack)
+			{
+				if (main_char.depth == 1)
+					op_health -= 5;
+				op_health_rect.w = (op_health / 100) * SCREEN_WIDTH;
+			}
+			if (opponent_attack)
+			{
+				if (opponent.depth == 0)
+					main_health -= 5;
+				main_health_rect.w = (main_health / 100) * SCREEN_WIDTH;
+			}
 		}
 	}
 }
@@ -334,6 +360,10 @@ void Battle::handleStart(Character custom)
 		//play music
 		if (!Mix_Playing(7))
 			Mix_PlayChannel(7, BATTLE_START, -1);
+		
+		//init health
+		main_health = 100;
+		op_health = 100;
 		
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
@@ -638,9 +668,13 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//render clash
 	renderClash(RENDERER, mouse_x, mouse_y);
 
-	//bottom bat
+	//bottom bar
 	renderBottomBar(RENDERER, mouse_x, mouse_y);
-	
+
+	SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
+	SDL_RenderFillRect(RENDERER, &main_health_rect);
+	SDL_RenderFillRect(RENDERER, &op_health_rect);
+
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
 
