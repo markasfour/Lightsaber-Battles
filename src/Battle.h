@@ -28,6 +28,7 @@ struct Battle
 	SDL_Rect main_health_rect;
 	SDL_Rect op_health_rect;
 	SDL_Rect op_rect;
+	SDL_Rect hover_rect;
 	SDL_Point op_point;
 	SDL_Point temp_point;
 
@@ -79,7 +80,12 @@ struct Battle
 		op_rect.y = SCREEN_HEIGHT / 2;
 		op_rect.w = 200;
 		op_rect.h = 100;
-	
+
+		hover_rect.x = op_rect.x + (op_rect.w / 4);
+		hover_rect.y = op_rect.y + 33;
+		hover_rect.w = op_rect.w / 2;
+		hover_rect.h = 33;
+
 		op_point.x = rand() % op_rect.w + op_rect.x;
 		op_point.y = rand() % op_rect.h + op_rect.y;
 		temp_point = op_point;
@@ -166,10 +172,12 @@ struct Battle
 	void handleCustomizeMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
 	void handleStart(Character custom);
+	void handleOpponentMotion(int mouse_x, int mouse_y);
 	void handleOpponentAttack(int mouse_x, int mouse_y);
 	void handleOpponent(int mouse_x, int mouse_y);
 	void handleGame(int mouse_x, int mouse_y, Character custom);
 	void renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderSimulatorButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -364,7 +372,9 @@ void Battle::handleStart(Character custom)
 		//init health
 		main_health = 100;
 		op_health = 100;
-		
+		main_health_rect.w = (main_health / 100) * SCREEN_WIDTH;
+		op_health_rect.w = (op_health / 100) * SCREEN_WIDTH;
+
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
 		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
@@ -424,6 +434,97 @@ void Battle::handleStart(Character custom)
 	}
 }
 
+void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
+{		
+	//hover
+	if (!main_char_attack && !opponent_attack)
+	{
+		if (op_point.x == temp_point.x && op_point.y == temp_point.y)
+		{
+			temp_point.x = rand() % hover_rect.w + hover_rect.x;
+			temp_point.y = rand() % hover_rect.h + hover_rect.y;
+		}
+		if (op_point.x != temp_point.x || op_point.y != temp_point.y)
+		{
+			if (op_point.x < temp_point.x)
+				op_point.x++;
+			else if (op_point.x > temp_point.x)
+				op_point.x--;
+			if (op_point.y < temp_point.y)
+				op_point.y++;
+			else if (op_point.y > temp_point.y)
+				op_point.y--;
+		}
+	}
+	//attack
+	else if (opponent_attack)
+	{
+		if (op_point.x == temp_point.x && op_point.y == temp_point.y)
+		{
+			temp_point.x = rand() % op_rect.w + op_rect.x;
+			temp_point.y = rand() % op_rect.h + op_rect.y;
+		}
+		if (op_point.x != temp_point.x || op_point.y != temp_point.y)
+		{
+			if (op_point.x < temp_point.x)
+			{
+				op_point.x += 2;
+				if (op_point.x > temp_point.x)
+					op_point.x = temp_point.x;
+			}
+			else if (op_point.x > temp_point.x)
+			{	
+				op_point.x -= 2;
+				if (op_point.x < temp_point.x)
+					op_point.x = temp_point.x;
+			}
+			if (op_point.y < temp_point.y)
+			{	
+				op_point.y += 2;
+				if (op_point.y > temp_point.y)
+					op_point.y = temp_point.y;
+			}
+			else if (op_point.y > temp_point.y)
+			{	
+				op_point.y -= 2;
+				if (op_point.y < temp_point.y)
+					op_point.y = temp_point.y;
+			}
+		}
+	}
+	//block
+	else
+	{
+		if (op_point.x != mouse_x || op_point.y != mouse_y)
+		{
+			if (op_point.x < mouse_x)
+			{
+				op_point.x += 4;
+				if (op_point.x > mouse_x)
+					op_point.x = mouse_x;
+			}
+			else if (op_point.x > mouse_x)
+			{	
+				op_point.x -= 4;
+				if (op_point.x < mouse_x)
+					op_point.x = mouse_x;
+			}
+			if (op_point.y < mouse_y)
+			{	
+				op_point.y += 4;
+				if (op_point.y > mouse_y)
+					op_point.y = mouse_y;
+			}
+			else if (op_point.y > mouse_y)
+			{	
+				op_point.y -= 4;
+				if (op_point.y < mouse_y)
+					op_point.y = mouse_y;
+			}
+		}
+	}
+}
+
 void Battle::handleOpponentAttack(int mouse_x, int mouse_y)
 {
 	if (attack_timer.get_ticks() >= attack_times.at(0))
@@ -448,22 +549,8 @@ void Battle::handleOpponentAttack(int mouse_x, int mouse_y)
 
 void Battle::handleOpponent(int mouse_x, int mouse_y)
 {
-	if (op_point.x == temp_point.x && op_point.y == temp_point.y)
-	{
-		temp_point.x = rand() % op_rect.w + op_rect.x;
-		temp_point.y = rand() % op_rect.h + op_rect.y;
-	}
-	if (op_point.x != temp_point.x || op_point.y != temp_point.y)
-	{
-		if (op_point.x < temp_point.x)
-			op_point.x++;
-		else if (op_point.x > temp_point.x)
-			op_point.x--;
-		if (op_point.y < temp_point.y)
-			op_point.y++;
-		else if (op_point.y > temp_point.y)
-			op_point.y--;
-	}
+	//handle motion
+	handleOpponentMotion(mouse_x, mouse_y);
 
 	//handle opponent attack
 	handleOpponentAttack(mouse_x, mouse_y);
@@ -574,6 +661,25 @@ void Battle::renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	}
 }
 
+void Battle::renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (main_health <= 20)
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
+	else if (main_health <= 50)
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0x00, 0xFF);
+	else
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
+	SDL_RenderFillRect(RENDERER, &main_health_rect);
+	
+	if (op_health <= 20)
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
+	else if (op_health <= 50)
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0x00, 0xFF);
+	else
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
+	SDL_RenderFillRect(RENDERER, &op_health_rect);
+}
+
 void Battle::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	if (mute)
@@ -671,9 +777,8 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//bottom bar
 	renderBottomBar(RENDERER, mouse_x, mouse_y);
 
-	SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
-	SDL_RenderFillRect(RENDERER, &main_health_rect);
-	SDL_RenderFillRect(RENDERER, &op_health_rect);
+	//health bars
+	renderHealthBars(RENDERER, mouse_x, mouse_y);
 
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
@@ -703,10 +808,13 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 		SDL_Point p2 = main_char.saber.edge_bot;
 		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
 		SDL_RenderDrawLine(RENDERER, p1.x, p1.y, p2.x, p2.y);
-		
+	
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
+		SDL_RenderDrawRect(RENDERER, &hover_rect);
+
 		SDL_Point p3 = opponent.saber.edge_top;
 		SDL_Point p4 = opponent.saber.edge_bot;
-		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0x00, 0xFF);
 		SDL_RenderDrawLine(RENDERER, p3.x, p3.y, p4.x, p4.y);
 
 		cout << main_char.saber.blade.h << endl;
@@ -720,7 +828,7 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//ready
 	SDL_Rect r;
 	r.x = SCREEN_WIDTH / 2 - 100;
-	r.y = 0;
+	r.y = SCREEN_HEIGHT / 2 - 50;
 	r.w = 200;
 	r.h = 100;
 	if (rReady)
