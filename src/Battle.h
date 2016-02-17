@@ -104,8 +104,8 @@ struct Battle
 		hover_rect.w = op_rect.w / 2;
 		hover_rect.h = 33;
 
-		op_point.x = rand() % op_rect.w + op_rect.x;
-		op_point.y = rand() % op_rect.h + op_rect.y;
+		op_point.x = rand() % hover_rect.w + hover_rect.x;
+		op_point.y = rand() % hover_rect.h + hover_rect.y;
 		temp_point = op_point;
 
 		Character o(1.00);
@@ -317,8 +317,8 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 		Mix_HaltChannel(-1);
 		Mix_HaltMusic();
 		start = true;
-		op_point.x = rand() % op_rect.w + op_rect.x;
-		op_point.y = rand() % op_rect.h + op_rect.y;
+		op_point.x = rand() % hover_rect.w + hover_rect.x;
+		op_point.y = rand() % hover_rect.h + hover_rect.y;
 		opponent.hilt = &hilts.at(rand() % hilts.size());
 		int x = rand() % blades.size();
 		opponent.saber.blade.h = 0;
@@ -338,8 +338,8 @@ void Battle::handleSimulatorMouseDown(int mouse_x, int mouse_y)
 		Mix_HaltChannel(-1);
 		Mix_HaltMusic();
 		start = true;
-		op_point.x = rand() % op_rect.w + op_rect.x;
-		op_point.y = rand() % op_rect.h + op_rect.y;
+		op_point.x = rand() % hover_rect.w + hover_rect.x;
+		op_point.y = rand() % hover_rect.h + hover_rect.y;
 		opponent.hilt = &hilts.at(rand() % hilts.size());
 		int x = rand() % blades.size();
 		opponent.saber.blade.h = 0;
@@ -360,8 +360,8 @@ void Battle::handleCustomizeMouseDown(int mouse_x, int mouse_y)
 		Mix_HaltChannel(-1);
 		Mix_HaltMusic();
 		start = true;
-		op_point.x = rand() % op_rect.w + op_rect.x;
-		op_point.y = rand() % op_rect.h + op_rect.y;
+		op_point.x = rand() % hover_rect.w + hover_rect.x;
+		op_point.y = rand() % hover_rect.h + hover_rect.y;
 		opponent.hilt = &hilts.at(rand() % hilts.size());
 		int x = rand() % blades.size();
 		opponent.saber.blade.h = 0;
@@ -526,6 +526,7 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	else
 	{
 		//find blocking angle
+		//try 1
 		double block_angle = main_char.saber.angle + 90;
 		SDL_Point block_point = {0, 0};
 		for (int i = 0; i < op_points.size(); i++)
@@ -541,6 +542,27 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 				{
 					block_point = op_points.at(i);
 					break;
+				}
+			}
+		}
+		//try 2
+		if (block_point.x == 0 && block_point.y == 0)
+		{
+			block_angle -= 180;
+			for (int i = 0; i < op_points.size(); i++)
+			{
+				if (op_angles.at(i) == block_angle)
+				{
+					block_point = op_points.at(i);
+					break;
+				}
+				else if (op_angles.at(i) > block_angle - 10)
+				{
+					if (op_angles.at(i) < block_angle + 10)
+					{
+						block_point = op_points.at(i);
+						break;
+					}
 				}
 			}
 		}
