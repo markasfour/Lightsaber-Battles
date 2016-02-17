@@ -1,6 +1,22 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
+void mapAngles (SDL_Point center, vector <SDL_Point> points, vector <double> &angles)
+{
+	double angle = 0;
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		if (points.at(i).x - center.x != 0)
+			angle = atan2((double(center.y - points.at(i).y)) , (double(center.x - points.at(i).x))) * (180.0/PI) - 90;
+		else if (points.at(i).y < center.y)
+			angle = 0;
+		else
+			angle = 180;
+		angles.push_back(angle);
+	}
+}
+
 struct Battle
 {
 	//background rendering rectangle
@@ -31,6 +47,8 @@ struct Battle
 	SDL_Rect hover_rect;
 	SDL_Point op_point;
 	SDL_Point temp_point;
+	vector <SDL_Point> op_points;
+	vector <double> op_angles;
 
 	//attack
 	bool main_char_attack;
@@ -160,6 +178,18 @@ struct Battle
 		op_health_rect.y = 0;
 		op_health_rect.w = SCREEN_WIDTH;
 		op_health_rect.h = 10;
+
+		//opponent AI handling
+		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
+		for (int i = op_rect.y; i < op_rect.y + op_rect.h; i += 5)
+		{
+			for (int j = op_rect.x; j < op_rect.x + op_rect.w; j += 5)
+			{
+				SDL_Point temp_point = {j, i};
+				op_points.push_back(temp_point);
+			}
+		}
+		mapAngles(op_center, op_points, op_angles);
 	}
 	
 	bool Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p4);
@@ -800,29 +830,29 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 		SDL_RenderDrawRect(RENDERER, &op_rect);
 	
 		//blade edge lines
-		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
-		SDL_RenderDrawRect(RENDERER, &opponent.saber.blade);
-		SDL_RenderDrawRect(RENDERER, &main_char.saber.blade);
-
 		SDL_Point p1 = main_char.saber.edge_top;
 		SDL_Point p2 = main_char.saber.edge_bot;
 		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
 		SDL_RenderDrawLine(RENDERER, p1.x, p1.y, p2.x, p2.y);
 	
-		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
-		SDL_RenderDrawRect(RENDERER, &hover_rect);
-
 		SDL_Point p3 = opponent.saber.edge_top;
 		SDL_Point p4 = opponent.saber.edge_bot;
-		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0x00, 0xFF);
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
 		SDL_RenderDrawLine(RENDERER, p3.x, p3.y, p4.x, p4.y);
 
-		cout << main_char.saber.blade.h << endl;
-		cout << opponent.saber.blade.h << endl;
-		cout << endl;
+		//hover rect
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0x00, 0xFF);
+		SDL_RenderDrawRect(RENDERER, &hover_rect);
 
 		//opponent center
 		SDL_RenderDrawPoint(RENDERER, op_center.x, op_center.y);
+
+		//opponent points
+		for (int i = 0; i < op_points.size(); i++)
+		{
+			SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0x00, 0xFF);
+			SDL_RenderDrawPoint(RENDERER, op_points.at(i).x, op_points.at(i).y);
+		}
 	}
 
 	//ready
