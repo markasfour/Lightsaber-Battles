@@ -525,33 +525,56 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	//block
 	else
 	{
-		if (op_point.x != mouse_x || op_point.y != mouse_y)
+		//find blocking angle
+		double block_angle = main_char.saber.angle + 90;
+		SDL_Point block_point = {0, 0};
+		for (int i = 0; i < op_points.size(); i++)
 		{
-			if (op_point.x < mouse_x)
+			if (op_angles.at(i) == block_angle)
 			{
-				op_point.x += 4;
-				if (op_point.x > mouse_x)
-					op_point.x = mouse_x;
+				block_point = op_points.at(i);
+				break;
 			}
-			else if (op_point.x > mouse_x)
-			{	
-				op_point.x -= 4;
-				if (op_point.x < mouse_x)
-					op_point.x = mouse_x;
-			}
-			if (op_point.y < mouse_y)
-			{	
-				op_point.y += 4;
-				if (op_point.y > mouse_y)
-					op_point.y = mouse_y;
-			}
-			else if (op_point.y > mouse_y)
-			{	
-				op_point.y -= 4;
-				if (op_point.y < mouse_y)
-					op_point.y = mouse_y;
+			else if (op_angles.at(i) > block_angle - 10)
+			{
+				if (op_angles.at(i) < block_angle + 10)
+				{
+					block_point = op_points.at(i);
+					break;
+				}
 			}
 		}
+		//move to block position
+		if (op_point.x != block_point.x || op_point.y != block_point.y)
+		{
+			if (op_point.x < block_point.x)
+			{
+				op_point.x += 4;
+				if (op_point.x > block_point.x)
+					op_point.x = block_point.x;
+			}
+			else if (op_point.x > block_point.x)
+			{	
+				op_point.x -= 4;
+				if (op_point.x < block_point.x)
+					op_point.x = block_point.x;
+			}
+			if (op_point.y < block_point.y)
+			{	
+				op_point.y += 4;
+				if (op_point.y > block_point.y)
+					op_point.y = block_point.y;
+			}
+			else if (op_point.y > block_point.y)
+			{	
+				op_point.y -= 4;
+				if (op_point.y < block_point.y)
+					op_point.y = block_point.y;
+			}
+		}
+		cout << main_char.saber.angle << " , " << block_angle << endl;
+		cout << block_point.x << " , " << block_point.y << endl;
+		cout << endl;
 	}
 }
 
