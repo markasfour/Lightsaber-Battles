@@ -586,32 +586,60 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 				}
 			}
 		}
+		temp_point = block_point;
 		//move to block position
-		if (op_point.x != block_point.x || op_point.y != block_point.y)
+		//if (op_point.x != block_point.x || op_point.y != block_point.y)
+		//{
+		//	if (op_point.x < block_point.x)
+		//	{
+		//		op_point.x += 4;
+		//		if (op_point.x > block_point.x)
+		//			op_point.x = block_point.x;
+		//	}
+		//	else if (op_point.x > block_point.x)
+		//	{	
+		//		op_point.x -= 4;
+		//		if (op_point.x < block_point.x)
+		//			op_point.x = block_point.x;
+		//	}
+		//	if (op_point.y < block_point.y)
+		//	{	
+		//		op_point.y += 4;
+		//		if (op_point.y > block_point.y)
+		//			op_point.y = block_point.y;
+		//	}
+		//	else if (op_point.y > block_point.y)
+		//	{	
+		//		op_point.y -= 4;
+		//		if (op_point.y < block_point.y)
+		//			op_point.y = block_point.y;
+		//	}
+		//}
+		if (op_point.x != temp_point.x || op_point.y != temp_point.y)
 		{
-			if (op_point.x < block_point.x)
+			if (op_point.x < temp_point.x)
 			{
 				op_point.x += 4;
-				if (op_point.x > block_point.x)
-					op_point.x = block_point.x;
+				if (op_point.x > temp_point.x)
+					op_point.x = temp_point.x;
 			}
-			else if (op_point.x > block_point.x)
+			else if (op_point.x > temp_point.x)
 			{	
 				op_point.x -= 4;
-				if (op_point.x < block_point.x)
-					op_point.x = block_point.x;
+				if (op_point.x < temp_point.x)
+					op_point.x = temp_point.x;
 			}
-			if (op_point.y < block_point.y)
+			if (op_point.y < temp_point.y)
 			{	
 				op_point.y += 4;
-				if (op_point.y > block_point.y)
-					op_point.y = block_point.y;
+				if (op_point.y > temp_point.y)
+					op_point.y = temp_point.y;
 			}
-			else if (op_point.y > block_point.y)
+			else if (op_point.y > temp_point.y)
 			{	
 				op_point.y -= 4;
-				if (op_point.y < block_point.y)
-					op_point.y = block_point.y;
+				if (op_point.y < temp_point.y)
+					op_point.y = temp_point.y;
 			}
 		}
 		cout << main_char.saber.angle << " , " << block_angle << endl;
