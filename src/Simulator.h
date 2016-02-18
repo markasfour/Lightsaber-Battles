@@ -44,7 +44,8 @@ struct Simulator
 	bool soundOn;
 	bool soundOff;
 	button muteIC;
-	
+	button muteMusicIC;
+
 	//back
 	button back;
 	LTexture back_text;
@@ -131,6 +132,8 @@ struct Simulator
 		soundOff = false;
 		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);
 		muteIC = mIC;
+		button mmIC (muteIC.rect.x - 25, SCREEN_HEIGHT - 25, 20, 20);
+		muteMusicIC = mmIC;
 
 		//back
 		button B(0x0F, 0x0F, 0x0F, 0xFF, 3, SCREEN_HEIGHT - 25, 45, 25);
@@ -160,6 +163,7 @@ struct Simulator
 	//void handleSaberSelectMouseDown(int mosue_x, int mouse_y, Character custom);
 	//void handleBackgroundSelectMouseDown(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
+	void handleMuteMusicMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleCustomizeMouseDown(int mouse_x, int mouse_y);
 	void handleBattleMouseDown(int mouse_x, int mouse_y);
@@ -171,6 +175,7 @@ struct Simulator
 	//void renderSaberSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, Character custom);
 	//void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderCustomizeButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBattleButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -225,6 +230,15 @@ void Simulator::handleMuteMouseDown(int mouse_x, int mouse_y)
 	}
 }
 
+void Simulator::handleMuteMusicMouseDown(int mouse_x, int mouse_y)
+{
+	if (muteMusicIC.wasClicked(mouse_x, mouse_y))
+	{	
+		mute_music = !mute_music;
+		Mix_HaltMusic();
+	}
+}
+
 void Simulator::handleBackMouseDown(int mouse_x, int mouse_y)
 {
 	if (back.wasClicked(mouse_x, mouse_y))
@@ -232,6 +246,7 @@ void Simulator::handleBackMouseDown(int mouse_x, int mouse_y)
 		GAMES.at(0) = false;	
 		SDL_ShowCursor(1);
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 	}
 }
 
@@ -241,6 +256,7 @@ void Simulator::handleCustomizeMouseDown(int mouse_x, int mouse_y)
 	{
 		GAMES.at(0) = false;
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 		GAMES.at(1) = true;
 	}
 }
@@ -251,6 +267,7 @@ void Simulator::handleBattleMouseDown(int mouse_x, int mouse_y)
 	{
 		GAMES.at(0) = false;
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 		GAMES.at(2) = true;
 	}
 }
@@ -259,7 +276,8 @@ void Simulator::handleSaberOnSwitchMouseDown(int mouse_x, int mouse_y, Character
 {
 	//if (!saberSelect.visible && !bgSelect.visible && !muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y))
 	if (!muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y) &&
-		!customize.wasClicked(mouse_x, mouse_y) && !battle.wasClicked(mouse_x, mouse_y))	
+		!customize.wasClicked(mouse_x, mouse_y) && !battle.wasClicked(mouse_x, mouse_y) &&
+		!muteMusicIC.wasClicked(mouse_x, mouse_y))	
 		main_char.saber.on = !main_char.saber.on;
 	
 	//if (main_char.saber.on && !switched && !soundOn)
@@ -403,7 +421,8 @@ void Simulator::handleMouseDown(int mouse_x, int mouse_y, Character &custom)
 	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
-	
+	handleMuteMusicMouseDown(mouse_x, mouse_y);
+
 	//back button click
 	handleBackMouseDown(mouse_x, mouse_y);
 
@@ -479,6 +498,24 @@ void Simulator::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 				SDL_RenderCopy(RENDERER, muteOff.mTexture, NULL, &muteIC.hover);
 			else if (!muteIC.mouseHover(mouse_x, mouse_y, true))
 				SDL_RenderCopy(RENDERER, muteOff.mTexture, NULL, &muteIC.rect);
+		}
+}
+
+void Simulator::renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (mute_music)
+		{
+			if (muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOn.mTexture, NULL, &muteMusicIC.hover);
+			else if (!muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOn.mTexture, NULL, &muteMusicIC.rect);
+		}
+		else if (!mute_music)
+		{
+			if (muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOff.mTexture, NULL, &muteMusicIC.hover);
+			else if (!muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOff.mTexture, NULL, &muteMusicIC.rect);
 		}
 }
 
@@ -560,6 +597,7 @@ void Simulator::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
+	renderMuteMusicButton(RENDERER, mouse_x, mouse_y);
 
 	//back button
 	renderBackButton(RENDERER, mouse_x, mouse_y);

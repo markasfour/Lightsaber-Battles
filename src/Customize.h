@@ -29,7 +29,8 @@ struct Customize
 
 	//mute
 	button muteIC;
-	
+	button muteMusicIC;
+
 	//back
 	button back;
 	LTexture back_text;
@@ -149,6 +150,8 @@ struct Customize
 		//mute
 		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);
 		muteIC = mIC;
+		button mmIC (muteIC.rect.x - 25, SCREEN_HEIGHT - 25, 20, 20);
+		muteMusicIC = mmIC;
 
 		//back
 		button B(0x0F, 0x0F, 0x0F, 0xFF, 3, SCREEN_HEIGHT - 25, 45, 25);
@@ -182,6 +185,7 @@ struct Customize
 	void handleBackgroundSelectMouseDown(int mouse_x, int mouse_y, int &bg);
 	void handleColorSelectMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
+	void handleMuteMusicMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleSimulatorMouseDown(int mouse_x, int mouse_y, Character &c);
 	void handleBattleMouseDown(int mouse_x, int mouse_y, Character &c);
@@ -192,6 +196,7 @@ struct Customize
 	void renderBackgroundSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderColorSelectGUI(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderSimulatorButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBattleButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -271,6 +276,15 @@ void Customize::handleMuteMouseDown(int mouse_x, int mouse_y)
 	}
 }
 
+void Customize::handleMuteMusicMouseDown(int mouse_x, int mouse_y)
+{
+	if (muteMusicIC.wasClicked(mouse_x, mouse_y))
+	{	
+		mute_music = !mute_music;
+		Mix_HaltMusic();
+	}
+}
+
 void Customize::handleBackMouseDown(int mouse_x, int mouse_y, Character &c)
 {
 	if (back.wasClicked(mouse_x, mouse_y))
@@ -280,6 +294,7 @@ void Customize::handleBackMouseDown(int mouse_x, int mouse_y, Character &c)
 		c = custom;
 		GAMES.at(1) = false;
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 	}
 }
 
@@ -292,6 +307,7 @@ void Customize::handleSimulatorMouseDown(int mouse_x, int mouse_y, Character &c)
 		c = custom;
 		GAMES.at(1) = false;
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 		GAMES.at(0) = true;
 	}
 }
@@ -305,6 +321,7 @@ void Customize::handleBattleMouseDown(int mouse_x, int mouse_y, Character &c)
 		c = custom;
 		GAMES.at(1) = false;
 		Mix_HaltChannel(-1);
+		Mix_HaltMusic();
 		GAMES.at(2) = true;
 	}
 }
@@ -331,7 +348,8 @@ void Customize::handleMouseDown(int mouse_x, int mouse_y, Character &c, int &bg)
 	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
-	
+	handleMuteMusicMouseDown(mouse_x, mouse_y);
+
 	//back button click
 	handleBackMouseDown(mouse_x, mouse_y, c);
 
@@ -470,6 +488,24 @@ void Customize::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 		}
 }
 
+void Customize::renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (mute_music)
+		{
+			if (muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOn.mTexture, NULL, &muteMusicIC.hover);
+			else if (!muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOn.mTexture, NULL, &muteMusicIC.rect);
+		}
+		else if (!mute_music)
+		{
+			if (muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOff.mTexture, NULL, &muteMusicIC.hover);
+			else if (!muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOff.mTexture, NULL, &muteMusicIC.rect);
+		}
+}
+
 void Customize::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
@@ -560,8 +596,9 @@ void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_
 	//bottom bar
 	renderBottomBar(RENDERER, mouse_x, mouse_y);
 
-	//mute button
+	//mute buttons
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
+	renderMuteMusicButton(RENDERER, mouse_x, mouse_y);
 
 	//back button
 	renderBackButton(RENDERER, mouse_x, mouse_y);

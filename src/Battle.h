@@ -67,7 +67,8 @@ struct Battle
 	bool soundOn;
 	bool soundOff;
 	button muteIC;
-	
+	button muteMusicIC;
+
 	//back
 	button back;
 	LTexture back_text;
@@ -94,9 +95,11 @@ struct Battle
 
 		start = true;
 	
-		op_rect.x = SCREEN_WIDTH / 2 - 100;
+		//op_rect.x = SCREEN_WIDTH / 2 - 100;
+		op_rect.x = 0;
 		op_rect.y = SCREEN_HEIGHT / 2;
-		op_rect.w = 200;
+		//op_rect.w = 200;
+		op_rect.w = SCREEN_WIDTH;
 		op_rect.h = 100;
 
 		hover_rect.x = op_rect.x + (op_rect.w / 4);
@@ -142,6 +145,8 @@ struct Battle
 		soundOff = false;
 		button mIC (SCREEN_WIDTH - 25 - 5, SCREEN_HEIGHT - 25, 20, 20);
 		muteIC = mIC;
+		button mmIC (muteIC.rect.x - 25, SCREEN_HEIGHT - 25, 20, 20);
+		muteMusicIC = mmIC;
 
 		//back
 		button B(0x0F, 0x0F, 0x0F, 0xFF, 3, SCREEN_HEIGHT - 25, 45, 25);
@@ -197,6 +202,7 @@ struct Battle
 	void handleBlock();
 	void handleAttack(int mouse_x, int mouse_y);
 	void handleMuteMouseDown(int mouse_x, int mouse_y);
+	void handleMuteMusicMouseDown(int mouse_x, int mouse_y);
 	void handleBackMouseDown(int mouse_x, int mouse_y);
 	void handleSimulatorMouseDown(int mouse_x, int mouse_y);
 	void handleCustomizeMouseDown(int mouse_x, int mouse_y);
@@ -209,6 +215,7 @@ struct Battle
 	void renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderSimulatorButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderCustomizeButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -308,6 +315,15 @@ void Battle::handleMuteMouseDown(int mouse_x, int mouse_y)
 	}
 }
 
+void Battle::handleMuteMusicMouseDown(int mouse_x, int mouse_y)
+{
+	if (muteMusicIC.wasClicked(mouse_x, mouse_y))
+	{	
+		mute_music = !mute_music;
+		Mix_HaltMusic();
+	}
+}
+
 void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 {
 	if (back.wasClicked(mouse_x, mouse_y))
@@ -380,7 +396,8 @@ void Battle::handleMouseDown(int mouse_x, int mouse_y)
 	
 	//mute button click
 	handleMuteMouseDown(mouse_x, mouse_y);
-	
+	handleMuteMusicMouseDown(mouse_x, mouse_y);
+
 	//back button click
 	handleBackMouseDown(mouse_x, mouse_y);
 
@@ -396,8 +413,11 @@ void Battle::handleStart(Character custom)
 	if (start)
 	{
 		//play music
-		if (!Mix_Playing(7))
-			Mix_PlayChannel(7, BATTLE_START, -1);
+		if (!mute_music)
+		{
+			if (!Mix_Playing(7))
+				Mix_PlayChannel(7, BATTLE_START, -1);
+		}	
 		
 		//init health
 		main_health = 100;
@@ -527,7 +547,7 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	{
 		//find blocking angle
 		//try 1
-		double block_angle = main_char.saber.angle + 90;
+		double block_angle = main_char.saber.angle + 60;
 		SDL_Point block_point = {0, 0};
 		for (int i = 0; i < op_points.size(); i++)
 		{
@@ -548,7 +568,7 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 		//try 2
 		if (block_point.x == 0 && block_point.y == 0)
 		{
-			block_angle -= 180;
+			block_angle -= 120;
 			for (int i = 0; i < op_points.size(); i++)
 			{
 				if (op_angles.at(i) == block_angle)
@@ -660,11 +680,14 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 	if (!start)	
 	{
 		//play music
-		if (Mix_Playing(7))
-			Mix_HaltChannel(7);
-		if (!Mix_PlayingMusic())
-			Mix_PlayMusic(BATTLE_THEME, -1);
-		
+		if (!mute_music)
+		{
+			if (Mix_Playing(7))
+				Mix_HaltChannel(7);
+			if (!Mix_PlayingMusic())
+				Mix_PlayMusic(BATTLE_THEME, -1);
+		}
+
 		handleBlock();
 
 		//handle main_char attack
@@ -773,6 +796,24 @@ void Battle::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 		}
 }
 
+void Battle::renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	if (mute_music)
+		{
+			if (muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOn.mTexture, NULL, &muteMusicIC.hover);
+			else if (!muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOn.mTexture, NULL, &muteMusicIC.rect);
+		}
+		else if (!mute_music)
+		{
+			if (muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOff.mTexture, NULL, &muteMusicIC.hover);
+			else if (!muteMusicIC.mouseHover(mouse_x, mouse_y, true))
+				SDL_RenderCopy(RENDERER, muteMusicOff.mTexture, NULL, &muteMusicIC.rect);
+		}
+}
+
 void Battle::renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	SDL_SetRenderDrawColor(RENDERER, 0x0F, 0x0F, 0x0F, 0xFF);
@@ -857,6 +898,7 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
+	renderMuteMusicButton(RENDERER, mouse_x, mouse_y);	
 
 	//back button
 	renderBackButton(RENDERER, mouse_x, mouse_y);

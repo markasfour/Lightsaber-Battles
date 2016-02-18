@@ -121,9 +121,12 @@ struct Menu
 	void renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	{
 		//play music
-		if (!Mix_PlayingMusic())
-			Mix_PlayMusic(MENU_THEME, -1);
-		
+		if (!mute_music)
+		{
+			if (!Mix_PlayingMusic())
+				Mix_PlayMusic(MENU_THEME, -1);
+		}
+
 		//render everything
 		//clear screen
 		SDL_SetRenderDrawColor(RENDERER, 0, 0, 0, 255);

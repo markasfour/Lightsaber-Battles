@@ -19,6 +19,7 @@ const int SCREEN_HEIGHT = 480;
 const int FRAMES_PER_SECOND = 60;
 
 bool mute = false;
+bool mute_music = false;
 
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
@@ -29,6 +30,8 @@ LTexture menuBackground;
 vector <LTexture> backgrounds (3);
 LTexture muteOn;
 LTexture muteOff;
+LTexture muteMusicOn;
+LTexture muteMusicOff;
 vector <LTexture> hilts (6);
 vector <LTexture> blades (7);
 vector <LTexture> bladetips (7);
@@ -167,7 +170,13 @@ bool loadMedia(string CurrentPath)
 	
 	if (!loadImage(muteOff, CurrentPath, "/content/unmute_sfx.png"))
 		return false;	
-	
+
+	if (!loadImage(muteMusicOn, CurrentPath, "/content/mute_music.png"))
+		return false;
+
+	if (!loadImage(muteMusicOff, CurrentPath, "/content/unmute_music.png"))
+		return false;
+
 	//load hilt images
 	if (!loadImage(hilts.at(0), CurrentPath, "/content/Luke_hilt.png"))
 		return false;	
@@ -452,6 +461,8 @@ void close()
 		backgrounds.at(i).free();
 	muteOn.free();
 	muteOff.free();
+	muteMusicOn.free();
+	muteMusicOff.free();
 	for (int i = 0; i < hilts.size(); i++)
 		hilts.at(i).free();
 	for (int i = 0; i < blades.size(); i++)
