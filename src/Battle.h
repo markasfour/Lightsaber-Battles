@@ -1,22 +1,6 @@
 #ifndef BATTLE_H
 #define BATTLE_H
 
-void mapAngles (SDL_Point center, vector <SDL_Point> points, vector <double> &angles)
-{
-	double angle = 0;
-
-	for (int i = 0; i < points.size(); i++)
-	{
-		if (points.at(i).x - center.x != 0)
-			angle = atan2((double(center.y - points.at(i).y)) , (double(center.x - points.at(i).x))) * (180.0/PI) - 90;
-		else if (points.at(i).y < center.y)
-			angle = 0;
-		else
-			angle = 180;
-		angles.push_back(angle);
-	}
-}
-
 struct Battle
 {
 	//background rendering rectangle
@@ -47,8 +31,6 @@ struct Battle
 	SDL_Rect hover_rect;
 	SDL_Point op_point;
 	SDL_Point temp_point;
-	vector <SDL_Point> op_points;
-	vector <double> op_angles;
 
 	//attack
 	bool main_char_attack;
@@ -102,9 +84,12 @@ struct Battle
 		op_rect.w = SCREEN_WIDTH;
 		op_rect.h = 100;
 
-		hover_rect.x = op_rect.x + (op_rect.w / 4);
+		//hover_rect.x = op_rect.x + (op_rect.w / 4);
+		//hover_rect.y = op_rect.y + 33;
+		//hover_rect.w = op_rect.w / 2;
+		hover_rect.x = SCREEN_WIDTH / 3;
 		hover_rect.y = op_rect.y + 33;
-		hover_rect.w = op_rect.w / 2;
+		hover_rect.w = SCREEN_WIDTH / 3;
 		hover_rect.h = 33;
 
 		op_point.x = rand() % hover_rect.w + hover_rect.x;
@@ -186,15 +171,6 @@ struct Battle
 
 		//opponent AI handling
 		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
-		for (int i = op_rect.y; i < op_rect.y + op_rect.h; i += 5)
-		{
-			for (int j = op_rect.x; j < op_rect.x + op_rect.w; j += 5)
-			{
-				SDL_Point temp_point = {j, i};
-				op_points.push_back(temp_point);
-			}
-		}
-		mapAngles(op_center, op_points, op_angles);
 	}
 	
 	bool Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p4);
@@ -489,21 +465,52 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	//hover
 	if (!main_char_attack && !opponent_attack)
 	{
-		if (op_point.x == temp_point.x && op_point.y == temp_point.y)
+		//determine point
+		if (mouse_x > SCREEN_WIDTH / 2 && temp_point.x < SCREEN_WIDTH / 2) //if not on right side
 		{
-			temp_point.x = rand() % hover_rect.w + hover_rect.x;
+			temp_point.x = rand() % (hover_rect.w / 2) + hover_rect.x + (hover_rect.w / 2);
 			temp_point.y = rand() % hover_rect.h + hover_rect.y;
 		}
-		if (op_point.x != temp_point.x || op_point.y != temp_point.y)
+		else if (mouse_x < SCREEN_WIDTH / 2 && temp_point.x > SCREEN_WIDTH / 2) //if not on left side
+		{
+			temp_point.x = rand() % (hover_rect.w / 2) + hover_rect.x;
+			temp_point.y = rand() % hover_rect.h + hover_rect.y;
+		}
+		else if (op_point.x == temp_point.x && op_point.y == temp_point.y) //if reached point
+		{
+			if (mouse_x > SCREEN_WIDTH / 2) //if player is on right side of screen
+				temp_point.x = rand() % (hover_rect.w / 2) + hover_rect.x + (hover_rect.w / 2);
+			else if (mouse_x < SCREEN_WIDTH / 2) //if player is on left side of screen
+				temp_point.x = rand() % (hover_rect.w / 2) + hover_rect.x;
+			temp_point.y = rand() % hover_rect.h + hover_rect.y;
+		}
+		//go to point
+		if ((op_point.x != temp_point.x || op_point.y != temp_point.y) && !clash_render)
 		{
 			if (op_point.x < temp_point.x)
+			{
+				if (op_point.x < hover_rect.x)
+					op_point.x++;
 				op_point.x++;
+			}
 			else if (op_point.x > temp_point.x)
+			{	
+				if (op_point.x > hover_rect.x + hover_rect.w)
+					op_point.x--;
 				op_point.x--;
+			}
 			if (op_point.y < temp_point.y)
+			{	
+				if (op_point.y < hover_rect.y)
+					op_point.y++;
 				op_point.y++;
+			}
 			else if (op_point.y > temp_point.y)
+			{	
+				if (op_point.y > hover_rect.y + hover_rect.h)
+					op_point.y--;
 				op_point.y--;
+			}
 		}
 	}
 	//attack
@@ -514,7 +521,7 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 			temp_point.x = rand() % op_rect.w + op_rect.x;
 			temp_point.y = rand() % op_rect.h + op_rect.y;
 		}
-		if (op_point.x != temp_point.x || op_point.y != temp_point.y)
+		if ((op_point.x != temp_point.x || op_point.y != temp_point.y) && !clash_render)
 		{
 			if (op_point.x < temp_point.x)
 			{
@@ -546,76 +553,15 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	else
 	{
 		//find blocking angle
-		//try 1
-		double block_angle = main_char.saber.angle + 60;
+		double block_angle = main_char.saber.angle + 90;
 		SDL_Point block_point = {0, 0};
-		for (int i = 0; i < op_points.size(); i++)
-		{
-			if (op_angles.at(i) == block_angle)
-			{
-				block_point = op_points.at(i);
-				break;
-			}
-			else if (op_angles.at(i) > block_angle - 10)
-			{
-				if (op_angles.at(i) < block_angle + 10)
-				{
-					block_point = op_points.at(i);
-					break;
-				}
-			}
-		}
-		//try 2
-		if (block_point.x == 0 && block_point.y == 0)
-		{
-			block_angle -= 120;
-			for (int i = 0; i < op_points.size(); i++)
-			{
-				if (op_angles.at(i) == block_angle)
-				{
-					block_point = op_points.at(i);
-					break;
-				}
-				else if (op_angles.at(i) > block_angle - 10)
-				{
-					if (op_angles.at(i) < block_angle + 10)
-					{
-						block_point = op_points.at(i);
-						break;
-					}
-				}
-			}
-		}
+		if (mouse_x < SCREEN_WIDTH / 2)
+			block_point.x = rand() % (SCREEN_WIDTH / 2);
+		else
+			block_point.x = rand() % (SCREEN_WIDTH / 2) + (SCREEN_WIDTH / 2);
+		block_point.y = rand() % op_rect.h + op_rect.y;
 		temp_point = block_point;
-		//move to block position
-		//if (op_point.x != block_point.x || op_point.y != block_point.y)
-		//{
-		//	if (op_point.x < block_point.x)
-		//	{
-		//		op_point.x += 4;
-		//		if (op_point.x > block_point.x)
-		//			op_point.x = block_point.x;
-		//	}
-		//	else if (op_point.x > block_point.x)
-		//	{	
-		//		op_point.x -= 4;
-		//		if (op_point.x < block_point.x)
-		//			op_point.x = block_point.x;
-		//	}
-		//	if (op_point.y < block_point.y)
-		//	{	
-		//		op_point.y += 4;
-		//		if (op_point.y > block_point.y)
-		//			op_point.y = block_point.y;
-		//	}
-		//	else if (op_point.y > block_point.y)
-		//	{	
-		//		op_point.y -= 4;
-		//		if (op_point.y < block_point.y)
-		//			op_point.y = block_point.y;
-		//	}
-		//}
-		if (op_point.x != temp_point.x || op_point.y != temp_point.y)
+		if ((op_point.x != temp_point.x || op_point.y != temp_point.y) && !clash_render)
 		{
 			if (op_point.x < temp_point.x)
 			{
@@ -961,13 +907,6 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 
 		//opponent center
 		SDL_RenderDrawPoint(RENDERER, op_center.x, op_center.y);
-
-		//opponent points
-		for (int i = 0; i < op_points.size(); i++)
-		{
-			SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0x00, 0xFF);
-			SDL_RenderDrawPoint(RENDERER, op_points.at(i).x, op_points.at(i).y);
-		}
 	}
 
 	//ready
