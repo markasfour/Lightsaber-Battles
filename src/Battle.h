@@ -31,6 +31,7 @@ struct Battle
 	SDL_Rect hover_rect;
 	SDL_Point op_point;
 	SDL_Point temp_point;
+	SDL_Point block_point;
 
 	//attack
 	bool main_char_attack;
@@ -159,18 +160,18 @@ struct Battle
 
 		//main char health bar
 		main_health_rect.x = 0;
-		main_health_rect.y = bottom.y - 10;
+		main_health_rect.y = bottom.y;
 		main_health_rect.w = SCREEN_WIDTH;
 		main_health_rect.h = 10;
 	
 		//opponent health bar
 		op_health_rect.x = 0;
-		op_health_rect.y = 0;
+		op_health_rect.y = -10;
 		op_health_rect.w = SCREEN_WIDTH;
 		op_health_rect.h = 10;
 
-		//opponent AI handling
-		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
+		//opponent center 
+		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h * 2};
 	}
 	
 	bool Intersection (SDL_Point p1, SDL_Point p2, SDL_Point p3, SDL_Point p4);
@@ -318,6 +319,8 @@ void Battle::handleBackMouseDown(int mouse_x, int mouse_y)
 		opponent.bladetip = &bladetips.at(x);
 		opponent.bladebase = &bladebases.at(x);
 		opponent.saber.on = false;
+		main_health_rect.y = bottom.y;
+		op_health_rect.y -= op_health_rect.h;
 	}
 }
 
@@ -339,6 +342,8 @@ void Battle::handleSimulatorMouseDown(int mouse_x, int mouse_y)
 		opponent.bladetip = &bladetips.at(x);
 		opponent.bladebase = &bladebases.at(x);
 		opponent.saber.on = false;
+		main_health_rect.y = bottom.y;
+		op_health_rect.y -= op_health_rect.h;
 		GAMES.at(0) = true;
 	}
 }
@@ -361,6 +366,8 @@ void Battle::handleCustomizeMouseDown(int mouse_x, int mouse_y)
 		opponent.bladetip = &bladetips.at(x);
 		opponent.bladebase = &bladebases.at(x);
 		opponent.saber.on = false;
+		main_health_rect.y = bottom.y;
+		op_health_rect.y -= op_health_rect.h;
 		GAMES.at(1) = true;
 	}
 }
@@ -403,7 +410,7 @@ void Battle::handleStart(Character custom)
 
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
-		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
+		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h * 2};
 		main_char.saber.setCenterPoints();
 		opponent.saber.setCenterPoints();
 
@@ -430,16 +437,23 @@ void Battle::handleStart(Character custom)
 			if (!wait.is_started())
 				wait.start();
 			
-			main_char.saber.on = true;
+			main_char.saber.on = true; //turn on main char saber
 			main_char.saber.handleOnOffSwitch(false);
 			if (!mute && !Mix_Playing(2) && wait.get_ticks() < 2000)
 				Mix_PlayChannel(2, main_char.ON_SOUND, 0);
+			
+			if (main_health_rect.y != bottom.y - main_health_rect.h) //reveal health bar
+				main_health_rect.y--;
+			
 			if (wait.get_ticks() > 2000)
 			{
-				opponent.saber.on = true;
+				opponent.saber.on = true; //turn on op saber
 				opponent.saber.handleOnOffSwitch(false);	
 				if (!mute && !Mix_Playing(2) && wait.get_ticks() < 2500)
 					Mix_PlayChannel(2, opponent.ON_SOUND, 0);
+			
+				if (op_health_rect.y != 0) //reveal health bar
+					op_health_rect.y++;
 			}
 		}
 		if (wait.get_ticks() > 3000)
@@ -465,6 +479,9 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	//hover
 	if (!main_char_attack && !opponent_attack)
 	{
+		//reset block point
+		block_point.x = 0;
+		block_point.y = 0;
 		//determine point
 		if (mouse_x > SCREEN_WIDTH / 2 && temp_point.x < SCREEN_WIDTH / 2) //if not on right side
 		{
@@ -516,51 +533,14 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	//attack
 	else if (opponent_attack)
 	{
+		//reset block point
+		block_point.x = 0;
+		block_point.y = 0;
 		if (op_point.x == temp_point.x && op_point.y == temp_point.y)
 		{
 			temp_point.x = rand() % op_rect.w + op_rect.x;
 			temp_point.y = rand() % op_rect.h + op_rect.y;
 		}
-		if ((op_point.x != temp_point.x || op_point.y != temp_point.y) && !clash_render)
-		{
-			if (op_point.x < temp_point.x)
-			{
-				op_point.x += 2;
-				if (op_point.x > temp_point.x)
-					op_point.x = temp_point.x;
-			}
-			else if (op_point.x > temp_point.x)
-			{	
-				op_point.x -= 2;
-				if (op_point.x < temp_point.x)
-					op_point.x = temp_point.x;
-			}
-			if (op_point.y < temp_point.y)
-			{	
-				op_point.y += 2;
-				if (op_point.y > temp_point.y)
-					op_point.y = temp_point.y;
-			}
-			else if (op_point.y > temp_point.y)
-			{	
-				op_point.y -= 2;
-				if (op_point.y < temp_point.y)
-					op_point.y = temp_point.y;
-			}
-		}
-	}
-	//block
-	else
-	{
-		//find blocking angle
-		double block_angle = main_char.saber.angle + 90;
-		SDL_Point block_point = {0, 0};
-		if (mouse_x < SCREEN_WIDTH / 2)
-			block_point.x = rand() % (SCREEN_WIDTH / 2);
-		else
-			block_point.x = rand() % (SCREEN_WIDTH / 2) + (SCREEN_WIDTH / 2);
-		block_point.y = rand() % op_rect.h + op_rect.y;
-		temp_point = block_point;
 		if ((op_point.x != temp_point.x || op_point.y != temp_point.y) && !clash_render)
 		{
 			if (op_point.x < temp_point.x)
@@ -588,15 +568,57 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 					op_point.y = temp_point.y;
 			}
 		}
-		cout << main_char.saber.angle << " , " << block_angle << endl;
-		cout << block_point.x << " , " << block_point.y << endl;
-		cout << endl;
+	}
+	//block
+	else
+	{
+		//find blocking angle
+		double block_angle = main_char.saber.angle + 90;
+		if (block_point.x == 0 && block_point.y == 0)
+		{
+			if (mouse_x < SCREEN_WIDTH / 2)
+				block_point.x = rand() % (SCREEN_WIDTH / 2);
+			else
+				block_point.x = rand() % (SCREEN_WIDTH / 2) + (SCREEN_WIDTH / 2);
+			block_point.y = rand() % op_rect.h + op_rect.y;
+			temp_point = block_point;
+		}
+		if ((op_point.x != temp_point.x || op_point.y != temp_point.y) && !clash_render)
+		{
+			if (op_point.x < temp_point.x)
+			{
+				op_point.x += 8;
+				if (op_point.x > temp_point.x)
+					op_point.x = temp_point.x;
+			}
+			else if (op_point.x > temp_point.x)
+			{	
+				op_point.x -= 8;
+				if (op_point.x < temp_point.x)
+					op_point.x = temp_point.x;
+			}
+			if (op_point.y < temp_point.y)
+			{	
+				op_point.y += 8;
+				if (op_point.y > temp_point.y)
+					op_point.y = temp_point.y;
+			}
+			else if (op_point.y > temp_point.y)
+			{	
+				op_point.y -= 8;
+				if (op_point.y < temp_point.y)
+					op_point.y = temp_point.y;
+			}
+		}
+		//cout << main_char.saber.angle << " , " << block_angle << endl;
+		//cout << block_point.x << " , " << block_point.y << endl;
+		//cout << endl;
 	}
 }
 
 void Battle::handleOpponentAttack(int mouse_x, int mouse_y)
 {
-	if (attack_timer.get_ticks() >= attack_times.at(0))
+	if (attack_timer.get_ticks() >= attack_times.at(attack_times.size() - 1))
 	{
 		int x = rand() % HITS.size();
 		if (!mute)
@@ -605,6 +627,7 @@ void Battle::handleOpponentAttack(int mouse_x, int mouse_y)
 		opponent_zoomOut = true;
 		attack_timer.stop();
 		attack_timer.start();
+		attack_times.pop_back();
 	}
 	if (attack_times.size() == 0)
 	{
@@ -700,7 +723,7 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 
 		//get center points
 		center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT};
-		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h};
+		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h * 2};
 		main_char.saber.setCenterPoints();
 		opponent.saber.setCenterPoints();
 
@@ -864,11 +887,11 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//render clash
 	renderClash(RENDERER, mouse_x, mouse_y);
 
-	//bottom bar
-	renderBottomBar(RENDERER, mouse_x, mouse_y);
-
 	//health bars
 	renderHealthBars(RENDERER, mouse_x, mouse_y);
+
+	//bottom bar
+	renderBottomBar(RENDERER, mouse_x, mouse_y);
 
 	//mute button
 	renderMuteButton(RENDERER, mouse_x, mouse_y);
