@@ -19,6 +19,13 @@ struct Battle
 	Timer ready_time;
 	Timer wait;
 	Timer fight_time;
+	
+	//end game
+	bool rGameOver;
+	bool rVictory;
+	LTexture gameover;
+	LTexture victory;
+	Timer endgame_timer;
 
 	//characters
 	Character main_char;
@@ -105,13 +112,19 @@ struct Battle
 			int x = rand() % 3 + 1;
 			attack_times.push_back(x * 1000);
 		}
-
+		
+		//ready / fight text
 		rReady = false;
 		rFight = false;
 		SDL_Color color = {0xFF, 0xFF, 0xFF};
 		ready.loadFromRenderedText(RENDERER, FONT, "Ready", color);
-		color = {0xFF, 0xFF, 0xFF};
 		fight.loadFromRenderedText(RENDERER, FONT, "Fight", color);
+
+		//end game text
+		rGameOver = false;
+		rVictory = false;
+		gameover.loadFromRenderedText(RENDERER, FONT, "game over", color);
+		victory.loadFromRenderedText(RENDERER, FONT, "victory", color);	
 
 		main_char_attack = false;
 		main_char_zoomIn = false;
@@ -185,6 +198,7 @@ struct Battle
 	void handleCustomizeMouseDown(int mouse_x, int mouse_y);
 	void handleMouseDown(int mouse_x, int mouse_y);
 	void handleStart(Character custom);
+	void handleEndGame(int mouse_x, int mouse_y);
 	void handleOpponentMotion(int mouse_x, int mouse_y);
 	void handleOpponentAttack(int mouse_x, int mouse_y);
 	void handleOpponent(int mouse_x, int mouse_y);
@@ -474,6 +488,53 @@ void Battle::handleStart(Character custom)
 	}
 }
 
+void Battle::handleEndGame(int mouse_x, int mouse_y)
+{
+	if (main_health <= 0 || op_health <= 0)
+	{
+		if (!endgame_timer.is_started())
+			endgame_timer.start();
+		
+		//game over
+		if (main_health <= 0)
+		{
+			rGameOver = true;
+			main_char.saber.on = false;
+		}
+
+		//victory
+		else if (op_health <= 0)
+		{
+			rVictory = true;
+			opponent.saber.on = false;
+		}
+
+		//exit
+		if (endgame_timer.get_ticks() > 5000)
+		{
+			rGameOver = false;
+			rVictory = false;
+			GAMES.at(2) = false;	
+			SDL_ShowCursor(1);
+			Mix_HaltChannel(-1);
+			Mix_HaltMusic();
+			start = true;
+			op_point.x = rand() % hover_rect.w + hover_rect.x;
+			op_point.y = rand() % hover_rect.h + hover_rect.y;
+			opponent.hilt = &hilts.at(rand() % hilts.size());
+			int x = rand() % blades.size();
+			opponent.saber.blade.h = 0;
+			opponent.blade = &blades.at(x);
+			opponent.bladetip = &bladetips.at(x);
+			opponent.bladebase = &bladebases.at(x);
+			opponent.saber.on = false;
+			main_health_rect.y = bottom.y;
+			op_health_rect.y -= op_health_rect.h;
+			GAMES.at(1) = true;
+		}
+	}
+}
+
 void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 {		
 	//hover
@@ -610,9 +671,6 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 					op_point.y = temp_point.y;
 			}
 		}
-		//cout << main_char.saber.angle << " , " << block_angle << endl;
-		//cout << block_point.x << " , " << block_point.y << endl;
-		//cout << endl;
 	}
 }
 
@@ -673,8 +731,9 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 {
 	//handle start
 	handleStart(custom);
-	
-	if (!start)	
+
+	//handle main game
+	if (!start && main_health > 0 && op_health > 0)	
 	{
 		//play music
 		if (!mute_music)
@@ -744,6 +803,9 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 		main_char.saber.handleSaberPosition(mouse_x, mouse_y, false);
 		opponent.saber.handleSaberPosition(op_point.x, op_point.y, false);
 	}
+
+	//end game
+	handleEndGame(mouse_x, mouse_y);
 }
 
 void Battle::renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -932,7 +994,7 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 		SDL_RenderDrawPoint(RENDERER, op_center.x, op_center.y);
 	}
 
-	//ready
+	//text render
 	SDL_Rect r;
 	r.x = SCREEN_WIDTH / 2 - 100;
 	r.y = SCREEN_HEIGHT / 2 - 50;
@@ -942,7 +1004,10 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 		SDL_RenderCopy(RENDERER, ready.mTexture, NULL, &r);
 	if (rFight)
 		SDL_RenderCopy(RENDERER, fight.mTexture, NULL, &r);
-
+	if (rGameOver)
+		SDL_RenderCopy(RENDERER, gameover.mTexture, NULL, &r);
+	if (rVictory)
+		SDL_RenderCopy(RENDERER, victory.mTexture, NULL, &r);
 	//display
 	SDL_RenderPresent(RENDERER);
 }
