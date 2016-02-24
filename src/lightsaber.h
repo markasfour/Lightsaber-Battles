@@ -130,18 +130,18 @@ struct Saber
 
 	void handleEdge(int mouse_x, int mouse_y)
 	{
-		edge_top.x = bladetip.x + bladetipCenter.x - 
-					 bladetipCenter.x*cos(angle/-58) - bladetipCenter.y*sin(angle/-58) + 
-					 min(int(cos(angle/-58)), 0)*bladetip.w + min(int(sin(angle/-58)), 0)*bladetip.h ;
+		edge_top.x = bladetip.x + bladetipCenter.x + (bladetip.w / 2) - 
+					 bladetipCenter.x*cos(angle/-57) - bladetipCenter.y*sin(angle/-57) + 
+					 min(int(cos(angle/-57)), 0)*bladetip.w + min(int(sin(angle/-57)), 0)*bladetip.h ;
 		edge_top.y = bladetip.y + bladetipCenter.y + 
-					 bladetipCenter.x*sin(angle/-58) - bladetipCenter.y*cos(angle/-58) + 
-					 min(int(cos(angle/-58)), 0)*bladetip.h - max(int(sin(angle/-58)), 0)*bladetip.w ;
-		edge_bot.x = bladebase.x + bladebaseCenter.x - 
-					 bladebaseCenter.x*cos(angle/-58) - bladebaseCenter.y*sin(angle/-58) + 
-					 min(int(cos(angle/-58)), 0)*bladetip.w + min(int(sin(angle/-58)), 0)*bladetip.h ;
+					 bladetipCenter.x*sin(angle/-57) - bladetipCenter.y*cos(angle/-57) + 
+					 min(int(cos(angle/-57)), 0)*bladetip.h - max(int(sin(angle/-57)), 0)*bladetip.w ;
+		edge_bot.x = bladebase.x + bladebaseCenter.x + (bladebase.w / 2) - 
+					 bladebaseCenter.x*cos(angle/-57) - bladebaseCenter.y*sin(angle/-57) + 
+					 min(int(cos(angle/-57)), 0)*bladetip.w + min(int(sin(angle/-57)), 0)*bladetip.h ;
 		edge_bot.y = bladebase.y + bladebaseCenter.y + 
-					 bladebaseCenter.x*sin(angle/-58) - bladebaseCenter.y*cos(angle/-58) + 
-					 min(int(cos(angle/-58)), 0)*bladebase.h - max(int(sin(angle/-58)), 0)*bladebase.w ;
+					 bladebaseCenter.x*sin(angle/-57) - bladebaseCenter.y*cos(angle/-57) + 
+					 min(int(cos(angle/-57)), 0)*bladebase.h - max(int(sin(angle/-57)), 0)*bladebase.w ;
 	}
 
 	void handleSaberPosition(int mouse_x, int mouse_y, bool switched)
