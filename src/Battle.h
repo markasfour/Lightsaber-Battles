@@ -182,13 +182,13 @@ struct Battle
 		main_health_rect.x = 0;
 		main_health_rect.y = bottom.y;
 		main_health_rect.w = SCREEN_WIDTH;
-		main_health_rect.h = 10;
+		main_health_rect.h = 15;
 	
 		//opponent health bar
 		op_health_rect.x = 0;
-		op_health_rect.y = -10;
+		op_health_rect.y = -15;
 		op_health_rect.w = SCREEN_WIDTH;
-		op_health_rect.h = 10;
+		op_health_rect.h = 15;
 
 		//opponent center 
 		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h * 2};
@@ -552,7 +552,7 @@ void Battle::handleEndGame(int mouse_x, int mouse_y)
 			opponent.saber.on = false;
 			main_health_rect.y = bottom.y;
 			op_health_rect.y -= op_health_rect.h;
-			
+			GAMES.at(1) = true;
 		}
 	}
 }
@@ -670,25 +670,25 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 		{
 			if (op_point.x < temp_point.x)
 			{
-				op_point.x += 8;
+				op_point.x += 12;
 				if (op_point.x > temp_point.x)
 					op_point.x = temp_point.x;
 			}
 			else if (op_point.x > temp_point.x)
 			{	
-				op_point.x -= 8;
+				op_point.x -= 12;
 				if (op_point.x < temp_point.x)
 					op_point.x = temp_point.x;
 			}
 			if (op_point.y < temp_point.y)
 			{	
-				op_point.y += 8;
+				op_point.y += 12;
 				if (op_point.y > temp_point.y)
 					op_point.y = temp_point.y;
 			}
 			else if (op_point.y > temp_point.y)
 			{	
-				op_point.y -= 8;
+				op_point.y -= 12;
 				if (op_point.y < temp_point.y)
 					op_point.y = temp_point.y;
 			}
@@ -862,6 +862,16 @@ void Battle::renderDamage(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 
 void Battle::renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
+	//main health bar
+	//back
+	SDL_Rect b;
+	b.x = main_health_rect.x; 
+	b.y = main_health_rect.y;
+	b.w = SCREEN_WIDTH;
+	b.h = main_health_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x00, 0x00, 0x00, 0xFF);
+	SDL_RenderFillRect(RENDERER, &b);
+	//health
 	if (main_health <= 20)
 		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
 	else if (main_health <= 50)
@@ -869,7 +879,44 @@ void Battle::renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	else
 		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
 	SDL_RenderFillRect(RENDERER, &main_health_rect);
-	
+	//frame
+	SDL_Rect f1;
+	f1.x = main_health_rect.x;
+	f1.y = main_health_rect.y;
+	f1.w = SCREEN_WIDTH;
+	f1.h = 3;
+	SDL_Rect f2 = f1;
+	f2.y += main_health_rect.h - f2.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &f1);
+	SDL_RenderFillRect(RENDERER, &f2);
+	//right edge
+	SDL_Rect e;
+	e.x = SCREEN_WIDTH - 3;
+	e.y = main_health_rect.y;
+	e.w = 3;
+	e.h = main_health_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &e);
+	//heart
+	SDL_Rect h;
+	h.x = main_health_rect.x;
+	h.y = main_health_rect.y;
+	h.w = 15;
+	h.h = main_health_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &h);
+	SDL_RenderCopy(RENDERER, HEART.mTexture, NULL, &h);
+
+	//opponent health bar
+	//back
+	b.x = op_health_rect.x; 
+	b.y = op_health_rect.y;
+	b.w = SCREEN_WIDTH;
+	b.h = op_health_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x00, 0x00, 0x00, 0xFF);
+	SDL_RenderFillRect(RENDERER, &b);
+	//health
 	if (op_health <= 20)
 		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0x00, 0x00, 0xFF);
 	else if (op_health <= 50)
@@ -877,6 +924,31 @@ void Battle::renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	else
 		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0x00, 0xFF);
 	SDL_RenderFillRect(RENDERER, &op_health_rect);
+	//frame
+	f1.x = op_health_rect.x;
+	f1.y = op_health_rect.y;
+	f1.w = SCREEN_WIDTH;
+	f1.h = 3;
+	f2 = f1;
+	f2.y += op_health_rect.h - f2.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &f1);
+	SDL_RenderFillRect(RENDERER, &f2);
+	//right edge
+	e.x = SCREEN_WIDTH - 3;
+	e.y = op_health_rect.y;
+	e.w = 3;
+	e.h = op_health_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &e);
+	//heart
+	h.x = op_health_rect.x;
+	h.y = op_health_rect.y;
+	h.w = 15;
+	h.h = op_health_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &h);
+	SDL_RenderCopy(RENDERER, HEART.mTexture, NULL, &h);
 }
 
 void Battle::renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)

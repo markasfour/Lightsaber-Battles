@@ -39,6 +39,7 @@ vector <LTexture> bladebases (7);
 LTexture hilt_icon;
 LTexture background_icon;
 LTexture color_icon;
+LTexture HEART;
 LTexture CLASH;
 LTexture DAMAGE;
 
@@ -274,6 +275,10 @@ bool loadMedia(string CurrentPath)
 	if (!loadImage(color_icon, CurrentPath, "/content/color_icon.png"))
 		return false;
 
+	//heart
+	if (!loadImage(HEART, CurrentPath, "/content/heart.png"))
+		return false;
+
 	//clash
 	if (!loadImage(CLASH, CurrentPath, "/content/clash.png"))
 		return false;	
@@ -488,10 +493,17 @@ void close()
 	hilt_icon.free();
 	background_icon.free();
 	color_icon.free();
+	HEART.free();
 	CLASH.free();
 	DAMAGE.free();
 
 	//free loaded music
+	Mix_FreeMusic(MENU_THEME);
+	MENU_THEME = NULL;
+	Mix_FreeMusic(CUSTOMIZE_THEME);
+	CUSTOMIZE_THEME = NULL;
+	Mix_FreeMusic(BATTLE_THEME);
+	BATTLE_THEME = NULL;
 
 	//free loaded sound effects
 	Mix_FreeChunk(ON_SOUND_1);
@@ -520,13 +532,6 @@ void close()
 	CLICK_SOUND = NULL;
 	Mix_FreeChunk(BATTLE_START);
 	BATTLE_START = NULL;
-	Mix_FreeMusic(MENU_THEME);
-	MENU_THEME = NULL;
-	Mix_FreeMusic(CUSTOMIZE_THEME);
-	CUSTOMIZE_THEME = NULL;
-	Mix_FreeMusic(BATTLE_THEME);
-	BATTLE_THEME = NULL;
-	
 
 	//free loaded fonts
 	TTF_CloseFont(FONT);
