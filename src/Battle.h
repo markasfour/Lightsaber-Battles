@@ -501,9 +501,10 @@ void Battle::handleEndGame(int mouse_x, int mouse_y)
 {
 	if (main_health <= 0 || op_health <= 0)
 	{
+		//start timer
 		if (!endgame_timer.is_started())
 			endgame_timer.start();
-		
+
 		//game over
 		if (main_health <= 0)
 		{
@@ -517,6 +518,16 @@ void Battle::handleEndGame(int mouse_x, int mouse_y)
 			rVictory = true;
 			opponent.saber.on = false;
 		}
+
+		//handle sabers
+		op_center = {op_rect.x + (op_rect.w / 2), op_rect.y + op_rect.h * 2};
+		main_char.saber.setCenterPoints();
+		opponent.saber.setCenterPoints();
+		main_char.saber.handleAngle(center, mouse_x, mouse_y);
+		opponent.saber.handleAngle(op_center, op_point.x, op_point.y);
+		opponent.saber.angle *= -1;
+		main_char.saber.handleSaberPosition(mouse_x, mouse_y, false);
+		opponent.saber.handleSaberPosition(op_point.x, op_point.y, false);
 
 		//exit
 		if (endgame_timer.get_ticks() > 5000)
