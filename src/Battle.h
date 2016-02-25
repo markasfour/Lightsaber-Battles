@@ -38,6 +38,7 @@ struct Battle
 	SDL_Rect hover_rect;
 	SDL_Point op_point;
 	SDL_Point temp_point;
+	SDL_Point attack_point;
 	SDL_Point block_point;
 
 	//attack
@@ -52,6 +53,8 @@ struct Battle
 	SDL_Point clash;
 	SDL_Rect clashRect;
 	bool clash_render;
+	double temp_main_health;
+	Timer damage_timer;
 
 	//mute
 	bool soundOn;
@@ -103,6 +106,10 @@ struct Battle
 		op_point.x = rand() % hover_rect.w + hover_rect.x;
 		op_point.y = rand() % hover_rect.h + hover_rect.y;
 		temp_point = op_point;
+		attack_point.x = 0;
+		attack_point.y = 0;
+		block_point.x = 0;
+		block_point.y = 0;
 
 		Character o(1.00);
 		opponent = o;
@@ -204,6 +211,7 @@ struct Battle
 	void handleOpponent(int mouse_x, int mouse_y);
 	void handleGame(int mouse_x, int mouse_y, Character custom);
 	void renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderDamage(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -418,6 +426,7 @@ void Battle::handleStart(Character custom)
 		
 		//init health
 		main_health = 100;
+		temp_main_health = 100;
 		op_health = 100;
 		main_health_rect.w = (main_health / 100) * SCREEN_WIDTH;
 		op_health_rect.w = (op_health / 100) * SCREEN_WIDTH;
@@ -512,6 +521,8 @@ void Battle::handleEndGame(int mouse_x, int mouse_y)
 		//exit
 		if (endgame_timer.get_ticks() > 5000)
 		{
+			endgame_timer.stop();
+			main_char_attack = false;
 			rGameOver = false;
 			rVictory = false;
 			GAMES.at(2) = false;	
@@ -530,7 +541,7 @@ void Battle::handleEndGame(int mouse_x, int mouse_y)
 			opponent.saber.on = false;
 			main_health_rect.y = bottom.y;
 			op_health_rect.y -= op_health_rect.h;
-			GAMES.at(1) = true;
+			
 		}
 	}
 }
@@ -540,21 +551,16 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	//hover
 	if (!main_char_attack && !opponent_attack)
 	{
+		//reset attack point
+		attack_point.x = 0;
+		attack_point.y = 0;
 		//reset block point
 		block_point.x = 0;
 		block_point.y = 0;
 		//determine point
-		if (mouse_x > SCREEN_WIDTH / 2 && temp_point.x < SCREEN_WIDTH / 2) //if not on right side
-		{
-			temp_point.x = rand() % (hover_rect.w / 2) + hover_rect.x + (hover_rect.w / 2);
-			temp_point.y = rand() % hover_rect.h + hover_rect.y;
-		}
-		else if (mouse_x < SCREEN_WIDTH / 2 && temp_point.x > SCREEN_WIDTH / 2) //if not on left side
-		{
-			temp_point.x = rand() % (hover_rect.w / 2) + hover_rect.x;
-			temp_point.y = rand() % hover_rect.h + hover_rect.y;
-		}
-		else if (op_point.x == temp_point.x && op_point.y == temp_point.y) //if reached point
+		if ((op_point.x == temp_point.x && op_point.y == temp_point.y) || //if reached point
+			op_point.x < hover_rect.x || op_point.x > hover_rect.x + hover_rect.w || //outside hover rect
+			op_point.y < hover_rect.y || op_point.y > hover_rect.y + hover_rect.h) //outside hover rect
 		{
 			if (mouse_x > SCREEN_WIDTH / 2) //if player is on right side of screen
 				temp_point.x = rand() % (hover_rect.w / 2) + hover_rect.x + (hover_rect.w / 2);
@@ -568,25 +574,25 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 			if (op_point.x < temp_point.x)
 			{
 				if (op_point.x < hover_rect.x)
-					op_point.x++;
+					op_point.x += 3;
 				op_point.x++;
 			}
 			else if (op_point.x > temp_point.x)
 			{	
 				if (op_point.x > hover_rect.x + hover_rect.w)
-					op_point.x--;
+					op_point.x -= 3;
 				op_point.x--;
 			}
 			if (op_point.y < temp_point.y)
 			{	
 				if (op_point.y < hover_rect.y)
-					op_point.y++;
+					op_point.y += 3;
 				op_point.y++;
 			}
 			else if (op_point.y > temp_point.y)
 			{	
 				if (op_point.y > hover_rect.y + hover_rect.h)
-					op_point.y--;
+					op_point.y -= 3;
 				op_point.y--;
 			}
 		}
@@ -597,34 +603,36 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 		//reset block point
 		block_point.x = 0;
 		block_point.y = 0;
-		if (op_point.x == temp_point.x && op_point.y == temp_point.y)
+		if (attack_point.x == 0 && attack_point.y == 0)
 		{
-			temp_point.x = rand() % op_rect.w + op_rect.x;
-			temp_point.y = rand() % op_rect.h + op_rect.y;
+			attack_point.x = rand() % op_rect.w + op_rect.x;
+			attack_point.y = rand() % op_rect.h + op_rect.y;
+			temp_point = attack_point;
+			cout << temp_point.x << ", " << temp_point.y << endl;
 		}
 		if ((op_point.x != temp_point.x || op_point.y != temp_point.y) && !clash_render)
 		{
 			if (op_point.x < temp_point.x)
 			{
-				op_point.x += 4;
+				op_point.x += 8;
 				if (op_point.x > temp_point.x)
 					op_point.x = temp_point.x;
 			}
 			else if (op_point.x > temp_point.x)
 			{	
-				op_point.x -= 4;
+				op_point.x -= 8;
 				if (op_point.x < temp_point.x)
 					op_point.x = temp_point.x;
 			}
 			if (op_point.y < temp_point.y)
 			{	
-				op_point.y += 4;
+				op_point.y += 8;
 				if (op_point.y > temp_point.y)
 					op_point.y = temp_point.y;
 			}
 			else if (op_point.y > temp_point.y)
 			{	
-				op_point.y -= 4;
+				op_point.y -= 8;
 				if (op_point.y < temp_point.y)
 					op_point.y = temp_point.y;
 			}
@@ -633,6 +641,9 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 	//block
 	else
 	{
+		//reset attack point
+		attack_point.x = 0;
+		attack_point.y = 0;
 		//find blocking angle
 		double block_angle = main_char.saber.angle + 90;
 		if (block_point.x == 0 && block_point.y == 0)
@@ -671,7 +682,7 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 					op_point.y = temp_point.y;
 			}
 		}
-	}
+	}	
 }
 
 void Battle::handleOpponentAttack(int mouse_x, int mouse_y)
@@ -818,6 +829,26 @@ void Battle::renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 	}
 }
 
+void Battle::renderDamage(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	SDL_Rect rect;
+	rect.x = 0; 
+	rect.y = 0;
+	rect.w = SCREEN_WIDTH;
+	rect.h = SCREEN_HEIGHT;
+	if (temp_main_health != main_health)
+	{
+		damage_timer.start();
+		temp_main_health = main_health;
+	}
+	if (damage_timer.is_started())
+	{
+		SDL_RenderCopy(RENDERER, DAMAGE.mTexture, NULL, &rect);
+		if (damage_timer.get_ticks() > 250)
+			damage_timer.stop();
+	}
+}
+
 void Battle::renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	if (main_health <= 20)
@@ -949,6 +980,9 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//render clash
 	renderClash(RENDERER, mouse_x, mouse_y);
 
+	//render damage
+	renderDamage(RENDERER, mouse_x, mouse_y);
+	
 	//health bars
 	renderHealthBars(RENDERER, mouse_x, mouse_y);
 

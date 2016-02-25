@@ -559,6 +559,13 @@ void Customize::renderBottomBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y
 
 void Customize::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, int bg)
 {
+	//play music
+	if (!mute_music)
+	{
+		if (!Mix_PlayingMusic())
+			Mix_PlayMusic(CUSTOMIZE_THEME, -1);
+	}
+	
 	custom.saber.on = true;
 	custom.saber.blade.h = 250;
 	

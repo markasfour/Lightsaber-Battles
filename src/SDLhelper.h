@@ -40,6 +40,7 @@ LTexture hilt_icon;
 LTexture background_icon;
 LTexture color_icon;
 LTexture CLASH;
+LTexture DAMAGE;
 
 Mix_Chunk *ON_SOUND_1 = NULL;
 Mix_Chunk *ON_SOUND_2 = NULL;
@@ -57,6 +58,7 @@ Mix_Chunk *BATTLE_START = NULL;
 vector <Mix_Chunk*> HITS(7);
 
 Mix_Music *MENU_THEME = NULL;
+Mix_Music *CUSTOMIZE_THEME = NULL;
 Mix_Music *BATTLE_THEME = NULL;
 
 bool DEBUG = false;
@@ -276,6 +278,10 @@ bool loadMedia(string CurrentPath)
 	if (!loadImage(CLASH, CurrentPath, "/content/clash.png"))
 		return false;	
 
+	//damage
+	if (!loadImage(DAMAGE, CurrentPath, "/content/damage.png"))
+		return false;	
+
 	//load sound effects 
 	path << CurrentPath << "/content/SaberOn_1.wav";
 	ON_SOUND_1 = Mix_LoadWAV(path.str().c_str());
@@ -444,6 +450,14 @@ bool loadMedia(string CurrentPath)
 
 	//clear stringstream
 	path.str("");
+		
+	path << CurrentPath << "/content/customize_theme.mp3";
+	CUSTOMIZE_THEME = Mix_LoadMUS(path.str().c_str());
+	if (CUSTOMIZE_THEME == NULL)
+		return false;
+	
+	//clear stringstream
+	path.str("");
 	
 	path << CurrentPath << "/content/battle_theme.wav";
 	BATTLE_THEME = Mix_LoadMUS(path.str().c_str());
@@ -475,6 +489,7 @@ void close()
 	background_icon.free();
 	color_icon.free();
 	CLASH.free();
+	DAMAGE.free();
 
 	//free loaded music
 
@@ -507,6 +522,8 @@ void close()
 	BATTLE_START = NULL;
 	Mix_FreeMusic(MENU_THEME);
 	MENU_THEME = NULL;
+	Mix_FreeMusic(CUSTOMIZE_THEME);
+	CUSTOMIZE_THEME = NULL;
 	Mix_FreeMusic(BATTLE_THEME);
 	BATTLE_THEME = NULL;
 	
