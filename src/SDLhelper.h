@@ -41,6 +41,7 @@ LTexture background_icon;
 LTexture color_icon;
 LTexture HEART;
 LTexture CLASH;
+LTexture SPARK;
 LTexture DAMAGE;
 
 Mix_Chunk *ON_SOUND_1 = NULL;
@@ -279,6 +280,10 @@ bool loadMedia(string CurrentPath)
 	if (!loadImage(HEART, CurrentPath, "/content/heart.png"))
 		return false;
 
+	//spark
+	if (!loadImage(SPARK , CurrentPath, "/content/white_pixel.png"))
+		return false;
+
 	//clash
 	if (!loadImage(CLASH, CurrentPath, "/content/clash.png"))
 		return false;	
@@ -494,6 +499,7 @@ void close()
 	background_icon.free();
 	color_icon.free();
 	HEART.free();
+	SPARK.free();
 	CLASH.free();
 	DAMAGE.free();
 

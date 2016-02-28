@@ -19,6 +19,7 @@
 #include "timer.h"
 #include "texture.h"
 #include "SDLhelper.h"
+#include "Spark.h"
 #include "lightsaber.h"
 #include "character.h"
 #include "button.h"
