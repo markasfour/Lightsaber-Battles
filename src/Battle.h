@@ -146,8 +146,8 @@ struct Battle
 		clash_render = false;
 		clashRect.x = 0;
 		clashRect.y = 0;
-		clashRect.w = 100;
-		clashRect.h = 100;
+		clashRect.w = 75;
+		clashRect.h = 75;
 
 		//mute
 		soundOn = false;
@@ -313,25 +313,16 @@ void Battle::handleAttack(int mouse_x, int mouse_y)
 void Battle::handleSparks(int mouse_x, int mouse_y)
 {
 	//generate sparks on clash
-	if (clash_render)
+	if (clash_render && sparks.size() < 10)
 	{
 		SDL_Point clashCenter;
 		clashCenter.x = clashRect.x + (clashRect.w / 2);
 		clashCenter.y = clashRect.y + (clashRect.h / 2);
-		spark s1(clashCenter);
-		sparks.push_back(s1);
-		spark s2(clashCenter);
-		sparks.push_back(s2);
 		if (rand() % 2)
 		{
-			spark s3(clashCenter);
-			sparks.push_back(s3);
+			spark s(clashCenter);
+			sparks.push_back(s);
 		}
-		if (rand() % 2)
-		{
-			spark s4(clashCenter);
-			sparks.push_back(s4);
-		}	
 	}
 	//handle existing sparks
 	if (sparks.size() > 0)
@@ -660,8 +651,6 @@ void Battle::handleOpponentMotion(int mouse_x, int mouse_y)
 			attack_point.x = rand() % op_rect.w + op_rect.x;
 			attack_point.y = rand() % op_rect.h + op_rect.y;
 			temp_point = attack_point;
-			cout << temp_point.x << ", " << temp_point.y << endl;
-			cout << op_point.x << ", " << op_point.y << endl;
 		}
 		if (op_point.x != temp_point.x || op_point.y != temp_point.y)
 		{
@@ -888,13 +877,8 @@ void Battle::renderClash(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 void Battle::renderSparks(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 {
 	for (int i = 0; i < sparks.size(); i++)
-	{
-		//SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0xFF, 0xFF);
-		//SDL_RenderFillRect(RENDERER, &sparks.at(i).rect);
 		SDL_RenderCopyEx(RENDERER, SPARK.mTexture, NULL, &sparks.at(i).rect, 
 						 sparks.at(i).angle, &sparks.at(i).sparkCenter, SDL_FLIP_NONE);	
-		cout << sparks.at(i).angle << endl;
-	}
 }
 
 void Battle::renderDamage(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)

@@ -13,31 +13,14 @@ struct spark
 	int life;
 
 	spark ()
-	{
-		center.x = SCREEN_WIDTH / 2;
-		center.y = SCREEN_HEIGHT / 2;
-		
-		rect.w = rand() % 8 + 4;
-		rect.h = rand() % 2 + 1;
-		rect.x = rand() % 10 - 5 + center.x;
-		rect.y = rand() % 10 - 5 + center.y;
-
-		sparkCenter.x = rect.x + rect.w / 2;
-		sparkCenter.y = rect.y + rect.h / 2;
-		
-		angle = 0;
-
-		t.start();
-
-		life = rand() % 2 + 1 * 100;
-	}
+	{ }
 	spark (SDL_Point c)
 	{
 		center.x = c.x;
 		center.y = c.y;
 
-		rect.w = rand() % 8 + 4;
-		rect.h = rand() % 2 + 1;
+		rect.w = rand() % 4 + 2;
+		rect.h = 1;
 		rect.x = rand() % 10 - 5 + center.x;
 		rect.y = rand() % 10 - 5 + center.y;
 
