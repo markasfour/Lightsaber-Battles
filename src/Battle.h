@@ -55,6 +55,9 @@ struct Battle
 	bool clash_render;
 	double temp_main_health;
 	Timer damage_timer;
+	Timer power_timer;
+	int attack_power;
+	SDL_Rect power_rect;
 
 	//sparks
 	vector <spark> sparks;
@@ -186,7 +189,13 @@ struct Battle
 		main_health_rect.y = bottom.y;
 		main_health_rect.w = SCREEN_WIDTH;
 		main_health_rect.h = 15;
-	
+		
+		//main char power bar
+		power_rect.x = main_health_rect.x;
+		power_rect.y = main_health_rect.y;
+		power_rect.w = 0;
+		power_rect.h = 6;
+
 		//opponent health bar
 		op_health_rect.x = 0;
 		op_health_rect.y = -15;
@@ -218,6 +227,7 @@ struct Battle
 	void renderSparks(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderDamage(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
+	void renderPowerBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderMuteMusicButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
 	void renderBackButton(SDL_Renderer *RENDERER, int mouse_x, int mouse_y);
@@ -277,6 +287,14 @@ void Battle::handleBlock()
 		if (bladeIntersect())
 		{
 			clash_render = true;
+			if (main_char_attack)
+			{
+				//reset attack_power
+				attack_power = 1;
+				power_rect.w = 0;
+				power_timer.stop();
+				power_timer.start();
+			}
 		}
 		else
 		{
@@ -284,7 +302,14 @@ void Battle::handleBlock()
 			if (main_char_attack)
 			{
 				if (main_char.depth == 1)
-					op_health -= 5;
+				{
+					op_health -= attack_power;
+					//reset attack_power
+					attack_power = 1;
+					power_rect.w = 0;
+					power_timer.stop();
+					power_timer.start();
+				}
 				op_health_rect.w = (op_health / 100) * SCREEN_WIDTH;
 			}
 			if (opponent_attack)
@@ -302,9 +327,12 @@ void Battle::handleAttack(int mouse_x, int mouse_y)
 	if (!muteIC.wasClicked(mouse_x, mouse_y) && !back.wasClicked(mouse_x, mouse_y) &&
 		!simulator.wasClicked(mouse_x, mouse_y) && !customize.wasClicked(mouse_x, mouse_y))
 	{
+		//handle attack sound
 		int x = rand() % HITS.size();
 		if (!mute)
 			Mix_PlayChannel(-1, HITS.at(x), 0);
+		
+		//handle attack bools
 		main_char_attack = true;
 		main_char_zoomIn = true;
 	}
@@ -398,6 +426,8 @@ void Battle::handleSimulatorMouseDown(int mouse_x, int mouse_y)
 		opponent.saber.on = false;
 		main_health_rect.y = bottom.y;
 		op_health_rect.y -= op_health_rect.h;
+		power_rect.y = bottom.y;
+		sparks.clear();
 		GAMES.at(0) = true;
 	}
 }
@@ -422,6 +452,8 @@ void Battle::handleCustomizeMouseDown(int mouse_x, int mouse_y)
 		opponent.saber.on = false;
 		main_health_rect.y = bottom.y;
 		op_health_rect.y -= op_health_rect.h;
+		power_rect.y = bottom.y;
+		sparks.clear();
 		GAMES.at(1) = true;
 	}
 }
@@ -457,6 +489,8 @@ void Battle::handleStart(Character custom)
 		}	
 		
 		//init health
+		attack_power = 1;
+		power_rect.w = 0;
 		main_health = 100;
 		temp_main_health = 100;
 		op_health = 100;
@@ -500,6 +534,9 @@ void Battle::handleStart(Character custom)
 			if (main_health_rect.y != bottom.y - main_health_rect.h) //reveal health bar
 				main_health_rect.y--;
 			
+			if (power_rect.y != main_health_rect.y - power_rect.h) //reveal power bar
+				power_rect.y--;
+
 			if (wait.get_ticks() > 2000)
 			{
 				opponent.saber.on = true; //turn on op saber
@@ -524,6 +561,7 @@ void Battle::handleStart(Character custom)
 			ready_time.stop();
 			wait.stop();
 			fight_time.stop();
+			power_timer.start();		//power timer
 			attack_timer.start();		//opponent attack timer
 		}
 	}
@@ -584,6 +622,8 @@ void Battle::handleEndGame(int mouse_x, int mouse_y)
 			opponent.saber.on = false;
 			main_health_rect.y = bottom.y;
 			op_health_rect.y -= op_health_rect.h;
+			power_rect.y = bottom.y;
+			sparks.clear();
 			GAMES.at(1) = true;
 		}
 	}
@@ -821,7 +861,47 @@ void Battle::handleGame(int mouse_x, int mouse_y, Character custom)
 				}
 			}
 		}
-		
+	
+		//handle attack power
+		if (power_timer.get_ticks() < 8000)
+		{
+			if (power_timer.get_ticks () < 3000)
+			{
+				if (power_timer.get_ticks () < 1000)
+				{
+					attack_power = 1;
+				}
+				else
+					attack_power = 2;
+			}
+			else
+				attack_power = 5;
+		}
+		else
+			attack_power = 10;
+
+		//handle power rect
+		if (attack_power == 1)
+		{
+			power_rect.w += (double(SCREEN_WIDTH) / (FRAMES_PER_SECOND * 1));
+			if (power_rect.w > SCREEN_WIDTH)
+				cout << "FUUUUUUUUCK" << endl;
+		}
+		if (power_timer.get_ticks() >= 1000 && power_timer.get_ticks() <= 1060)
+			power_rect.w = 0;
+		if (attack_power == 2)
+		{	
+			power_rect.w += (double(SCREEN_WIDTH) / (FRAMES_PER_SECOND * 2));
+		}
+		if (power_timer.get_ticks() >= 3000 && power_timer.get_ticks() <= 3060)
+			power_rect.w = 0;
+		if (attack_power == 5)
+		{	
+			power_rect.w += (double(SCREEN_WIDTH) / (FRAMES_PER_SECOND * 5));
+		}
+		if (power_timer.get_ticks() >= 8000)
+			power_rect.w = SCREEN_WIDTH;
+
 		//handle opponent
 		handleOpponent(mouse_x, mouse_y);
 		
@@ -899,6 +979,59 @@ void Battle::renderDamage(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
 		if (damage_timer.get_ticks() > 250)
 			damage_timer.stop();
 	}
+}
+
+void Battle::renderPowerBar(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
+{
+	//back
+	SDL_Rect b;
+	b.x = power_rect.x;
+	b.y = power_rect.y;
+	b.w = SCREEN_WIDTH;
+	b.h = power_rect.h;
+	if (attack_power == 1)
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0x00, 0x00, 0xFF);
+	if (attack_power == 2)
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0x00, 0xFF, 0xFF);
+	if (attack_power == 5)
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0xFF, 0xFF);
+	if (attack_power == 10)
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderFillRect(RENDERER, &b);
+	//power
+	if (attack_power == 1)
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0x00, 0xFF, 0xFF);
+	if (attack_power == 2)
+		SDL_SetRenderDrawColor(RENDERER, 0x00, 0xFF, 0xFF, 0xFF);
+	if (attack_power == 5 || attack_power == 10)
+		SDL_SetRenderDrawColor(RENDERER, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderFillRect(RENDERER, &power_rect);
+	//frame
+	SDL_Rect f1;
+	f1.x = power_rect.x;
+	f1.y = power_rect.y;
+	f1.w = SCREEN_WIDTH;
+	f1.h = 2;
+	SDL_Rect f2 = f1;
+	f2.y += power_rect.h - f2.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &f1);
+	SDL_RenderFillRect(RENDERER, &f2);
+	//right edge
+	SDL_Rect e;
+	e.x = SCREEN_WIDTH - 3;
+	e.y = power_rect.y;
+	e.w = 3;
+	e.h = power_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &e);
+	//left edge
+	e.x = 0;
+	e.y = power_rect.y;
+	e.w = 3;
+	e.h = power_rect.h;
+	SDL_SetRenderDrawColor(RENDERER, 0x3F, 0x3F, 0x3F, 0xFF);
+	SDL_RenderFillRect(RENDERER, &e);
 }
 
 void Battle::renderHealthBars(SDL_Renderer *RENDERER, int mouse_x, int mouse_y)
@@ -1110,6 +1243,9 @@ void Battle::renderEverything(SDL_Renderer *RENDERER, int mouse_x, int mouse_y, 
 	//render damage
 	renderDamage(RENDERER, mouse_x, mouse_y);
 	
+	//power bar
+	renderPowerBar(RENDERER, mouse_x, mouse_y);
+
 	//health bars
 	renderHealthBars(RENDERER, mouse_x, mouse_y);
 
