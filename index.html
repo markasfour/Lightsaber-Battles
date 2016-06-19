@@ -7,18 +7,22 @@
 	<meta property="og:type"          content="website" />
 	<meta property="og:title"         content="Lightsaber Battles" />
 	<meta property="og:description"   content="A Lightsaber Simulation Experience" />
-	
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+
 	<link href="main.css" rel="stylesheet"></link>
 	<link rel="stylesheet" type="text/css" href="slick/slick.css"/>
 	<link rel="stylesheet" type="text/css" href="slick/slick-theme.css"/>
 
+	<script type="text/javascript" src="loading.js"></script>
+	
 	<script type="text/javascript" src="jquery-1.12.2.min.js"></script>
 	<script type="text/javascript" src="processing.js"></script>
 
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css" rel="stylesheet" type="text/css"></link>
 	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-  	
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+  
+	
   	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>	
 
 	<script src="https://apis.google.com/js/platform.js" async defer>		
@@ -44,6 +48,16 @@
   js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.6";
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
+
+<div id="load_screen">
+	<div id="loading" align="center">
+		<p>Loading</p>
+		<div class="progress">
+      	  <div class="indeterminate"></div>
+		</div>	
+	</div>
+</div>
+
 
 <div id="header">
 	<div id="logo" align="center">Lightsaber Battles</div>
@@ -762,21 +776,21 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 		<col width="33%" align="center">
 		<col width="33%" align="center">
 		<tr>
+			<th style="text-align: center;"><h3>Mouse Only</h3></th>
+			<th style="text-align: center;"><h3>Battle</h3></th>
+			<th style="text-align: center;"><h3>Customize</h3></th>
+		</tr>
+		
+		<tr>
 			<th style="text-align: center;"><i class="fa fa-mouse-pointer" style="font-size: 40px;"></i></th>
 			<th style="text-align: center;"><img src="pics/Battle.png" width="80" height="80"></th>
 			<th style="text-align: center;"><i class="fa fa-gears" style="font-size: 40px;"></i></th>
 		</tr>
 		
 		<tr>
-			<th style="text-align: center;">Mouse Only</th>
-			<th style="text-align: center;">Battle</th>
-			<th style="text-align: center;">Customize</th>
-		</tr>
-		
-		<tr>
-			<td style="text-align: center;">Use simple mouse only controls to easily master your saber skills</td>
-			<td style="text-align: center;">Test your saber skills against an AI opponent in an epic duel</td>
-			<td style="text-align: center;">Customize your lightsaber with over <i>40</i> different possible combination</td>
+			<td style="text-align: center; padding: 25px;">Use simple mouse only controls to easily master your saber skills</td>
+			<td style="text-align: center; padding: 25px;">Test your saber skills against an AI opponent in an epic duel</td>
+			<td style="text-align: center; padding: 25px;">Customize your lightsaber with over <i>40</i> different possible combination</td>
 		</tr>
 	</table>
 </div>
@@ -791,7 +805,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 			<p style="font-size: 20px; margin-bottom: 5px;">Simulate</p>
 			<table>
 				<tr>
-					<td><img src="pics/Simulate.png" alt="Simulate" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 4px;"/></td>
+					<td><img src="pics/Simulate.png" alt="Simulate" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 7px;"/></td>
 					<td><p>Practice your saber skills in the simulator<br>
 					Full range of motion<br>
 					Real lightsaber sounds</p></td>
@@ -802,7 +816,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 			<p style="font-size: 20px; margin-bottom: 5px;">Customize</p>
 			<table>
 				<tr>
-					<td><img src="pics/Customize.png" alt="Customize" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 4px;"/></td>
+					<td><img src="pics/Customize.png" alt="Customize" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 7px;"/></td>
 					<td><p>Stylize your lightsaber with over 40 possible combinations<br>
 					6 lightsaber hilts<br>
 					7 lightsaber blade colors<br>
@@ -814,7 +828,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 			<p style="font-size: 20px; margin-bottom: 5px;">Battle</p>
 			<table>
 				<tr>
-					<td><img src="pics/Battle1.png" alt="Battle" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 4px;"/></td>
+					<td><img src="pics/Battle1.png" alt="Battle" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 7px;"/></td>
 					<td><p>Fight epic battles with AI opponents<br>
 					Time your strikes for the greatest effect<br>
 					Block attacks with your lightsaber<br>
@@ -826,7 +840,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 			<p style="font-size: 20px; margin-bottom: 5px;">Download Now</p>
 			<table>
 				<tr>	
-					<td><img src="pics/Battle2.png" alt="Battle" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 4px;"/></td>
+					<td><img src="pics/Battle2.png" alt="Battle" width="450" height="300" style="margin: 5px 10px 25px; border: 4px solid #222222; border-radius: 7px;"/></td>
 					<td>
 						<button class="waves-effect waves-light btn-large modal-trigger" data-target="license">	
 							<i class="fa fa-download" style="font-size: 40px;"></i> Download
@@ -880,7 +894,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 			
 			<div class="fb-share-button" data-href="https://markasfour.github.io/Lightsaber-Battles" data-layout="button" data-mobile-iframe="false"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmarkasfour.github.io%2FLightsaber-Battles&amp;src=sdkpreparse">Share</a></div>
 
-			<br>
+			<br><br>
 
 			<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://markasfour.github.io/Lightsaber-Battles" data-text="Check out this site" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 			
@@ -888,13 +902,13 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 
 			<div class="g-plus" data-action="share" data-annotation="none" data-height="24" data-href="https://markasfour.github.io/Lightsaber-Battles"></div>
 
+			<br><br>	
+
+			<a class="github-button" href="https://github.com/markasfour/Lightsaber-Battles" data-icon="octicon-star" data-style="mega" aria-label="Star markasfour/Lightsaber-Battles on GitHub">Star</a>
+
 			<br><br>
 
 			<a data-pin-do="buttonPin" data-pin-tall="true" data-pin-save="true" href="https://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fmarkasfour.github.io%2FLightsaber-Battles&media=https%3A%2F%2Fmarkasfour.github.io%2Fpics%2FLightsaberBattles.jpg&description=Next%20stop%3A%20Pinterest"></a>
-
-			<br><br>
-
-			<a class="github-button" href="https://github.com/markasfour/Lightsaber-Battles" data-icon="octicon-star" data-style="mega" aria-label="Star markasfour/Lightsaber-Battles on GitHub">Star</a>
 
 		</td>
 
