@@ -1,0 +1,133 @@
+body {
+	background-color: #000000;
+	margin: 0;
+	padding: 0;
+	font-family: 'Roboto', sans-serif;
+}
+
+@font-face {
+	font-family: "Star Jedi";
+	src: url(Starjedi.ttf) format("truetype");
+}
+
+#header {
+	width: 100%;
+	top: 0px;
+	display: block;	
+	margin: 0;
+	padding: 5px auto;
+	background-image: linear-gradient(to right, rgba(255, 255, 255, .5), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5));
+	z-index: 50;
+}
+
+#logo {
+	width: 100%;
+	font-family: "Star Jedi";
+	font-size: 40px;
+	text-shadow: 0 0 1px #000000;
+	color: #000000;
+}
+
+#sub-logo {
+	width: 100%;
+	color: #000000;
+}
+
+#highlight-container-top {
+	width: 100%;
+	height: 5px;
+	margin: 70px 0;
+	position: absolute;
+	display: block;
+	z-index: 100;
+	top: 0px;
+}
+
+#download {
+	width: 300px;
+	margin: 125px auto;
+	padding: 50px 0 35px;
+	background-color: rgba(255, 255, 255, .75);
+	color: #555555;
+	text-align: center;
+	border-radius: 4px;
+	box-shadow: 0 2px 2px #222222;
+}
+
+#about {
+	width: 100%;
+	margin: 0;
+	padding: 75px 0;
+	background-color: #000000;
+	background-image: linear-gradient(to right, rgba(255, 255, 255, .5), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5));
+	z-index: -50;
+	text-align: center;
+	color: #000000;
+	text-shadow: 0 0 1px #000000;
+}
+
+#about-table {
+	width: 80%;
+	padding: 75px 0;
+	text-align: center;
+}
+
+#jumbotron {
+	width: 100%;
+	margin: 0;
+	padding: 75px 0;
+	text-align: center;
+	color: #FFFFFF;
+	text-shadow: 0 0 2px #FFFFFF;
+}
+
+#project-slides {	
+	width: 700px;
+	display: block;
+	margin: 0 auto;
+	vertical-align: center;
+	background-color: rgba(255, 255, 255, .75);
+	border-radius: 4px;
+	box-shadow: 0 2px 2px #222222;
+	color: #000000;
+	text-shadow: 0 0 1px #000000;
+}
+
+#connect {
+	width: 100%;
+	margin: 0;
+	padding: 75px 0;
+	background-color: #000000;
+	background-image: linear-gradient(to right, rgba(255, 255, 255, .5), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5));
+	z-index: -50;
+	text-align: center;
+	color: #000000;
+	text-shadow: 0 0 1px #000000;
+}
+
+#highlight-container-bottom {
+	width: 100%;
+	height: 5px;
+	margin: 0;
+	position: fixed;
+	display: block;
+	z-index: 100;
+	bottom: 57px;
+}
+
+#footer {
+	position: fixed;
+	width: 100%;
+	height: 50px;
+	bottom: 0px;
+	display: block;
+	color: #FFFF00;
+	z-index: 99;
+}
+
+#star-container-footer {
+	width: 90%;
+	margin: 0;
+	position: absolute;
+	z-index: -1;
+}
